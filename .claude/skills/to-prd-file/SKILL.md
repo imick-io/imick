@@ -1,6 +1,6 @@
 ---
 name: to-prd-file
-description: Create a PRD through user interview, codebase exploration, and module design, then create a file in `plans/`. Use when user wants to write a PRD to file (not github issues), create a product requirements document, or plan a new feature.
+description: Create a PRD through user interview, codebase exploration, and module design, then create a file in `_prds/`. Use when user wants to write a PRD to file (not github issues), create a product requirements document, or plan a new feature.
 ---
 
 This skill will be invoked when the user wants to create a PRD. You should go through the steps below. You may skip steps if you don't consider them necessary.
@@ -17,7 +17,7 @@ Ask the questions one at a time.
 
 If a question can be answered by exploring the codebase, explore the codebase instead.
 
-4. Once you have a complete understanding of the problem and solution, use the template below to write the PRD. The PRD should be written in the `plans/prd-name.md` file.
+4. Once you have a complete understanding of the problem and solution, use the template below to write the PRD. The PRD should be written in the `_prds/prd-name.md` file.
 
 <prd-template>
 

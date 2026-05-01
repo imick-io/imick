@@ -19,7 +19,18 @@ If the task has not already been planned, create a plan for it.
 
 ### 3. Implement
 
-Work through the plan step by step.
+**For backend code**, use red/green/refactor one slice at a time:
+
+1. **Red** — write one failing test for the smallest useful behaviour. Run it, confirm it fails for the right reason.
+2. **Green** — write the minimum production code to make that test pass. Run it, confirm green.
+3. **Refactor** — clean up without changing behaviour. Run tests again to stay green.
+4. Repeat from step 1 for the next behaviour.
+
+Do not write the next test until the current slice is green. Do not write more production code than the current failing test demands.
+
+**For frontend code**, skip the red/green/refactor cycle and implement directly — UI behaviour is validated by running the dev server and testing in the browser.
+
+Work through the plan step by step regardless of frontend or backend.
 
 ### 4. Validate
 

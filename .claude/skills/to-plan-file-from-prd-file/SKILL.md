@@ -1,17 +1,17 @@
 ---
 name: to-plan-file-from-prd-file
-description: Turn a PRD into a multi-phase implementation plan using tracer-bullet vertical slices, saved as a local Markdown file in ./plans/. Use when user wants to break down a PRD, create an implementation plan, plan phases from a PRD, or mentions "tracer bullets".
+description: Turn a PRD from `_prds/` into a multi-phase implementation plan using tracer-bullet vertical slices, saved as a local Markdown file in ./_plans/. Use when user wants to break down a PRD, create an implementation plan, plan phases from a PRD, or mentions "tracer bullets".
 ---
 
 # PRD to Plan
 
-Break a PRD into a phased implementation plan using vertical slices (tracer bullets). Output is a Markdown file in `./plans/`.
+Break a PRD into a phased implementation plan using vertical slices (tracer bullets). Output is a Markdown file in `./_plans/`.
 
 ## Process
 
 ### 1. Confirm the PRD is in context
 
-The PRD should already be in the conversation. If it isn't, ask the user to paste it or point you to the file.
+The PRD should already be in the conversation. If it isn't, ask the user to paste it or point you to the file — PRDs are stored in `_prds/`.
 
 ### 2. Explore the codebase
 
@@ -57,7 +57,7 @@ Iterate until the user approves the breakdown.
 
 ### 6. Write the plan file
 
-Create `./plans/` if it doesn't exist. Write the plan as a Markdown file named after the feature (e.g. `./plans/user-onboarding.md`). Use the template below.
+Create `./_plans/` if it doesn't exist. Write the plan as a Markdown file named after the feature (e.g. `./_plans/user-onboarding.md`). Use the template below.
 
 <plan-template>
 # Plan: <Feature Name>
