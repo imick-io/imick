@@ -1,7 +1,12 @@
 import { defineCollection, defineConfig } from "@content-collections/core"
+import { compileMDX } from "@content-collections/mdx"
+import rehypePrettyCode, { type Options as RehypePrettyCodeOptions } from "rehype-pretty-code"
 import { z } from "zod"
 
-// ─── Phase 2: Blog posts (MDX) ───────────────────────────────────────────────
+const prettyCodeOptions: RehypePrettyCodeOptions = {
+  theme: { light: "github-light", dark: "github-dark" },
+  keepBackground: false,
+}
 
 const posts = defineCollection({
   name: "posts",
@@ -10,16 +15,24 @@ const posts = defineCollection({
   schema: z.object({
     title: z.string(),
     excerpt: z.string(),
-    publishedAt: z.string(),
+    publishedAt: z.string().optional(),
     updatedAt: z.string().optional(),
     category: z.enum(["opinion", "technical", "other"]),
     tags: z.array(z.string()),
     coverImage: z.string().optional(),
-    status: z.enum(["draft", "published"]).default("draft"),
+    content: z.string(),
   }),
+  transform: async (document, context) => {
+    const code = await compileMDX(context, document, {
+      rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
+    })
+    return {
+      ...document,
+      slug: document._meta.fileName.replace(/\.mdx$/, ""),
+      code,
+    }
+  },
 })
-
-// ─── Phase 2: Code snippets (MDX) ────────────────────────────────────────────
 
 const snippets = defineCollection({
   name: "snippets",
@@ -30,7 +43,18 @@ const snippets = defineCollection({
     language: z.string(),
     tags: z.array(z.string()),
     description: z.string().optional(),
+    content: z.string(),
   }),
+  transform: async (document, context) => {
+    const code = await compileMDX(context, document, {
+      rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
+    })
+    return {
+      ...document,
+      slug: document._meta.fileName.replace(/\.mdx$/, ""),
+      code,
+    }
+  },
 })
 
 export default defineConfig({

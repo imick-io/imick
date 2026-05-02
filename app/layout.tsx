@@ -56,6 +56,7 @@ export default function RootLayout({
             <nav className="flex items-center gap-6">
               <NavLink href="/">Home</NavLink>
               <NavLink href="/about">About</NavLink>
+              <NavLink href="/learn">Learn</NavLink>
               <NavLink href="/contact">Contact</NavLink>
               <a
                 href={siteConfig.githubSponsorsUrl}
