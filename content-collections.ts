@@ -1,11 +1,35 @@
 import { defineCollection, defineConfig } from "@content-collections/core"
 import { compileMDX } from "@content-collections/mdx"
 import rehypePrettyCode, { type Options as RehypePrettyCodeOptions } from "rehype-pretty-code"
+import { codeToHtml, type BundledLanguage } from "shiki"
 import { z } from "zod"
 
 const prettyCodeOptions: RehypePrettyCodeOptions = {
   theme: { light: "github-light", dark: "github-dark" },
   keepBackground: false,
+}
+
+const PREVIEW_LINE_LIMIT = 10
+
+async function buildSnippetPreview(content: string, fallbackLang: string): Promise<string | null> {
+  const match = content.match(/```([\w-]+)?[^\n]*\n([\s\S]*?)```/)
+  if (!match) return null
+  const lang = (match[1] || fallbackLang || "text").toLowerCase()
+  const lines = match[2].replace(/\n+$/, "").split("\n")
+  const clipped = lines.slice(0, PREVIEW_LINE_LIMIT).join("\n")
+  try {
+    return await codeToHtml(clipped, {
+      lang: lang as BundledLanguage,
+      themes: { light: "github-light", dark: "github-dark" },
+      defaultColor: false,
+    })
+  } catch {
+    return await codeToHtml(clipped, {
+      lang: "text",
+      themes: { light: "github-light", dark: "github-dark" },
+      defaultColor: false,
+    })
+  }
 }
 
 const posts = defineCollection({
@@ -50,10 +74,12 @@ const snippets = defineCollection({
     const code = await compileMDX(context, document, {
       rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
     })
+    const previewHtml = await buildSnippetPreview(document.content, document.language)
     return {
       ...document,
       slug: document._meta.fileName.replace(/\.mdx$/, ""),
       code,
+      previewHtml,
     }
   },
 })

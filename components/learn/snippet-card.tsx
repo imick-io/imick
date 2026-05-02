@@ -13,7 +13,7 @@ export function SnippetCard({ snippet }: SnippetCardProps) {
       className="group flex h-full flex-col gap-3 rounded-lg border border-border bg-card p-5 transition-colors hover:bg-muted/40"
     >
       <div className="flex items-center gap-2">
-        <span className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+        <span className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground capitalize">
           {snippet.language}
         </span>
         {snippet.isDraft ? (
@@ -27,6 +27,13 @@ export function SnippetCard({ snippet }: SnippetCardProps) {
       </h3>
       {snippet.description ? (
         <p className="text-sm text-muted-foreground">{snippet.description}</p>
+      ) : null}
+      {snippet.previewHtml ? (
+        <div
+          aria-hidden
+          className="overflow-hidden rounded-md border border-border bg-muted/40 p-3 text-xs leading-relaxed font-mono [&_pre]:overflow-hidden [&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0"
+          dangerouslySetInnerHTML={{ __html: snippet.previewHtml }}
+        />
       ) : null}
       {snippet.tags.length > 0 ? (
         <ul className="flex flex-wrap gap-1.5">

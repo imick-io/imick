@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
-import { SnippetCard } from "@/components/learn/snippet-card"
+import { LanguagePills } from "@/components/learn/language-pills"
+import { SnippetsGrid } from "@/components/learn/snippets-grid"
 import { siteConfig } from "@/lib/config"
 import { getAllSnippetsForRender } from "@/lib/snippets"
 
@@ -23,8 +24,20 @@ export const metadata: Metadata = {
   },
 }
 
-export default function SnippetsIndexPage() {
-  const snippets = getAllSnippetsForRender()
+type SearchParams = Promise<{ language?: string }>
+
+export default async function SnippetsIndexPage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  const { language } = await searchParams
+  const all = getAllSnippetsForRender()
+  const languages = Array.from(new Set(all.map((s) => s.language))).sort((a, b) =>
+    a.localeCompare(b)
+  )
+  const active = language && languages.includes(language) ? language : undefined
+  const filtered = active ? all.filter((s) => s.language === active) : all
 
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
@@ -36,8 +49,8 @@ export default function SnippetsIndexPage() {
         </p>
       </header>
 
-      <section className="mx-auto w-full max-w-5xl">
-        {snippets.length === 0 ? (
+      <section className="mx-auto flex w-full max-w-5xl flex-col gap-8">
+        {all.length === 0 ? (
           <div className="rounded-lg border border-dashed border-border bg-card/30 p-10 text-center">
             <p className="text-base font-medium text-foreground">First snippet coming soon</p>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -45,13 +58,10 @@ export default function SnippetsIndexPage() {
             </p>
           </div>
         ) : (
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {snippets.map((snippet) => (
-              <li key={snippet.slug}>
-                <SnippetCard snippet={snippet} />
-              </li>
-            ))}
-          </ul>
+          <>
+            <LanguagePills languages={languages} active={active} />
+            <SnippetsGrid key={active ?? "all"} snippets={filtered} />
+          </>
         )}
       </section>
     </div>

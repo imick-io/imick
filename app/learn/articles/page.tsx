@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
-import { ArticleCard } from "@/components/learn/article-card"
+import { ArticlesGrid } from "@/components/learn/articles-grid"
+import { CategoryPills, isValidCategory } from "@/components/learn/category-pills"
 import { siteConfig } from "@/lib/config"
 import { getAllPostsForRender } from "@/lib/posts"
 
@@ -23,8 +24,17 @@ export const metadata: Metadata = {
   },
 }
 
-export default function ArticlesIndexPage() {
-  const posts = getAllPostsForRender()
+type SearchParams = Promise<{ category?: string }>
+
+export default async function ArticlesIndexPage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  const { category } = await searchParams
+  const active = isValidCategory(category) ? category : undefined
+  const all = getAllPostsForRender()
+  const filtered = active ? all.filter((p) => p.category === active) : all
 
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
@@ -36,8 +46,8 @@ export default function ArticlesIndexPage() {
         </p>
       </header>
 
-      <section className="mx-auto w-full max-w-5xl">
-        {posts.length === 0 ? (
+      <section className="mx-auto flex w-full max-w-5xl flex-col gap-8">
+        {all.length === 0 ? (
           <div className="rounded-lg border border-dashed border-border bg-card/30 p-10 text-center">
             <p className="text-base font-medium text-foreground">First article coming soon</p>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -45,13 +55,10 @@ export default function ArticlesIndexPage() {
             </p>
           </div>
         ) : (
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
-              <li key={post.slug}>
-                <ArticleCard post={post} />
-              </li>
-            ))}
-          </ul>
+          <>
+            <CategoryPills active={active} />
+            <ArticlesGrid key={active ?? "all"} posts={filtered} />
+          </>
         )}
       </section>
     </div>
