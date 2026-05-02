@@ -1,11 +1,11 @@
 ---
 name: do-work
-description: Execute a unit of work end-to-end: plan, implement, validate with typecheck and tests, then commit. Use when user wants to do work, build a feature, fix a bug, or implement a phase from a plan.
+description: Execute a unit of work end-to-end: plan, implement, and validate with typecheck and tests. Use when user wants to do work, build a feature, fix a bug, or implement a phase from a plan.
 ---
 
 # Do Work
 
-Execute a complete unit of work: plan it, build it, validate it, commit it. 
+Execute a complete unit of work: plan it, build it, validate it. Stop before committing so the user can review.
 
 ## Workflow
 
@@ -34,13 +34,11 @@ Work through the plan step by step regardless of frontend or backend.
 
 ### 4. Validate
 
-Run the feedback loops and fix any issues. Repeat until both pass cleanly. 
+Run the feedback loops and fix any issues. Repeat until both pass cleanly.
 
 ```
 pnpm run typecheck
 pnpm run test
 ```
 
-### 5. Commit
-
-Once typecheck and tests pass - commit the work.
+Once typecheck and tests pass, stop and report back. Do not commit — the user will review the changes first.
