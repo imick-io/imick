@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Download01Icon, GithubIcon, ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
-import { Button } from "@/components/ui/button"
+import { GithubIcon, ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+import { ResumeGateDialog } from "@/components/resume-gate-dialog"
 import { siteConfig } from "@/lib/config"
 import { experience } from "@/content/data/experience"
 import { education } from "@/content/data/education"
@@ -149,10 +149,7 @@ export default function AboutPage() {
         <p className="text-sm text-muted-foreground">
           Download the full PDF resume.
         </p>
-        <Button size="lg" disabled>
-          <HugeiconsIcon icon={Download01Icon} data-icon="inline-start" />
-          Download Resume
-        </Button>
+        <ResumeGateDialog />
       </section>
     </div>
   )
