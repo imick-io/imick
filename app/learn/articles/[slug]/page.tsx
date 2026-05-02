@@ -101,11 +101,13 @@ export default async function ArticlePage(
               <span aria-hidden>·</span>
               <ul className="flex flex-wrap gap-1.5">
                 {post.tags.map((tag) => (
-                  <li
-                    key={tag}
-                    className="rounded-full border border-border bg-card px-2 py-0.5 text-xs text-muted-foreground"
-                  >
-                    {tag}
+                  <li key={tag}>
+                    <Link
+                      href={`/learn/tags/${encodeURIComponent(tag)}`}
+                      className="rounded-full border border-border bg-card px-2 py-0.5 text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      {tag}
+                    </Link>
                   </li>
                 ))}
               </ul>

@@ -8,10 +8,12 @@ type SnippetCardProps = {
 
 export function SnippetCard({ snippet }: SnippetCardProps) {
   return (
-    <Link
-      href={`/learn/snippets/${snippet.slug}`}
-      className="group flex h-full flex-col gap-3 rounded-lg border border-border bg-card p-5 transition-colors hover:bg-muted/40"
-    >
+    <div className="group relative flex h-full flex-col gap-3 rounded-lg border border-border bg-card p-5 transition-colors hover:bg-muted/40">
+      <Link
+        href={`/learn/snippets/${snippet.slug}`}
+        className="absolute inset-0 rounded-lg"
+        aria-label={snippet.title}
+      />
       <div className="flex items-center gap-2">
         <span className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground capitalize">
           {snippet.language}
@@ -36,13 +38,15 @@ export function SnippetCard({ snippet }: SnippetCardProps) {
         />
       ) : null}
       {snippet.tags.length > 0 ? (
-        <ul className="flex flex-wrap gap-1.5">
+        <ul className="relative z-10 flex flex-wrap gap-1.5">
           {snippet.tags.map((tag) => (
-            <li
-              key={tag}
-              className="rounded-full border border-border bg-background px-2 py-0.5 text-xs text-muted-foreground"
-            >
-              {tag}
+            <li key={tag}>
+              <Link
+                href={`/learn/tags/${encodeURIComponent(tag)}`}
+                className="rounded-full border border-border bg-background px-2 py-0.5 text-xs text-muted-foreground hover:text-foreground"
+              >
+                {tag}
+              </Link>
             </li>
           ))}
         </ul>
@@ -50,6 +54,6 @@ export function SnippetCard({ snippet }: SnippetCardProps) {
       <div className="mt-auto pt-2 text-xs text-muted-foreground">
         {formatPostDate(snippet.publishedAt) || "Unscheduled"}
       </div>
-    </Link>
+    </div>
   )
 }
