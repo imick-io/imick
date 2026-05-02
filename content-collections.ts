@@ -3,6 +3,7 @@ import { compileMDX } from "@content-collections/mdx"
 import rehypePrettyCode, { type Options as RehypePrettyCodeOptions } from "rehype-pretty-code"
 import { codeToHtml, type BundledLanguage } from "shiki"
 import { z } from "zod"
+import { extractHeadings, readingTimeMinutes } from "./lib/mdx-helpers"
 
 const prettyCodeOptions: RehypePrettyCodeOptions = {
   theme: { light: "github-light", dark: "github-dark" },
@@ -53,6 +54,9 @@ const posts = defineCollection({
     return {
       ...document,
       slug: document._meta.fileName.replace(/\.mdx$/, ""),
+      sourcePath: `content/posts/${document._meta.fileName}`,
+      headings: extractHeadings(document.content),
+      readingMinutes: readingTimeMinutes(document.content),
       code,
     }
   },
@@ -78,6 +82,7 @@ const snippets = defineCollection({
     return {
       ...document,
       slug: document._meta.fileName.replace(/\.mdx$/, ""),
+      sourcePath: `content/snippets/${document._meta.fileName}`,
       code,
       previewHtml,
     }

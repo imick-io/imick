@@ -5,9 +5,11 @@ import { allSnippets } from "content-collections"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { MDXContent } from "@/components/mdx/mdx-content"
+import { RelatedSnippets } from "@/components/learn/related-snippets"
+import { SourceLink } from "@/components/learn/source-link"
 import { siteConfig } from "@/lib/config"
 import { formatPostDate } from "@/lib/posts"
-import { getSnippetBySlug, isSnippetDraft } from "@/lib/snippets"
+import { getRelatedSnippets, getSnippetBySlug, isSnippetDraft } from "@/lib/snippets"
 
 type Params = { slug: string }
 
@@ -54,8 +56,10 @@ export default async function SnippetPage(
   const snippet = getSnippetBySlug(slug)
   if (!snippet) notFound()
 
+  const related = getRelatedSnippets(snippet)
+
   return (
-    <article className="flex flex-col gap-8 px-6 py-12 md:py-16">
+    <article className="flex flex-col gap-12 px-6 py-12 md:py-16">
       <nav aria-label="Breadcrumb" className="mx-auto flex w-full max-w-3xl items-center gap-1.5 text-xs text-muted-foreground">
         <Link href="/learn" className="hover:text-foreground">
           Learn
@@ -104,9 +108,15 @@ export default async function SnippetPage(
         ) : null}
       </header>
 
-      <div className="mx-auto w-full max-w-3xl text-base leading-relaxed text-foreground [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-8 [&_h3]:text-xl [&_h3]:font-semibold [&_p]:my-4 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-muted-foreground hover:[&_a]:decoration-foreground [&_:not(pre)>code]:rounded [&_:not(pre)>code]:bg-muted [&_:not(pre)>code]:px-1 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:text-sm [&_:not(pre)>code]:font-mono">
+      <div className="mx-auto w-full max-w-3xl text-base leading-relaxed text-foreground [&_h2]:mt-10 [&_h2]:scroll-mt-24 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-8 [&_h3]:scroll-mt-24 [&_h3]:text-xl [&_h3]:font-semibold [&_p]:my-4 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-muted-foreground hover:[&_a]:decoration-foreground [&_:not(pre)>code]:rounded [&_:not(pre)>code]:bg-muted [&_:not(pre)>code]:px-1 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:text-sm [&_:not(pre)>code]:font-mono">
         <MDXContent code={snippet.code} />
       </div>
+
+      <footer className="mx-auto flex w-full max-w-3xl items-center justify-end border-t border-border pt-6">
+        <SourceLink sourcePath={snippet.sourcePath} />
+      </footer>
+
+      {related.length > 0 ? <RelatedSnippets snippets={related} /> : null}
     </article>
   )
 }

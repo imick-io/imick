@@ -39,8 +39,10 @@ export function ArticleCard({ post }: ArticleCardProps) {
           {post.title}
         </h3>
         <p className="text-sm text-muted-foreground">{post.excerpt}</p>
-        <div className="mt-auto pt-2 text-xs text-muted-foreground">
-          {formatPostDate(post.publishedAt) || "Unscheduled"}
+        <div className="mt-auto flex items-center gap-2 pt-2 text-xs text-muted-foreground">
+          <span>{formatPostDate(post.publishedAt) || "Unscheduled"}</span>
+          <span aria-hidden>·</span>
+          <span>{post.readingMinutes} min read</span>
         </div>
       </div>
     </Link>

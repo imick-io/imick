@@ -5,8 +5,18 @@ import { allPosts } from "content-collections"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { MDXContent } from "@/components/mdx/mdx-content"
+import { TableOfContents } from "@/components/learn/table-of-contents"
+import { RelatedArticles } from "@/components/learn/related-articles"
+import { ShareButtons } from "@/components/learn/share-buttons"
+import { SourceLink } from "@/components/learn/source-link"
 import { siteConfig } from "@/lib/config"
-import { getPostBySlug, formatPostDate, categoryLabel, isDraft } from "@/lib/posts"
+import {
+  getPostBySlug,
+  getRelatedPosts,
+  formatPostDate,
+  categoryLabel,
+  isDraft,
+} from "@/lib/posts"
 
 type Params = { slug: string }
 
@@ -53,8 +63,11 @@ export default async function ArticlePage(
   const post = getPostBySlug(slug)
   if (!post) notFound()
 
+  const related = getRelatedPosts(post)
+  const url = `/learn/articles/${post.slug}`
+
   return (
-    <article className="flex flex-col gap-8 px-6 py-12 md:py-16">
+    <article className="flex flex-col gap-12 px-6 py-12 md:py-16">
       <nav aria-label="Breadcrumb" className="mx-auto flex w-full max-w-3xl items-center gap-1.5 text-xs text-muted-foreground">
         <Link href="/learn" className="hover:text-foreground">
           Learn
@@ -81,6 +94,8 @@ export default async function ArticlePage(
           <span>{formatPostDate(post.publishedAt) || "Unscheduled"}</span>
           <span aria-hidden>·</span>
           <span>{categoryLabel[post.category]}</span>
+          <span aria-hidden>·</span>
+          <span>{post.readingMinutes} min read</span>
           {post.tags.length > 0 ? (
             <>
               <span aria-hidden>·</span>
@@ -97,11 +112,32 @@ export default async function ArticlePage(
             </>
           ) : null}
         </div>
+        {post.updatedAt ? (
+          <p className="text-sm text-muted-foreground">
+            Updated {formatPostDate(post.updatedAt)}
+          </p>
+        ) : null}
       </header>
 
-      <div className="mx-auto w-full max-w-3xl text-base leading-relaxed text-foreground [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-8 [&_h3]:text-xl [&_h3]:font-semibold [&_p]:my-4 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-muted-foreground hover:[&_a]:decoration-foreground [&_:not(pre)>code]:rounded [&_:not(pre)>code]:bg-muted [&_:not(pre)>code]:px-1 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:text-sm [&_:not(pre)>code]:font-mono">
-        <MDXContent code={post.code} />
+      <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_220px]">
+        <div className="min-w-0 max-w-3xl text-base leading-relaxed text-foreground [&_h2]:mt-10 [&_h2]:scroll-mt-24 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-8 [&_h3]:scroll-mt-24 [&_h3]:text-xl [&_h3]:font-semibold [&_p]:my-4 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-muted-foreground hover:[&_a]:decoration-foreground [&_:not(pre)>code]:rounded [&_:not(pre)>code]:bg-muted [&_:not(pre)>code]:px-1 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:text-sm [&_:not(pre)>code]:font-mono">
+          <MDXContent code={post.code} headings={post.headings} />
+        </div>
+        <aside className="hidden lg:block">
+          <div className="sticky top-24">
+            <TableOfContents headings={post.headings} />
+          </div>
+        </aside>
       </div>
+
+      <footer className="mx-auto flex w-full max-w-3xl flex-col gap-4 border-t border-border pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <ShareButtons title={post.title} url={url} />
+          <SourceLink sourcePath={post.sourcePath} />
+        </div>
+      </footer>
+
+      {related.length > 0 ? <RelatedArticles posts={related} /> : null}
     </article>
   )
 }

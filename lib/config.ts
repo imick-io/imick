@@ -7,4 +7,6 @@ export const siteConfig = {
   description: "Full-stack engineer building products that scale.",
   url: "https://imick.io",
   githubSponsorsUrl: "https://github.com/sponsors/PLACEHOLDER",
+  repoUrl: "https://github.com/mboutin-toptal/imick-io",
+  repoBranch: "main",
 } as const

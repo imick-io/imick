@@ -45,3 +45,23 @@ export const categoryLabel: Record<Post["category"], string> = {
   technical: "Technical",
   other: "Other",
 }
+
+export function getRelatedPosts(
+  current: Post & { isDraft: boolean },
+  limit = 3
+): Array<Post & { isDraft: boolean }> {
+  const others = getAllPostsForRender().filter((p) => p.slug !== current.slug && !p.isDraft)
+  const scored = others
+    .map((p) => {
+      const overlap = p.tags.filter((t) => current.tags.includes(t)).length
+      return { post: p, score: overlap }
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score
+      const aDate = a.post.publishedAt ? new Date(a.post.publishedAt).getTime() : 0
+      const bDate = b.post.publishedAt ? new Date(b.post.publishedAt).getTime() : 0
+      return bDate - aDate
+    })
+  return scored.slice(0, limit).map((x) => x.post)
+}
