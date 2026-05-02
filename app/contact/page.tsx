@@ -1,9 +1,25 @@
 import type { Metadata } from "next"
 import { ContactForm } from "@/components/contact-form"
+import { siteConfig } from "@/lib/config"
+
+const contactDescription = `Get in touch with ${siteConfig.name} about hiring, collaboration, or anything else.`
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with Michael Boutin.",
+  description: contactDescription,
+  alternates: { canonical: "/contact" },
+  openGraph: {
+    type: "website",
+    url: "/contact",
+    siteName: siteConfig.handle,
+    title: `Contact ${siteConfig.name}`,
+    description: contactDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Contact ${siteConfig.name}`,
+    description: contactDescription,
+  },
 }
 
 export default function ContactPage() {

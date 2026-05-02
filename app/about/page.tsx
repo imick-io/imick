@@ -7,9 +7,24 @@ import { experience } from "@/content/data/experience"
 import { education } from "@/content/data/education"
 import { projects } from "@/content/data/projects"
 
+const aboutDescription = `About ${siteConfig.name} — full-stack engineer, open-source contributor, and content creator.`
+
 export const metadata: Metadata = {
   title: "About",
-  description: "Learn more about Michael Boutin — full-stack engineer, open-source contributor, and content creator.",
+  description: aboutDescription,
+  alternates: { canonical: "/about" },
+  openGraph: {
+    type: "profile",
+    url: "/about",
+    siteName: siteConfig.handle,
+    title: `About ${siteConfig.name}`,
+    description: aboutDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `About ${siteConfig.name}`,
+    description: aboutDescription,
+  },
 }
 
 function formatMonth(value: string) {

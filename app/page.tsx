@@ -1,9 +1,30 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon, UserIcon, Mail01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/lib/config"
 import { stack } from "@/content/data/stack"
+
+const description = `Personal site of ${siteConfig.name} — ${siteConfig.tagline}`
+
+export const metadata: Metadata = {
+  title: { absolute: `${siteConfig.name} — ${siteConfig.role}` },
+  description,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: siteConfig.handle,
+    title: `${siteConfig.name} — ${siteConfig.role}`,
+    description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteConfig.name} — ${siteConfig.role}`,
+    description,
+  },
+}
 
 const sectionLinks = [
   {
