@@ -1,0 +1,38 @@
+---
+title: "Zod discriminated union for API responses"
+language: "typescript"
+tags: ["zod", "validation", "typescript"]
+description: "A type-safe way to model success/error API responses with Zod."
+publishedAt: "2026-05-02"
+---
+
+Use a `discriminatedUnion` so TypeScript can narrow on the `status` field after parsing.
+
+```ts title="api-response.ts"
+import { z } from "zod"
+
+const ApiResponse = z.discriminatedUnion("status", [
+  z.object({
+    status: z.literal("ok"),
+    data: z.unknown(),
+  }),
+  z.object({
+    status: z.literal("error"),
+    code: z.string(),
+    message: z.string(),
+  }),
+])
+
+export type ApiResponse = z.infer<typeof ApiResponse>
+
+const result = ApiResponse.parse(await fetch("/api/user").then((r) => r.json()))
+
+if (result.status === "ok") {
+  // result.data is available here
+} else {
+  // result.code and result.message are available here
+}
+```
+
+The `discriminatedUnion` is faster to validate than a regular `z.union` because Zod
+short-circuits on the discriminator field instead of trying every variant.

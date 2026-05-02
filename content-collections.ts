@@ -43,6 +43,7 @@ const snippets = defineCollection({
     language: z.string(),
     tags: z.array(z.string()),
     description: z.string().optional(),
+    publishedAt: z.string().optional(),
     content: z.string(),
   }),
   transform: async (document, context) => {

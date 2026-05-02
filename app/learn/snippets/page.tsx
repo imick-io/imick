@@ -1,54 +1,54 @@
 import type { Metadata } from "next"
-import { ArticleCard } from "@/components/learn/article-card"
+import { SnippetCard } from "@/components/learn/snippet-card"
 import { siteConfig } from "@/lib/config"
-import { getAllPostsForRender } from "@/lib/posts"
+import { getAllSnippetsForRender } from "@/lib/snippets"
 
-const description = `Articles by ${siteConfig.name} — opinions and technical deep-dives.`
+const description = `Code snippets by ${siteConfig.name} — short, copy-pastable reference code.`
 
 export const metadata: Metadata = {
-  title: "Articles",
+  title: "Snippets",
   description,
-  alternates: { canonical: "/learn/articles" },
+  alternates: { canonical: "/learn/snippets" },
   openGraph: {
     type: "website",
-    url: "/learn/articles",
+    url: "/learn/snippets",
     siteName: siteConfig.handle,
-    title: `Articles | ${siteConfig.name}`,
+    title: `Snippets | ${siteConfig.name}`,
     description,
   },
   twitter: {
     card: "summary_large_image",
-    title: `Articles | ${siteConfig.name}`,
+    title: `Snippets | ${siteConfig.name}`,
     description,
   },
 }
 
-export default function ArticlesIndexPage() {
-  const posts = getAllPostsForRender()
+export default function SnippetsIndexPage() {
+  const snippets = getAllSnippetsForRender()
 
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
       <header className="mx-auto flex w-full max-w-5xl flex-col gap-3">
         <p className="text-sm font-medium text-muted-foreground">Learn</p>
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Articles</h1>
+        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Snippets</h1>
         <p className="text-base text-muted-foreground md:text-lg">
-          Opinions, technical write-ups, and notes from the work.
+          Short, copy-pastable code I keep reaching for.
         </p>
       </header>
 
       <section className="mx-auto w-full max-w-5xl">
-        {posts.length === 0 ? (
+        {snippets.length === 0 ? (
           <div className="rounded-lg border border-dashed border-border bg-card/30 p-10 text-center">
-            <p className="text-base font-medium text-foreground">First article coming soon</p>
+            <p className="text-base font-medium text-foreground">First snippet coming soon</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              The first post is being written. Check back shortly.
+              The first snippet is being written. Check back shortly.
             </p>
           </div>
         ) : (
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
-              <li key={post.slug}>
-                <ArticleCard post={post} />
+            {snippets.map((snippet) => (
+              <li key={snippet.slug}>
+                <SnippetCard snippet={snippet} />
               </li>
             ))}
           </ul>
