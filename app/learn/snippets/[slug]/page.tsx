@@ -31,7 +31,10 @@ export async function generateMetadata(
   return {
     title: snippet.title,
     description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      types: { "application/rss+xml": "/learn/snippets/feed.xml" },
+    },
     openGraph: {
       type: "article",
       url,
@@ -57,9 +60,24 @@ export default async function SnippetPage(
   if (!snippet) notFound()
 
   const related = getRelatedSnippets(snippet)
+  const snippetUrl = `/learn/snippets/${snippet.slug}`
+  const description = snippet.description ?? `${snippet.language} snippet — ${snippet.title}`
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: snippet.title,
+    description,
+    datePublished: snippet.publishedAt,
+    author: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${siteConfig.url}${snippetUrl}` },
+  }
 
   return (
     <article className="flex flex-col gap-12 px-6 py-12 md:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <nav aria-label="Breadcrumb" className="mx-auto flex w-full max-w-3xl items-center gap-1.5 text-xs text-muted-foreground">
         <Link href="/learn" className="hover:text-foreground">
           Learn

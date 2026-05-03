@@ -1,4 +1,7 @@
 import type { Metadata } from "next"
+import Link from "next/link"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { RssIcon } from "@hugeicons/core-free-icons"
 import { LanguagePills } from "@/components/learn/language-pills"
 import { SnippetsGrid } from "@/components/learn/snippets-grid"
 import { siteConfig } from "@/lib/config"
@@ -9,7 +12,10 @@ const description = `Code snippets by ${siteConfig.name} — short, copy-pastabl
 export const metadata: Metadata = {
   title: "Snippets",
   description,
-  alternates: { canonical: "/learn/snippets" },
+  alternates: {
+    canonical: "/learn/snippets",
+    types: { "application/rss+xml": "/learn/snippets/feed.xml" },
+  },
   openGraph: {
     type: "website",
     url: "/learn/snippets",
@@ -43,7 +49,16 @@ export default async function SnippetsIndexPage({
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
       <header className="mx-auto flex w-full max-w-5xl flex-col gap-3">
         <p className="text-sm font-medium text-muted-foreground">Learn</p>
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Snippets</h1>
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Snippets</h1>
+          <Link
+            href="/learn/snippets/feed.xml"
+            aria-label="RSS feed for snippets"
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <HugeiconsIcon icon={RssIcon} size={20} />
+          </Link>
+        </div>
         <p className="text-base text-muted-foreground md:text-lg">
           Short, copy-pastable code I keep reaching for.
         </p>

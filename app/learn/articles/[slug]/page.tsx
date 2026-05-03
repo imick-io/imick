@@ -34,10 +34,14 @@ export async function generateMetadata(
   const post = getPostBySlug(slug)
   if (!post) return {}
   const url = `/learn/articles/${post.slug}`
+  const ogImage = post.coverImage ?? `/learn/articles/${post.slug}/cover`
   return {
     title: post.title,
     description: post.excerpt,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      types: { "application/rss+xml": "/learn/articles/feed.xml" },
+    },
     openGraph: {
       type: "article",
       url,
@@ -47,11 +51,13 @@ export async function generateMetadata(
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
       tags: post.tags,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: post.title }],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.excerpt,
+      images: [ogImage],
     },
   }
 }
@@ -65,9 +71,26 @@ export default async function ArticlePage(
 
   const related = getRelatedPosts(post)
   const url = `/learn/articles/${post.slug}`
+  const ogImage = post.coverImage ?? `/learn/articles/${post.slug}/cover`
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.publishedAt,
+    ...(post.updatedAt ? { dateModified: post.updatedAt } : {}),
+    author: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
+    publisher: { "@type": "Person", name: siteConfig.name, url: siteConfig.url },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${siteConfig.url}${url}` },
+    image: `${siteConfig.url}${ogImage}`,
+  }
 
   return (
     <article className="flex flex-col gap-12 px-6 py-12 md:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <nav aria-label="Breadcrumb" className="mx-auto flex w-full max-w-3xl items-center gap-1.5 text-xs text-muted-foreground">
         <Link href="/learn" className="hover:text-foreground">
           Learn
