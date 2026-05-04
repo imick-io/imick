@@ -2,6 +2,9 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+import { buttonVariants } from "@/components/ui/button"
 import { getPublishedBookmark, CATEGORY_LABELS } from "@/lib/bookmarks"
 import { categoryEnum } from "@/lib/db/schema"
 
@@ -91,9 +94,10 @@ export default async function BookmarkDetailPage({ params }: Props) {
           href={bookmark.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+          className={buttonVariants({ variant: "default", size: "lg" })}
         >
-          Visit site →
+          Visit site
+          <HugeiconsIcon icon={ArrowUpRight01Icon} size={16} />
         </a>
       </div>
 

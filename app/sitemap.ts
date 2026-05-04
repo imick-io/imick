@@ -3,12 +3,17 @@ import { allPosts, allSnippets } from "content-collections"
 import { siteConfig } from "@/lib/config"
 import { isDraft } from "@/lib/posts"
 import { isSnippetDraft } from "@/lib/snippets"
+import {
+  CATEGORY_VALUES,
+  getAllPublishedBookmarks,
+  getPublishedCategoryCounts,
+} from "@/lib/bookmarks"
 
 function url(path: string) {
   return new URL(path, siteConfig.url).toString()
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [
     { url: url("/"), lastModified: new Date(), changeFrequency: "monthly", priority: 1 },
     { url: url("/about"), lastModified: new Date(), changeFrequency: "yearly", priority: 0.8 },
@@ -17,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: url("/learn"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: url("/learn/articles"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: url("/learn/snippets"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: url("/bookmarks"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
   ]
 
   const publishedPosts = allPosts.filter((p) => !isDraft(p))
@@ -50,6 +56,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: url(`/learn/tags/${encodeURIComponent(tag)}`),
       lastModified: new Date(),
       changeFrequency: "weekly",
+      priority: 0.6,
+    })
+  }
+
+  const [counts, publishedBookmarks] = await Promise.all([
+    getPublishedCategoryCounts(),
+    getAllPublishedBookmarks(),
+  ])
+
+  for (const category of CATEGORY_VALUES) {
+    if (counts[category] === 0) continue
+    entries.push({
+      url: url(`/bookmarks/${category}`),
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    })
+  }
+
+  for (const bookmark of publishedBookmarks) {
+    entries.push({
+      url: url(`/bookmarks/${bookmark.category}/${bookmark.slug}`),
+      lastModified: new Date(bookmark.updatedAt),
+      changeFrequency: "monthly",
       priority: 0.6,
     })
   }
