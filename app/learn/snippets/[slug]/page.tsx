@@ -7,6 +7,7 @@ import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { MDXContent } from "@/components/mdx/mdx-content"
 import { RelatedSnippets } from "@/components/learn/related-snippets"
 import { SourceLink } from "@/components/learn/source-link"
+import { PostSubscribeCta } from "@/components/learn/post-subscribe-cta"
 import { siteConfig } from "@/lib/config"
 import { formatPostDate } from "@/lib/posts"
 import { getRelatedSnippets, getSnippetBySlug, isSnippetDraft } from "@/lib/snippets"
@@ -135,6 +136,8 @@ export default async function SnippetPage(
       <footer className="mx-auto flex w-full max-w-3xl items-center justify-end border-t border-border pt-6">
         <SourceLink sourcePath={snippet.sourcePath} />
       </footer>
+
+      <PostSubscribeCta source="snippet-cta" />
 
       {related.length > 0 ? <RelatedSnippets snippets={related} /> : null}
     </article>

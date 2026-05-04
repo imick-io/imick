@@ -9,6 +9,7 @@ import { TableOfContents } from "@/components/learn/table-of-contents"
 import { RelatedArticles } from "@/components/learn/related-articles"
 import { ShareButtons } from "@/components/learn/share-buttons"
 import { SourceLink } from "@/components/learn/source-link"
+import { PostSubscribeCta } from "@/components/learn/post-subscribe-cta"
 import { siteConfig } from "@/lib/config"
 import {
   getPostBySlug,
@@ -161,6 +162,8 @@ export default async function ArticlePage(
           <SourceLink sourcePath={post.sourcePath} />
         </div>
       </footer>
+
+      <PostSubscribeCta source="post-cta" />
 
       {related.length > 0 ? <RelatedArticles posts={related} /> : null}
     </article>
