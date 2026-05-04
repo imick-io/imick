@@ -5,6 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { GithubIcon } from "@hugeicons/core-free-icons"
 import { ThemeProvider } from "@/components/theme-provider"
 import { NavLink } from "@/components/nav-link"
+import { SiteFooter } from "@/components/site-footer"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/lib/config"
 import { cn } from "@/lib/utils"
@@ -73,6 +74,7 @@ export default function RootLayout({
           <main className="flex flex-col flex-1">
             {children}
           </main>
+          <SiteFooter />
         </ThemeProvider>
       </body>
     </html>
