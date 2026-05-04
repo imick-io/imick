@@ -57,6 +57,7 @@ export default function RootLayout({
               <NavLink href="/">Home</NavLink>
               <NavLink href="/about">About</NavLink>
               <NavLink href="/learn">Learn</NavLink>
+              <NavLink href="/newsletter">Newsletter</NavLink>
               <NavLink href="/contact">Contact</NavLink>
               <a
                 href={siteConfig.githubSponsorsUrl}

@@ -25,6 +25,7 @@ export interface SubscribeFormProps {
   className?: string
   emailLabel?: string
   submitLabel?: string
+  fineprint?: React.ReactNode
 }
 
 export function SubscribeForm({
@@ -33,6 +34,7 @@ export function SubscribeForm({
   className,
   emailLabel = "Email",
   submitLabel = "Subscribe",
+  fineprint,
 }: SubscribeFormProps) {
   const emailId = useId()
   const honeypotId = useId()
@@ -149,6 +151,10 @@ export function SubscribeForm({
         <p className="text-sm text-destructive" role="alert">
           {errorMessage}
         </p>
+      ) : null}
+
+      {fineprint ? (
+        <p className="text-xs text-muted-foreground">{fineprint}</p>
       ) : null}
 
       <div

@@ -10,4 +10,6 @@ export const siteConfig = {
   githubSponsorsUrl: "https://github.com/sponsors/PLACEHOLDER",
   repoUrl: "https://github.com/mboutin-toptal/imick-io",
   repoBranch: "main",
+  newsletterArchiveUrl: "https://imick.beehiiv.com",
+  newsletterSubscriberMilestone: 0,
 } as const
