@@ -4,6 +4,9 @@ import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon, UserIcon, Mail01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
+import { FlipWords } from "@/components/ui/flip-words"
+import { NoiseBackground } from "@/components/ui/noise-background"
+import { cn } from "@/lib/utils"
 import { siteConfig } from "@/lib/config"
 import { stack } from "@/content/data/stack"
 import profileThumb from "@/assets/profile-thumb.jpeg"
@@ -59,17 +62,33 @@ export default function HomePage() {
         <h1 className="text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
           Hi, I&apos;m Michael.
         </h1>
-        <p className="text-lg text-muted-foreground md:text-xl">
-          {siteConfig.tagline}
-        </p>
+        <div className="relative">
+          <FlipWords
+            words={[
+              "AI Product Engineer",
+              "Senior Full-Stack Engineer",
+              "AI-Native Product Builder",
+              "Next.js Specialist",
+            ]}
+            className="px-0 text-lg text-muted-foreground md:text-xl"
+          />
+        </div>
         <div className="flex flex-wrap gap-3 pt-2">
           <Link href="/about" className={buttonVariants({ size: "lg" })}>
             View Resume
             <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
           </Link>
-          <Link href="/contact" className={buttonVariants({ variant: "outline", size: "lg" })}>
-            Get in Touch
-          </Link>
+          <NoiseBackground containerClassName="rounded-full p-0.5">
+            <Link
+              href="/contact"
+              className={cn(
+                buttonVariants({ variant: "outline", size: "lg" }),
+                "relative w-full bg-background/80 backdrop-blur-sm hover:bg-background/40",
+              )}
+            >
+              Get in Touch
+            </Link>
+          </NoiseBackground>
         </div>
       </section>
 
