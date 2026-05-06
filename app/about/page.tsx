@@ -7,7 +7,7 @@ import { experience } from "@/content/data/experience"
 import { education } from "@/content/data/education"
 import { projects } from "@/content/data/projects"
 
-const aboutDescription = `About ${siteConfig.name} — full-stack engineer, open-source contributor, and content creator.`
+const aboutDescription = `${siteConfig.name} is a senior full-stack engineer designing and shipping AI-native products end-to-end.`
 
 export const metadata: Metadata = {
   title: "About",
@@ -41,11 +41,13 @@ function formatRange(startDate: string, endDate?: string, current?: boolean) {
 }
 
 export default function AboutPage() {
-  const sortedExperience = [...experience].sort((a, b) => {
-    if (a.current && !b.current) return -1
-    if (!a.current && b.current) return 1
-    return b.startDate.localeCompare(a.startDate)
-  })
+  const sortedExperience = [...experience]
+    .filter((item) => !item.linkedinOnly)
+    .sort((a, b) => {
+      if (a.current && !b.current) return -1
+      if (!a.current && b.current) return 1
+      return b.startDate.localeCompare(a.startDate)
+    })
 
   const sortedEducation = [...education].sort((a, b) => {
     const aEnd = a.endYear ?? Number.POSITIVE_INFINITY
@@ -100,6 +102,59 @@ export default function AboutPage() {
                     <li key={i}>{highlight}</li>
                   ))}
                 </ul>
+              ) : null}
+              {item.engagements && item.engagements.length > 0 ? (
+                <div className="mt-2 flex flex-col gap-2">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Engagements
+                  </p>
+                  <ol className="flex flex-col gap-6 border-l border-border/60 pl-5">
+                    {[...item.engagements]
+                      .sort((a, b) => a.order - b.order)
+                      .map((eng) => (
+                        <li key={eng.name} className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-1">
+                            <div className="flex flex-wrap items-baseline justify-between gap-2">
+                              <h4 className="text-base font-medium text-foreground">
+                                {eng.name}
+                                <span className="font-normal text-muted-foreground">
+                                  {" · "}
+                                  {eng.role}
+                                </span>
+                              </h4>
+                              <span className="text-xs text-muted-foreground">
+                                {formatRange(eng.startDate, eng.endDate, eng.current)}
+                              </span>
+                            </div>
+                            {eng.summary ? (
+                              <p className="text-sm leading-relaxed text-foreground/90">
+                                {eng.summary}
+                              </p>
+                            ) : null}
+                          </div>
+                          {eng.highlights.length > 0 ? (
+                            <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-foreground/90 marker:text-muted-foreground">
+                              {eng.highlights.map((highlight, i) => (
+                                <li key={i}>{highlight}</li>
+                              ))}
+                            </ul>
+                          ) : null}
+                          {eng.tech && eng.tech.length > 0 ? (
+                            <ul className="flex flex-wrap gap-1.5 pt-1">
+                              {eng.tech.map((t) => (
+                                <li
+                                  key={t}
+                                  className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs text-muted-foreground"
+                                >
+                                  {t}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
+                        </li>
+                      ))}
+                  </ol>
+                </div>
               ) : null}
             </li>
           ))}
