@@ -43,3 +43,6 @@ next-env.d.ts
 
 # content-collections
 .content-collections
+
+# personal working notes (drafts, learning plans, todos)
+_*.md
