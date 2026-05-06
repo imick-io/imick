@@ -6,6 +6,7 @@ import { ArrowRight01Icon, UserIcon, Mail01Icon } from "@hugeicons/core-free-ico
 import { buttonVariants } from "@/components/ui/button"
 import { FlipWords } from "@/components/ui/flip-words"
 import { NoiseBackground } from "@/components/ui/noise-background"
+import { StackGrid } from "@/components/ui/stack-grid"
 import { cn } from "@/lib/utils"
 import { siteConfig } from "@/lib/config"
 import { stack } from "@/content/data/stack"
@@ -101,19 +102,20 @@ export default function HomePage() {
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
         <h2 className="text-sm font-medium text-muted-foreground">Tech Stack</h2>
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {[...stack]
+        <StackGrid
+          items={[...stack]
             .sort((a, b) => a.order - b.order)
-            .map((item) => (
-              <li
-                key={item.name}
-                className="flex flex-col gap-1 rounded-lg border border-border bg-card px-4 py-3"
-              >
-                <span className="text-sm font-medium text-foreground">{item.name}</span>
-                <span className="text-xs text-muted-foreground capitalize">{item.category}</span>
-              </li>
-            ))}
-        </ul>
+            .filter((item) => item.iconSlug)
+            .map((item, idx) => ({
+              id: idx,
+              name: item.name,
+              designation:
+                item.category === "ai"
+                  ? "AI"
+                  : item.category.charAt(0).toUpperCase() + item.category.slice(1),
+              image: `/icons/${item.iconSlug}.svg`,
+            }))}
+        />
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">

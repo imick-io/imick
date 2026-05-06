@@ -8,6 +8,7 @@ export const siteConfig = {
   url: "https://imick.io",
   contactEmail: "michael@concreo.io",
   githubSponsorsUrl: "https://github.com/sponsors/PLACEHOLDER",
+  githubUrl: "https://github.com/imick-io",
   repoUrl: "https://github.com/mboutin-toptal/imick-io",
   repoBranch: "main",
   newsletterArchiveUrl: "https://imick.beehiiv.com",
