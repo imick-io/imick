@@ -2,8 +2,7 @@
 
 import { useActionState } from "react"
 import { updateBookmark, type UpdateBookmarkState } from "../../actions"
-import { type Bookmark } from "@/lib/bookmarks"
-import { CATEGORY_LABELS } from "@/lib/bookmarks"
+import { type Bookmark, CATEGORY_LABELS } from "@/lib/bookmarks-meta"
 import { categoryEnum } from "@/lib/db/schema"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"

@@ -1,5 +1,5 @@
 import { db } from "./db"
-import { bookmarks, categoryEnum } from "./db/schema"
+import { bookmarks } from "./db/schema"
 import {
   eq,
   and,
@@ -9,37 +9,14 @@ import {
   isNotNull,
   sql,
 } from "drizzle-orm"
+import {
+  isCategory,
+  CATEGORY_VALUES,
+  type BookmarkCategory,
+  type BookmarkSort,
+} from "./bookmarks-meta"
 
-export type { Bookmark, NewBookmark, BookmarkCategory } from "./db/schema"
-
-type Category = (typeof categoryEnum.enumValues)[number]
-
-export const CATEGORY_LABELS: Record<Category, string> = {
-  "dev-tools": "Dev Tools",
-  "libraries-frameworks": "Libraries & Frameworks",
-  "design": "Design",
-  "learning": "Learning",
-  "ai-productivity": "AI & Productivity",
-  "infrastructure": "Infrastructure",
-  "inspiration": "Inspiration",
-  "community": "Community",
-}
-
-export const CATEGORY_VALUES: readonly Category[] = categoryEnum.enumValues
-
-export function isCategory(value: string | undefined | null): value is Category {
-  return !!value && (CATEGORY_VALUES as readonly string[]).includes(value)
-}
-
-export function isReviewed(b: { rating: number | null; reviewText: string | null }) {
-  return b.rating != null || b.reviewText != null
-}
-
-export type BookmarkSort = "newest" | "top-rated"
-
-export function isBookmarkSort(value: string | undefined | null): value is BookmarkSort {
-  return value === "newest" || value === "top-rated"
-}
+export * from "./bookmarks-meta"
 
 export async function getBookmarkById(id: string) {
   const rows = await db
@@ -104,7 +81,7 @@ export async function getRecentlyReviewedBookmarks(limit = 6) {
     .limit(limit)
 }
 
-export async function getPublishedCategoryCounts(): Promise<Record<Category, number>> {
+export async function getPublishedCategoryCounts(): Promise<Record<BookmarkCategory, number>> {
   const rows = await db
     .select({
       category: bookmarks.category,
@@ -116,7 +93,7 @@ export async function getPublishedCategoryCounts(): Promise<Record<Category, num
 
   const counts = Object.fromEntries(
     CATEGORY_VALUES.map((c) => [c, 0])
-  ) as Record<Category, number>
+  ) as Record<BookmarkCategory, number>
   for (const row of rows) counts[row.category] = row.count
   return counts
 }

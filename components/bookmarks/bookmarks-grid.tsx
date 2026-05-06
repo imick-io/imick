@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { BookmarkCard } from "@/components/bookmarks/bookmark-card"
 import { Button } from "@/components/ui/button"
-import type { Bookmark } from "@/lib/bookmarks"
+import type { Bookmark } from "@/lib/bookmarks-meta"
 
 const PAGE_SIZE = 12
 

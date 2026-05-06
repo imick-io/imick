@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select } from "@/components/ui/select"
-import { CATEGORY_LABELS } from "@/lib/bookmarks"
+import { CATEGORY_LABELS } from "@/lib/bookmarks-meta"
 
 export function CreateBookmarkForm() {
   const [state, action, pending] = useActionState<CreateBookmarkState | null, FormData>(
