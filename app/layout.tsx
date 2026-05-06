@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono, Figtree } from "next/font/google"
 import Link from "next/link"
+import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { GithubIcon } from "@hugeicons/core-free-icons"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -9,9 +10,10 @@ import { SiteFooter } from "@/components/site-footer"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/lib/config"
 import { cn } from "@/lib/utils"
+import avatar from "@/assets/avatar.webp"
 import "./globals.css"
 
-const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" })
+const figtree = Figtree({subsets:['latin'],variable:'--font-sans'})
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,17 +44,27 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={cn(
-        "h-full antialiased",
-        figtree.variable,
-        geistSans.variable,
-        geistMono.variable
-      )}
+              "h-full antialiased",
+              geistSans.variable,
+              geistMono.variable
+            , "font-sans", figtree.variable)}
     >
       <body className="min-h-full flex flex-col font-sans">
         <ThemeProvider>
           <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-3 border-b bg-background/80 backdrop-blur-sm">
-            <Link href="/" className="font-semibold text-foreground hover:opacity-80 transition-opacity">
-              {siteConfig.handle}
+            <Link
+              href="/"
+              aria-label={`${siteConfig.handle} home`}
+              className="inline-flex items-center transition-opacity hover:opacity-80"
+            >
+              <Image
+                src={avatar}
+                alt={siteConfig.name}
+                width={36}
+                height={36}
+                priority
+                className="size-9 rounded-full"
+              />
             </Link>
             <nav className="flex items-center gap-6">
               <NavLink href="/">Home</NavLink>

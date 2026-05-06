@@ -1,10 +1,12 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon, UserIcon, Mail01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/lib/config"
 import { stack } from "@/content/data/stack"
+import profileThumb from "@/assets/profile-thumb.jpeg"
 
 const description = `Personal site of ${siteConfig.name} — ${siteConfig.tagline}`
 
@@ -45,9 +47,17 @@ export default function HomePage() {
   return (
     <div className="flex flex-col gap-20 px-6 py-16 md:gap-28 md:py-24 lg:gap-32">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <p className="text-sm font-medium text-muted-foreground">{siteConfig.role}</p>
+        <Image
+          src={profileThumb}
+          alt={siteConfig.name}
+          width={160}
+          height={160}
+          priority
+          placeholder="blur"
+          className="size-20 rounded-xl md:size-24 hover:scale-150 duration-300 hover:rotate-6 ease-in-out object-cover object-top"
+        />
         <h1 className="text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
-          {siteConfig.name}
+          Hi, I&apos;m Michael.
         </h1>
         <p className="text-lg text-muted-foreground md:text-xl">
           {siteConfig.tagline}

@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { SubscribeForm } from "@/components/subscribe-form"
 import { siteConfig } from "@/lib/config"
+import { Signature } from "@/registry/signature"
 
 export function SiteFooter() {
   const year = new Date().getFullYear()
@@ -37,6 +38,13 @@ export function SiteFooter() {
             />
           </div>
         </div>
+
+        <Signature
+          role="img"
+          aria-label={`${siteConfig.name} signature`}
+          fill="currentColor"
+          className="h-14 w-auto text-foreground/80 md:h-16"
+        />
 
         <div className="flex flex-col gap-3 border-t border-border pt-6 md:flex-row md:items-center md:justify-between">
           <p className="text-xs text-muted-foreground">

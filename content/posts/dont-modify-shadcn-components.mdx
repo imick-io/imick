@@ -1,0 +1,49 @@
+---
+title: "Why you should not modify the shadcn components"
+excerpt: "Editing shadcn/ui components is a one-way door. Here's why I leave them untouched and what I do when I genuinely need something custom."
+publishedAt: "2026-05-06"
+category: "opinion"
+tags: ["shadcn", "ui", "architecture"]
+---
+
+shadcn/ui ships components straight into your codebase. That's the whole point. You own the files, so you can change anything. The temptation to reach in and tweak a `Button` or a `Dialog` is real.
+
+Don't do it. Here is why.
+
+## The library keeps evolving
+
+shadcn/ui is not frozen. New variants get added, accessibility bugs get fixed, the underlying Radix primitives get bumped, and theming conventions shift. Every time the upstream component improves, you want those changes. The whole reason you adopted shadcn/ui in the first place is that someone else thought hard about how a `Select` should behave.
+
+If your local copy of `select.tsx` still matches upstream, the CLI can update it. If you have edited it, you are on your own.
+
+## Customization is a one-way door
+
+I have worked on projects where a previous team had reached into the shadcn components and made "small" customizations: a different border radius here, a different focus ring there, an extra prop on `Card`. Each change was reasonable in isolation.
+
+A year or two later, those projects had a stale fork of every primitive. Upgrading meant manually reconciling every component against months of upstream changes. Nobody wanted to do that work, so we didn't. We were stuck with a slowly aging copy of a UI library that everyone else got for free.
+
+That is the trade. A five-minute customization buys you a multi-day upgrade later, and the longer you wait, the worse it gets.
+
+## Presets are fine. Edits are not.
+
+There is a useful distinction here. shadcn supports presets that change the look and feel through `components.json` and the CSS variables in `globals.css`:
+
+```bash title="terminal"
+npx shadcn@latest init --preset [PRESET-ID]
+```
+
+A preset swaps tokens. It does not fork the component code. You can move between presets, or update to a new one, without merge pain. That is the path the library wants you to take.
+
+Editing a component file itself is a different story. Once you have changed `button.tsx`, you have forked it.
+
+## What to do when you actually need a custom component
+
+Sometimes you really do need a button that behaves differently, or a `DataCard` the library does not ship. The pattern I land on, every time, looks like this:
+
+1. Create a `components/registry/` folder for your own components.
+2. Build the custom thing there, composing the unmodified shadcn primitives where you can.
+3. Use the same CSS variables (`--background`, `--foreground`, `--primary`, and friends) so your component picks up theme and preset changes for free.
+
+This keeps the line bright. Files under `components/ui/` are upstream and you do not touch them. Files under `components/registry/` are yours and you own them completely. When shadcn ships an update, the CLI can refresh `components/ui/` and your registry is unaffected. When the design system changes, your registry components inherit the new tokens automatically.
+
+The discipline is worth it. The day you decide to upgrade, or to switch presets, you get to do that in an afternoon instead of in a sprint.

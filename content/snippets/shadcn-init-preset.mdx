@@ -1,0 +1,15 @@
+---
+title: "Apply a shadcn preset with the CLI"
+language: "bash"
+tags: ["shadcn", "cli", "setup"]
+description: "Update a project's shadcn config and UI components from a preset using the official init command."
+publishedAt: "2026-05-06"
+---
+
+Run the official shadcn CLI with the `--preset` flag to align an existing project with a preset's `components.json` and `ui/` components.
+
+```bash title="terminal"
+npx shadcn@latest init --preset [PRESET-ID]
+```
+
+The CLI will prompt you to confirm a few things, including updating `components.json` and overwriting files in your `ui/components` directory. Review the diffs before accepting if you've made local tweaks.
