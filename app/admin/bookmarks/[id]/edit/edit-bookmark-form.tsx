@@ -193,7 +193,7 @@ export function EditBookmarkForm({ bookmark }: Props) {
           <Textarea
             id="pros"
             name="pros"
-            defaultValue={bookmark.pros ?? ""}
+            defaultValue={bookmark.pros.join("\n")}
             rows={4}
             placeholder={"- Fast build times\n- Great DX\n- Well documented"}
             disabled={pending}
@@ -206,7 +206,7 @@ export function EditBookmarkForm({ bookmark }: Props) {
           <Textarea
             id="cons"
             name="cons"
-            defaultValue={bookmark.cons ?? ""}
+            defaultValue={bookmark.cons.join("\n")}
             rows={4}
             placeholder={"- Complex configuration\n- Large bundle size"}
             disabled={pending}
@@ -224,6 +224,28 @@ export function EditBookmarkForm({ bookmark }: Props) {
             placeholder="Long-form review notes…"
             disabled={pending}
           />
+        </div>
+      </fieldset>
+
+      {/* ── AI Summary ── */}
+      <fieldset className="space-y-4">
+        <legend className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+          AI Summary
+        </legend>
+
+        <div className="space-y-2">
+          <Label htmlFor="aiSummary">AI Summary</Label>
+          <Textarea
+            id="aiSummary"
+            name="aiSummary"
+            defaultValue={bookmark.aiSummary ?? ""}
+            rows={4}
+            placeholder="Neutral, AI-generated description of the tool..."
+            disabled={pending}
+          />
+          <p className="text-xs text-muted-foreground">
+            Rendered as "About this tool" on the public page. Leave empty to hide.
+          </p>
         </div>
       </fieldset>
 

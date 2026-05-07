@@ -9,7 +9,7 @@ import { NoiseBackground } from "@/components/ui/noise-background"
 import { StackGrid } from "@/components/ui/stack-grid"
 import { cn } from "@/lib/utils"
 import { siteConfig } from "@/lib/config"
-import { stack } from "@/content/data/stack"
+import { stack } from "@/lib/data/stack"
 import profileThumb from "@/assets/profile-thumb.jpeg"
 
 const description = `Personal site of ${siteConfig.name} — ${siteConfig.tagline}`

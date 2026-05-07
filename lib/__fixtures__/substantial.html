@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Substantial Page</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 20px; }
+    .hero { background: #f0f0f0; padding: 40px; }
+    .content { max-width: 800px; margin: 0 auto; }
+    nav a { color: blue; text-decoration: none; }
+  </style>
+  <script>
+    console.log("analytics loaded");
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "UA-000000-0");
+  </script>
+</head>
+<body>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/blog">Blog</a>
+  </nav>
+  <main>
+    <h1>Understanding Modern Web Development</h1>
+    <p>
+      Web development has evolved significantly over the past decade. Modern frameworks
+      and tools have transformed how developers build applications, making it easier
+      to create complex, interactive user interfaces while maintaining code quality
+      and performance. The ecosystem continues to grow with new innovations appearing
+      regularly, each addressing specific pain points in the development workflow.
+    </p>
+    <p>
+      Server-side rendering has made a comeback with frameworks like Next.js, Remix,
+      and Astro leading the charge. These frameworks provide excellent developer
+      experience while ensuring that pages load quickly and are accessible to search
+      engines. The pendulum has swung from fully client-rendered single-page
+      applications back toward a more balanced approach where the server does the
+      initial heavy lifting and the client takes over for interactivity.
+    </p>
+    <p>
+      TypeScript has become the de facto standard for large-scale JavaScript projects.
+      Its type system catches errors at compile time, provides excellent IDE support
+      through autocompletion and inline documentation, and makes refactoring safer
+      and more predictable. Teams that adopt TypeScript consistently report fewer
+      runtime errors and improved developer productivity, especially as codebases
+      grow in size and complexity.
+    </p>
+    <p>
+      Testing strategies have also matured considerably. Unit testing with tools like
+      Vitest and Jest, integration testing with Testing Library, and end-to-end
+      testing with Playwright and Cypress provide comprehensive coverage. The
+      testing pyramid has given way to the testing trophy, which emphasizes
+      integration tests as the most cost-effective layer for catching bugs while
+      still maintaining a foundation of unit tests and a cap of end-to-end tests.
+    </p>
+    <p>
+      Component-based architectures have become ubiquitous. React, Vue, Svelte, and
+      Solid all share the fundamental idea of building UIs from composable,
+      reusable components. This approach promotes separation of concerns, makes
+      code more maintainable, and enables teams to work on different parts of an
+      application simultaneously without stepping on each other's toes.
+    </p>
+  </main>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      console.log("Page loaded");
+      var links = document.querySelectorAll("a");
+      links.forEach(function(link) {
+        link.addEventListener("click", function() {
+          gtag("event", "click", { link: link.href });
+        });
+      });
+    });
+  </script>
+  <footer>
+    <p>Copyright 2024 Web Dev Blog. All rights reserved.</p>
+  </footer>
+</body>
+</html>

@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/.pnpm-store
 /.pnp
 .pnp.*
 .yarn/*
@@ -43,6 +44,11 @@ next-env.d.ts
 
 # content-collections
 .content-collections
+
+# private content (cloned at install time from imick-io/imick-io-content)
+/content/posts/
+/content/snippets/
+/.content-cache/
 
 # personal working notes (drafts, learning plans, todos)
 _*.md

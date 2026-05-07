@@ -3,7 +3,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
-import { getAdminBookmarks, CATEGORY_LABELS } from "@/lib/bookmarks"
+import { getAdminBookmarks, CATEGORY_LABELS, isReviewed } from "@/lib/bookmarks"
 import { categoryEnum } from "@/lib/db/schema"
 
 export const metadata: Metadata = { title: "Bookmarks" }
@@ -103,7 +103,7 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
                       Draft
                     </span>
                   )}
-                  {(b.rating != null || b.reviewText) && (
+                  {isReviewed(b) && (
                     <span className="text-xs px-1.5 py-0.5 rounded bg-primary/10 text-primary shrink-0">
                       Reviewed
                     </span>

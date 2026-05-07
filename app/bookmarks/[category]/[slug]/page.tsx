@@ -5,7 +5,7 @@ import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
-import { getPublishedBookmark, CATEGORY_LABELS } from "@/lib/bookmarks"
+import { getPublishedBookmark, CATEGORY_LABELS, isReviewed } from "@/lib/bookmarks"
 import { categoryEnum } from "@/lib/db/schema"
 
 export const revalidate = 3600
@@ -35,7 +35,7 @@ export default async function BookmarkDetailPage({ params }: Props) {
   const categoryLabel =
     CATEGORY_LABELS[bookmark.category as (typeof categoryEnum.enumValues)[number]] ?? bookmark.category
 
-  const isReviewed = bookmark.rating != null || bookmark.reviewText != null
+  const reviewed = isReviewed(bookmark)
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-12 space-y-8">
@@ -83,7 +83,7 @@ export default async function BookmarkDetailPage({ params }: Props) {
               #{tag}
             </span>
           ))}
-          {isReviewed && (
+          {reviewed && (
             <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
               Reviewed
             </span>
@@ -101,8 +101,56 @@ export default async function BookmarkDetailPage({ params }: Props) {
         </a>
       </div>
 
+      {/* Pros / Cons -- visible whenever populated, independent of review status */}
+      {(bookmark.pros.length > 0 || bookmark.cons.length > 0) && (
+        <div className="space-y-6">
+          {bookmark.pros.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="font-semibold text-sm text-green-600 dark:text-green-400">Pros</h2>
+              <ul className="space-y-1">
+                {bookmark.pros.map((line, i) => (
+                  <li key={i} className="text-sm flex gap-2">
+                    <span className="text-green-500 shrink-0">+</span>
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {bookmark.cons.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="font-semibold text-sm text-red-600 dark:text-red-400">Cons</h2>
+              <ul className="space-y-1">
+                {bookmark.cons.map((line, i) => (
+                  <li key={i} className="text-sm flex gap-2">
+                    <span className="text-red-500 shrink-0">&minus;</span>
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* About this tool (AI Summary) */}
+      {bookmark.aiSummary && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <h2 className="font-semibold text-sm">About this tool</h2>
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full border bg-muted text-muted-foreground">
+              AI-generated
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+            {bookmark.aiSummary}
+          </p>
+        </div>
+      )}
+
       {/* Review */}
-      {isReviewed && (
+      {reviewed && (
         <div className="space-y-6">
           {bookmark.rating != null && (
             <div className="flex items-center gap-2">
@@ -111,34 +159,6 @@ export default async function BookmarkDetailPage({ params }: Props) {
                 {"★".repeat(bookmark.rating)}{"☆".repeat(5 - bookmark.rating)}
               </span>
               <span className="text-sm text-muted-foreground">({bookmark.rating}/5)</span>
-            </div>
-          )}
-
-          {bookmark.pros && (
-            <div className="space-y-2">
-              <h2 className="font-semibold text-sm text-green-600 dark:text-green-400">Pros</h2>
-              <ul className="space-y-1">
-                {bookmark.pros.split("\n").filter(Boolean).map((line, i) => (
-                  <li key={i} className="text-sm flex gap-2">
-                    <span className="text-green-500 shrink-0">+</span>
-                    {line.replace(/^[-•+]\s*/, "")}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {bookmark.cons && (
-            <div className="space-y-2">
-              <h2 className="font-semibold text-sm text-red-600 dark:text-red-400">Cons</h2>
-              <ul className="space-y-1">
-                {bookmark.cons.split("\n").filter(Boolean).map((line, i) => (
-                  <li key={i} className="text-sm flex gap-2">
-                    <span className="text-red-500 shrink-0">−</span>
-                    {line.replace(/^[-•+]\s*/, "")}
-                  </li>
-                ))}
-              </ul>
             </div>
           )}
 

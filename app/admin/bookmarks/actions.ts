@@ -1,11 +1,15 @@
 "use server"
 
 import { redirect } from "next/navigation"
+import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { eq } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { bookmarks, categoryEnum } from "@/lib/db/schema"
 import { fetchMicrolink } from "@/lib/microlink"
+import { parseProsConsText } from "@/lib/bookmark-helpers"
+import { extractPageText } from "@/lib/page-text"
+import { generateBookmarkAi, mergeAiFields } from "@/lib/ai-bookmark"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
@@ -106,6 +110,7 @@ const updateSchema = z.object({
     .transform((v) => (v ? parseInt(v, 10) : null))
     .refine((v) => v === null || (v >= 1 && v <= 5), "Rating must be 1–5"),
   reviewText: z.string().optional(),
+  aiSummary: z.string().optional(),
   published: z.boolean(),
 })
 
@@ -133,6 +138,7 @@ export async function updateBookmark(
     cons: formData.get("cons") || undefined,
     rating: formData.get("rating") || undefined,
     reviewText: formData.get("reviewText") || undefined,
+    aiSummary: formData.get("aiSummary") || undefined,
     published: formData.get("published") === "on",
   })
 
@@ -140,7 +146,7 @@ export async function updateBookmark(
     return { ok: false, errors: parsed.error.flatten().fieldErrors }
   }
 
-  const { id, tags, logoUrl, imageUrl, colorHex, description, pros, cons, reviewText, ...rest } =
+  const { id, tags, logoUrl, imageUrl, colorHex, description, pros, cons, reviewText, aiSummary, ...rest } =
     parsed.data
 
   await db
@@ -152,9 +158,10 @@ export async function updateBookmark(
       imageUrl: imageUrl || null,
       colorHex: colorHex || null,
       tags: parseTags(tags),
-      pros: pros ?? null,
-      cons: cons ?? null,
+      pros: parseProsConsText(pros),
+      cons: parseProsConsText(cons),
       reviewText: reviewText ?? null,
+      aiSummary: aiSummary ?? null,
       updatedAt: new Date(),
     })
     .where(eq(bookmarks.id, id))
@@ -210,4 +217,77 @@ export async function refetchMetadata(
     .where(eq(bookmarks.id, id))
 
   return { ok: true, message: "Metadata refreshed successfully." }
+}
+
+// ─── generate with AI ──────────────────────────────────────────────────────
+
+export type GenerateAiState =
+  | { ok: true; message: string }
+  | { ok: false; error: string }
+
+export async function generateWithAi(
+  _prev: GenerateAiState | null,
+  formData: FormData
+): Promise<GenerateAiState> {
+  await requireAdmin()
+
+  const id = formData.get("id") as string
+  if (!id) return { ok: false, error: "Missing bookmark ID." }
+
+  const force = formData.get("force") === "on"
+
+  const [existing] = await db
+    .select()
+    .from(bookmarks)
+    .where(eq(bookmarks.id, id))
+    .limit(1)
+
+  if (!existing) return { ok: false, error: "Bookmark not found." }
+
+  const pageText = await extractPageText(existing.url)
+  if (!pageText) {
+    return {
+      ok: false,
+      error: "Couldn't extract enough text from the page, fill manually.",
+    }
+  }
+
+  const allTagRows = await db.select({ tags: bookmarks.tags }).from(bookmarks)
+  const existingTags = [...new Set(allTagRows.flatMap((r) => r.tags))]
+
+  let aiOutput
+  try {
+    aiOutput = await generateBookmarkAi({
+      url: existing.url,
+      pageText,
+      microlinkDescription: existing.description ?? "",
+      existingTags,
+    })
+  } catch {
+    return { ok: false, error: "AI generation failed. Please try again." }
+  }
+
+  const merged = mergeAiFields(
+    {
+      category: existing.category,
+      tags: existing.tags,
+      pros: existing.pros,
+      cons: existing.cons,
+      aiSummary: existing.aiSummary,
+    },
+    aiOutput,
+    force
+  )
+
+  await db
+    .update(bookmarks)
+    .set({
+      ...merged,
+      updatedAt: new Date(),
+    })
+    .where(eq(bookmarks.id, id))
+
+  revalidatePath(`/admin/bookmarks/${id}/edit`)
+
+  return { ok: true, message: "AI generation complete." }
 }
