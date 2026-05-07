@@ -193,7 +193,7 @@ export function EditBookmarkForm({ bookmark }: Props) {
           <Textarea
             id="pros"
             name="pros"
-            defaultValue={bookmark.pros ?? ""}
+            defaultValue={bookmark.pros.join("\n")}
             rows={4}
             placeholder={"- Fast build times\n- Great DX\n- Well documented"}
             disabled={pending}
@@ -206,7 +206,7 @@ export function EditBookmarkForm({ bookmark }: Props) {
           <Textarea
             id="cons"
             name="cons"
-            defaultValue={bookmark.cons ?? ""}
+            defaultValue={bookmark.cons.join("\n")}
             rows={4}
             placeholder={"- Complex configuration\n- Large bundle size"}
             disabled={pending}

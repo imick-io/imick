@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { bookmarks, categoryEnum } from "@/lib/db/schema"
 import { fetchMicrolink } from "@/lib/microlink"
+import { parseProsConsText } from "@/lib/bookmark-helpers"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
@@ -152,8 +153,8 @@ export async function updateBookmark(
       imageUrl: imageUrl || null,
       colorHex: colorHex || null,
       tags: parseTags(tags),
-      pros: pros ?? null,
-      cons: cons ?? null,
+      pros: parseProsConsText(pros),
+      cons: parseProsConsText(cons),
       reviewText: reviewText ?? null,
       updatedAt: new Date(),
     })
