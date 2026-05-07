@@ -124,7 +124,7 @@ export default async function BookmarkDetailPage({ params }: Props) {
               <ul className="space-y-1">
                 {bookmark.cons.map((line, i) => (
                   <li key={i} className="text-sm flex gap-2">
-                    <span className="text-red-500 shrink-0">-</span>
+                    <span className="text-red-500 shrink-0">&minus;</span>
                     {line}
                   </li>
                 ))}
