@@ -63,13 +63,12 @@ describe("generateBookmarkAi", () => {
     await generateBookmarkAi(validInput)
 
     const call = mockGenerateObject.mock.calls[0][0]
-    const promptText = JSON.stringify(call.prompt ?? call.messages ?? call.system)
 
-    expect(promptText).toContain(validInput.url)
-    expect(promptText).toContain(validInput.microlinkDescription)
-    expect(promptText).toContain("typescript")
-    expect(promptText).toContain("react")
-    expect(promptText).toContain("testing")
+    expect(call.prompt).toContain(validInput.url)
+    expect(call.prompt).toContain(validInput.microlinkDescription)
+    expect(call.prompt).toContain("typescript")
+    expect(call.prompt).toContain("react")
+    expect(call.prompt).toContain("testing")
   })
 
   it("sets temperature to approximately 0.2", async () => {
