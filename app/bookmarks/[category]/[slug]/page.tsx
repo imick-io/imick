@@ -101,6 +101,39 @@ export default async function BookmarkDetailPage({ params }: Props) {
         </a>
       </div>
 
+      {/* Pros / Cons -- visible whenever populated, independent of review status */}
+      {(bookmark.pros.length > 0 || bookmark.cons.length > 0) && (
+        <div className="space-y-6">
+          {bookmark.pros.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="font-semibold text-sm text-green-600 dark:text-green-400">Pros</h2>
+              <ul className="space-y-1">
+                {bookmark.pros.map((line, i) => (
+                  <li key={i} className="text-sm flex gap-2">
+                    <span className="text-green-500 shrink-0">+</span>
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {bookmark.cons.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="font-semibold text-sm text-red-600 dark:text-red-400">Cons</h2>
+              <ul className="space-y-1">
+                {bookmark.cons.map((line, i) => (
+                  <li key={i} className="text-sm flex gap-2">
+                    <span className="text-red-500 shrink-0">-</span>
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Review */}
       {isReviewed && (
         <div className="space-y-6">
@@ -111,34 +144,6 @@ export default async function BookmarkDetailPage({ params }: Props) {
                 {"★".repeat(bookmark.rating)}{"☆".repeat(5 - bookmark.rating)}
               </span>
               <span className="text-sm text-muted-foreground">({bookmark.rating}/5)</span>
-            </div>
-          )}
-
-          {bookmark.pros && (
-            <div className="space-y-2">
-              <h2 className="font-semibold text-sm text-green-600 dark:text-green-400">Pros</h2>
-              <ul className="space-y-1">
-                {bookmark.pros.split("\n").filter(Boolean).map((line, i) => (
-                  <li key={i} className="text-sm flex gap-2">
-                    <span className="text-green-500 shrink-0">+</span>
-                    {line.replace(/^[-•+]\s*/, "")}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {bookmark.cons && (
-            <div className="space-y-2">
-              <h2 className="font-semibold text-sm text-red-600 dark:text-red-400">Cons</h2>
-              <ul className="space-y-1">
-                {bookmark.cons.split("\n").filter(Boolean).map((line, i) => (
-                  <li key={i} className="text-sm flex gap-2">
-                    <span className="text-red-500 shrink-0">−</span>
-                    {line.replace(/^[-•+]\s*/, "")}
-                  </li>
-                ))}
-              </ul>
             </div>
           )}
 
