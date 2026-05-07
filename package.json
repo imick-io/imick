@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "npx tsx scripts/fetch-content.mts",
+    "fetch-content": "npx tsx scripts/fetch-content.mts",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

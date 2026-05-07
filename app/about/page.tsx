@@ -3,9 +3,9 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { GithubIcon, ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { ResumeGateDialog } from "@/components/resume-gate-dialog"
 import { siteConfig } from "@/lib/config"
-import { experience } from "@/content/data/experience"
-import { education } from "@/content/data/education"
-import { projects } from "@/content/data/projects"
+import { experience } from "@/lib/data/experience"
+import { education } from "@/lib/data/education"
+import { projects } from "@/lib/data/projects"
 
 const aboutDescription = `${siteConfig.name} is a senior full-stack engineer designing and shipping AI-native products end-to-end.`
 
