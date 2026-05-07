@@ -50,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "@ai-hero/sandcastle": "^0.5.8",
     "@next/env": "^16.2.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
