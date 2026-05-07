@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SPA Shell</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    #root { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .spinner { width: 40px; height: 40px; border: 3px solid #ccc; border-top-color: #333; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  </style>
+  <script type="module">
+    import { createApp } from "/assets/vendor.js";
+    import { router } from "/assets/router.js";
+    import { store } from "/assets/store.js";
+    const app = createApp({ router, store });
+    app.mount("#root");
+    window.__APP_READY__ = true;
+    console.log("App mounted");
+    if (window.performance) {
+      const timing = performance.getEntriesByType("navigation")[0];
+      fetch("/api/metrics", { method: "POST", body: JSON.stringify({ ttfb: timing.responseStart, fcp: timing.domContentLoadedEventEnd }) });
+    }
+  </script>
+  <script>
+    window.__CONFIG__ = { apiUrl: "https://api.example.com", version: "2.1.0", features: { darkMode: true, notifications: true } };
+  </script>
+</head>
+<body>
+  <div id="root">
+    <div class="spinner"></div>
+    <span class="sr-only">Loading</span>
+  </div>
+</body>
+</html>
