@@ -5,7 +5,7 @@ import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
-import { getPublishedBookmark, CATEGORY_LABELS } from "@/lib/bookmarks"
+import { getPublishedBookmark, CATEGORY_LABELS, isReviewed } from "@/lib/bookmarks"
 import { categoryEnum } from "@/lib/db/schema"
 
 export const revalidate = 3600
@@ -35,7 +35,7 @@ export default async function BookmarkDetailPage({ params }: Props) {
   const categoryLabel =
     CATEGORY_LABELS[bookmark.category as (typeof categoryEnum.enumValues)[number]] ?? bookmark.category
 
-  const isReviewed = bookmark.rating != null || bookmark.reviewText != null
+  const reviewed = isReviewed(bookmark)
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-12 space-y-8">
@@ -83,7 +83,7 @@ export default async function BookmarkDetailPage({ params }: Props) {
               #{tag}
             </span>
           ))}
-          {isReviewed && (
+          {reviewed && (
             <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
               Reviewed
             </span>
@@ -150,7 +150,7 @@ export default async function BookmarkDetailPage({ params }: Props) {
       )}
 
       {/* Review */}
-      {isReviewed && (
+      {reviewed && (
         <div className="space-y-6">
           {bookmark.rating != null && (
             <div className="flex items-center gap-2">
