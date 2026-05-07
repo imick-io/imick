@@ -3,8 +3,10 @@ import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { ArticleCard } from "@/components/learn/article-card"
+import { ClassCard } from "@/components/learn/class-card"
 import { SnippetCard } from "@/components/learn/snippet-card"
 import { siteConfig } from "@/lib/config"
+import { getAllClassesForRender } from "@/lib/classes"
 import { getAllPostsForRender } from "@/lib/posts"
 import { getAllSnippetsForRender } from "@/lib/snippets"
 
@@ -33,6 +35,7 @@ const HUB_LIMIT = 6
 export default function LearnHubPage() {
   const posts = getAllPostsForRender().slice(0, HUB_LIMIT)
   const snippets = getAllSnippetsForRender().slice(0, HUB_LIMIT)
+  const classes = getAllClassesForRender().slice(0, HUB_LIMIT)
 
   return (
     <div className="flex flex-col gap-16 px-6 py-16 md:gap-20 md:py-20">
@@ -98,15 +101,31 @@ export default function LearnHubPage() {
         )}
       </section>
 
-      <section className="mx-auto w-full max-w-5xl">
-        <div className="rounded-lg border border-dashed border-border bg-card/30 p-8 md:p-10">
-          <p className="text-sm font-medium text-muted-foreground">Coming soon</p>
-          <h2 className="mt-2 text-xl font-semibold tracking-tight md:text-2xl">Classes</h2>
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground md:text-base">
-            Structured courses on topics I write and ship — sign up for the newsletter to
-            hear when the first one drops.
-          </p>
+      <section className="mx-auto flex w-full max-w-5xl flex-col gap-5">
+        <div className="flex items-end justify-between">
+          <h2 className="text-xl font-semibold tracking-tight">Upcoming Classes</h2>
+          <Link
+            href="/learn/classes"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            View all
+            <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
+          </Link>
         </div>
+        {classes.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-border bg-card/30 p-8 text-center text-sm text-muted-foreground">
+            Structured courses on topics I write and ship -- sign up for the newsletter to
+            hear when the first one drops.
+          </div>
+        ) : (
+          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {classes.map((cls) => (
+              <li key={cls.slug}>
+                <ClassCard cls={cls} />
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   )

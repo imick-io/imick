@@ -34,6 +34,32 @@ async function buildSnippetPreview(content: string, fallbackLang: string): Promi
   }
 }
 
+const classes = defineCollection({
+  name: "classes",
+  directory: "content/classes",
+  include: "*.mdx",
+  schema: z.object({
+    title: z.string(),
+    tagline: z.string(),
+    publishedAt: z.string().optional(),
+    coverImage: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    content: z.string(),
+  }),
+  transform: async (document, context) => {
+    const code = await compileMDX(context, document, {
+      rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
+    })
+    return {
+      ...document,
+      tags: document.tags ?? [],
+      slug: document._meta.fileName.replace(/\.mdx$/, ""),
+      sourcePath: `content/classes/${document._meta.fileName}`,
+      code,
+    }
+  },
+})
+
 const posts = defineCollection({
   name: "posts",
   directory: "content/posts",
@@ -135,5 +161,5 @@ const folios = defineCollection({
 })
 
 export default defineConfig({
-  content: [posts, snippets, folios],
+  content: [classes, posts, snippets, folios],
 })
