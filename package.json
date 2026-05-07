@@ -11,10 +11,12 @@
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
+    "db:migrate": "npx tsx scripts/migrate.mts",
     "db:studio": "drizzle-kit studio",
     "sandcastle": "npx tsx .sandcastle/main.mts",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf node_modules .next .content-collections && pnpm install"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.75",
