@@ -5,3 +5,4 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 - The "middleware" file convention is deprecated. Please use "proxy" instead.
+- NEVER use em-dash
