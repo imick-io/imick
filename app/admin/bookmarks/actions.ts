@@ -107,6 +107,7 @@ const updateSchema = z.object({
     .transform((v) => (v ? parseInt(v, 10) : null))
     .refine((v) => v === null || (v >= 1 && v <= 5), "Rating must be 1–5"),
   reviewText: z.string().optional(),
+  aiSummary: z.string().optional(),
   published: z.boolean(),
 })
 
@@ -134,6 +135,7 @@ export async function updateBookmark(
     cons: formData.get("cons") || undefined,
     rating: formData.get("rating") || undefined,
     reviewText: formData.get("reviewText") || undefined,
+    aiSummary: formData.get("aiSummary") || undefined,
     published: formData.get("published") === "on",
   })
 
@@ -141,7 +143,7 @@ export async function updateBookmark(
     return { ok: false, errors: parsed.error.flatten().fieldErrors }
   }
 
-  const { id, tags, logoUrl, imageUrl, colorHex, description, pros, cons, reviewText, ...rest } =
+  const { id, tags, logoUrl, imageUrl, colorHex, description, pros, cons, reviewText, aiSummary, ...rest } =
     parsed.data
 
   await db
@@ -156,6 +158,7 @@ export async function updateBookmark(
       pros: parseProsConsText(pros),
       cons: parseProsConsText(cons),
       reviewText: reviewText ?? null,
+      aiSummary: aiSummary || null,
       updatedAt: new Date(),
     })
     .where(eq(bookmarks.id, id))

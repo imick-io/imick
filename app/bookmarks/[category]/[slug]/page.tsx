@@ -134,6 +134,21 @@ export default async function BookmarkDetailPage({ params }: Props) {
         </div>
       )}
 
+      {/* About this tool (AI Summary) */}
+      {bookmark.aiSummary != null && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <h2 className="font-semibold text-sm">About this tool</h2>
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full border bg-muted text-muted-foreground">
+              AI-generated
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+            {bookmark.aiSummary}
+          </p>
+        </div>
+      )}
+
       {/* Review */}
       {isReviewed && (
         <div className="space-y-6">

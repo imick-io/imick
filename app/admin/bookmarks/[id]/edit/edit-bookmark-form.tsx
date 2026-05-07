@@ -227,6 +227,28 @@ export function EditBookmarkForm({ bookmark }: Props) {
         </div>
       </fieldset>
 
+      {/* ── AI Summary ── */}
+      <fieldset className="space-y-4">
+        <legend className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+          AI Summary
+        </legend>
+
+        <div className="space-y-2">
+          <Label htmlFor="aiSummary">AI Summary</Label>
+          <Textarea
+            id="aiSummary"
+            name="aiSummary"
+            defaultValue={bookmark.aiSummary ?? ""}
+            rows={4}
+            placeholder="Neutral, AI-generated description of the tool..."
+            disabled={pending}
+          />
+          <p className="text-xs text-muted-foreground">
+            Rendered as "About this tool" on the public page. Leave empty to hide.
+          </p>
+        </div>
+      </fieldset>
+
       {/* ── Publish toggle ── */}
       <fieldset className="space-y-2">
         <legend className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">

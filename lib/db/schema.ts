@@ -87,6 +87,7 @@ export const bookmarks = pgTable("bookmarks", {
   tags: text("tags").array().notNull().default(sql`ARRAY[]::text[]`),
   pros: text("pros").array().notNull().default(sql`ARRAY[]::text[]`),
   cons: text("cons").array().notNull().default(sql`ARRAY[]::text[]`),
+  aiSummary: text("ai_summary"),
   rating: integer("rating"),
   reviewText: text("review_text"),
   published: boolean("published").notNull().default(false),
