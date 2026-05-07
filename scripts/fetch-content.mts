@@ -27,7 +27,7 @@ const CONTENT_DIR = join(ROOT, "content")
 const CACHE_DIR = join(ROOT, ".content-cache")
 const REPO = "imick-io/imick-io-content"
 const BRANCH = "main"
-const SUBDIRS = ["posts", "snippets", "folios"] as const
+const SUBDIRS = ["posts", "snippets", "folios", "classes"] as const
 
 function hasMdx(dir: string): boolean {
   if (!existsSync(dir)) return false
@@ -56,7 +56,10 @@ function mirrorIntoContent() {
     const src = join(CACHE_DIR, sub)
     const dest = join(CONTENT_DIR, sub)
     if (!existsSync(src)) {
-      throw new Error(`Expected '${sub}/' in ${REPO} but did not find it`)
+      console.warn(
+        `fetch-content: '${sub}/' not present in ${REPO}, skipping (local content/${sub}/ left as-is)`,
+      )
+      continue
     }
     rmSync(dest, { recursive: true, force: true })
     mkdirSync(dest, { recursive: true })
