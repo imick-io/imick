@@ -27,7 +27,7 @@ const CONTENT_DIR = join(ROOT, "content")
 const CACHE_DIR = join(ROOT, ".content-cache")
 const REPO = "imick-io/imick-io-content"
 const BRANCH = "main"
-const SUBDIRS = ["posts", "snippets"] as const
+const SUBDIRS = ["posts", "snippets", "folios"] as const
 
 function hasMdx(dir: string): boolean {
   if (!existsSync(dir)) return false

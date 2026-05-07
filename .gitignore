@@ -48,6 +48,7 @@ next-env.d.ts
 # private content (cloned at install time from imick-io/imick-io-content)
 /content/posts/
 /content/snippets/
+/content/folios/
 /.content-cache/
 
 # personal working notes (drafts, learning plans, todos)

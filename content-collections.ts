@@ -4,6 +4,7 @@ import rehypePrettyCode, { type Options as RehypePrettyCodeOptions } from "rehyp
 import { codeToHtml, type BundledLanguage } from "shiki"
 import { z } from "zod"
 import { extractHeadings, readingTimeMinutes } from "./lib/mdx-helpers"
+import { validateFolioItems } from "./lib/folios"
 
 const prettyCodeOptions: RehypePrettyCodeOptions = {
   theme: { light: "github-light", dark: "github-dark" },
@@ -89,6 +90,50 @@ const snippets = defineCollection({
   },
 })
 
+const folioItemSchema = z.object({
+  type: z.enum(["article", "snippet"]),
+  slug: z.string(),
+})
+
+const folios = defineCollection({
+  name: "folios",
+  directory: "content/folios",
+  include: "*.mdx",
+  schema: z.object({
+    title: z.string(),
+    excerpt: z.string(),
+    publishedAt: z.string().optional(),
+    updatedAt: z.string().optional(),
+    coverImage: z.string().optional(),
+    items: z.array(folioItemSchema).min(2),
+    content: z.string(),
+  }),
+  transform: async (document, context) => {
+    const allPosts = context.documents(posts)
+    const allSnippets = context.documents(snippets)
+    validateFolioItems(
+      document.items,
+      document.publishedAt,
+      allPosts.map((p) => ({
+        slug: p._meta.fileName.replace(/\.mdx$/, ""),
+        publishedAt: p.publishedAt,
+      })),
+      allSnippets.map((s) => ({
+        slug: s._meta.fileName.replace(/\.mdx$/, ""),
+        publishedAt: s.publishedAt,
+      }))
+    )
+    const code = await compileMDX(context, document, {
+      rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
+    })
+    return {
+      ...document,
+      slug: document._meta.fileName.replace(/\.mdx$/, ""),
+      code,
+    }
+  },
+})
+
 export default defineConfig({
-  content: [posts, snippets],
+  content: [posts, snippets, folios],
 })

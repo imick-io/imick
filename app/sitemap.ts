@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next"
-import { allPosts, allSnippets } from "content-collections"
+import { allPosts, allSnippets, allFolios } from "content-collections"
 import { siteConfig } from "@/lib/config"
 import { isDraft } from "@/lib/posts"
 import { isSnippetDraft } from "@/lib/snippets"
+import { isFolioDraft } from "@/lib/folios"
 import {
   CATEGORY_VALUES,
   getAllPublishedBookmarks,
@@ -24,6 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: url("/learn"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: url("/learn/articles"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: url("/learn/snippets"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: url("/learn/folios"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: url("/bookmarks"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
   ]
 
@@ -42,6 +44,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entries.push({
       url: url(`/learn/snippets/${snippet.slug}`),
       lastModified: new Date(snippet.publishedAt!),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    })
+  }
+
+  const publishedFolios = allFolios.filter((f) => !isFolioDraft(f))
+  for (const folio of publishedFolios) {
+    entries.push({
+      url: url(`/learn/folios/${folio.slug}`),
+      lastModified: new Date(folio.updatedAt ?? folio.publishedAt!),
       changeFrequency: "monthly",
       priority: 0.7,
     })

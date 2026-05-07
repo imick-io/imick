@@ -39,6 +39,17 @@ A board of hands-on **Tasks** that follows each **Module**, simulating a real-wo
 **Task** (Class context):
 A work item on a Module's **Kanban**, framed as the kind of ticket a developer would pick up in a real sprint applied to the Module's subject. Distinct from any unrelated future use of "Task."
 
+### Folios
+
+**Folio**:
+A curated, ordered grouping of existing **Articles** and/or **Snippets**, authored as MDX. A Folio surfaces a throughline across standalone pieces that were published independently. Items are listed in an explicit order in frontmatter; the MDX body is the **Preface**. An item may belong to many Folios. Membership is restricted to Articles and Snippets only (no Classes, no Bookmarks) per ADR `0003-folio-membership-boundary`.
+Lifecycle follows the Article model: future-dated Folios are hidden in production and visible in `next dev`. Renders at `/learn/folios` (listing) and `/learn/folios/[slug]` (detail).
+_Avoid_: Playlist, Series, Collection, Reading list, Group, Bundle.
+
+**Preface**:
+The Folio-level prose: editorial framing that explains why these items, in this order, and what the throughline is. Read _before_ working through the Folio's items. Exactly one per **Folio**, stored as the MDX body.
+_Avoid_: Read me, Overview (reserved for Classes), Intro, Foreword, Notes (reserved for Lessons).
+
 ### Bookmarks
 
 **Bookmark**:
@@ -67,6 +78,13 @@ A neutral, model-generated description of what a tool *is* and *does*, sourced f
 _Avoid_: Review, opinion, take.
 
 ## Relationships
+
+### Folios
+
+- A **Folio** contains two or more ordered **items**, each referencing an **Article** or **Snippet** by `(type, slug)`.
+- A **Folio** has exactly one **Preface** (the MDX body).
+- An **Article** or **Snippet** may belong to zero or more **Folios**.
+- A **Folio** does not contain **Classes** or **Bookmarks** (see ADR `0003`).
 
 ### Bookmarks
 
