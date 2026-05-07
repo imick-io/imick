@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth"
 import { getBookmarkById, CATEGORY_LABELS } from "@/lib/bookmarks"
 import { EditBookmarkForm } from "./edit-bookmark-form"
 import { RefetchButton } from "./refetch-button"
+import { GenerateAiButton } from "./generate-ai-button"
 import { DeleteButton } from "./delete-button"
 
 export const metadata: Metadata = { title: "Edit Bookmark" }
@@ -36,12 +37,13 @@ export default async function EditBookmarkPage({ params }: Props) {
           </a>
         </div>
         <div className="flex items-center gap-2 shrink-0">
+          <GenerateAiButton bookmarkId={bookmark.id} />
           <RefetchButton bookmarkId={bookmark.id} />
           <DeleteButton bookmarkId={bookmark.id} title={bookmark.title} />
         </div>
       </div>
 
-      <EditBookmarkForm bookmark={bookmark} />
+      <EditBookmarkForm key={bookmark.updatedAt.getTime()} bookmark={bookmark} />
     </div>
   )
 }

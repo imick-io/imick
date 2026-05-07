@@ -62,3 +62,27 @@ export async function generateBookmarkAi(
     tags: result.object.tags.map((t) => t.trim().toLowerCase()),
   }
 }
+
+interface ExistingAiFields {
+  category: string
+  tags: string[]
+  pros: string[]
+  cons: string[]
+  aiSummary: string | null
+}
+
+export function mergeAiFields(
+  existing: ExistingAiFields,
+  ai: AiBookmarkOutput,
+  force: boolean
+): AiBookmarkOutput {
+  if (force) return { ...ai }
+
+  return {
+    category: existing.category as AiBookmarkOutput["category"],
+    tags: existing.tags.length > 0 ? existing.tags : ai.tags,
+    pros: existing.pros.length > 0 ? existing.pros : ai.pros,
+    cons: existing.cons.length > 0 ? existing.cons : ai.cons,
+    aiSummary: existing.aiSummary ?? ai.aiSummary,
+  }
+}

@@ -10,7 +10,7 @@ vi.mock("@ai-sdk/anthropic", () => ({
   anthropic: vi.fn(() => "mocked-model"),
 }))
 
-import { generateBookmarkAi } from "./ai-bookmark"
+import { generateBookmarkAi, mergeAiFields, type AiBookmarkOutput } from "./ai-bookmark"
 
 const validInput = {
   url: "https://example.com/tool",
@@ -78,5 +78,91 @@ describe("generateBookmarkAi", () => {
 
     const call = mockGenerateObject.mock.calls[0][0]
     expect(call.temperature).toBeCloseTo(0.2, 1)
+  })
+})
+
+describe("mergeAiFields", () => {
+  const aiOutput: AiBookmarkOutput = {
+    category: "ai-productivity",
+    tags: ["ai", "productivity"],
+    pros: ["Great AI features", "Easy to use"],
+    cons: ["Expensive"],
+    aiSummary: "An AI productivity tool.",
+  }
+
+  const fullExisting = {
+    category: "dev-tools" as const,
+    tags: ["react", "typescript"],
+    pros: ["Fast", "Reliable"],
+    cons: ["Complex setup"],
+    aiSummary: "A dev tool for building apps.",
+  }
+
+  const emptyExisting = {
+    category: "dev-tools" as const,
+    tags: [] as string[],
+    pros: [] as string[],
+    cons: [] as string[],
+    aiSummary: null,
+  }
+
+  it("overwrites all five fields when force is true", () => {
+    const result = mergeAiFields(fullExisting, aiOutput, true)
+    expect(result).toEqual({
+      category: aiOutput.category,
+      tags: aiOutput.tags,
+      pros: aiOutput.pros,
+      cons: aiOutput.cons,
+      aiSummary: aiOutput.aiSummary,
+    })
+  })
+
+  it("fills only empty fields when force is false", () => {
+    const result = mergeAiFields(emptyExisting, aiOutput, false)
+    expect(result.tags).toEqual(aiOutput.tags)
+    expect(result.pros).toEqual(aiOutput.pros)
+    expect(result.cons).toEqual(aiOutput.cons)
+    expect(result.aiSummary).toBe(aiOutput.aiSummary)
+  })
+
+  it("preserves category in non-force mode (category is always populated)", () => {
+    const result = mergeAiFields(emptyExisting, aiOutput, false)
+    expect(result.category).toBe(emptyExisting.category)
+  })
+
+  it("preserves all populated fields when force is false", () => {
+    const result = mergeAiFields(fullExisting, aiOutput, false)
+    expect(result).toEqual({
+      category: fullExisting.category,
+      tags: fullExisting.tags,
+      pros: fullExisting.pros,
+      cons: fullExisting.cons,
+      aiSummary: fullExisting.aiSummary,
+    })
+  })
+
+  it("treats tags with length > 0 as non-empty", () => {
+    const partial = { ...emptyExisting, tags: ["existing-tag"] }
+    const result = mergeAiFields(partial, aiOutput, false)
+    expect(result.tags).toEqual(["existing-tag"])
+  })
+
+  it("fills aiSummary when existing is null", () => {
+    const result = mergeAiFields(emptyExisting, aiOutput, false)
+    expect(result.aiSummary).toBe(aiOutput.aiSummary)
+  })
+
+  it("preserves aiSummary when existing is non-null", () => {
+    const result = mergeAiFields(fullExisting, aiOutput, false)
+    expect(result.aiSummary).toBe(fullExisting.aiSummary)
+  })
+
+  it("never includes rating or reviewText in the result", () => {
+    const forceResult = mergeAiFields(fullExisting, aiOutput, true)
+    const nonForceResult = mergeAiFields(fullExisting, aiOutput, false)
+    expect(forceResult).not.toHaveProperty("rating")
+    expect(forceResult).not.toHaveProperty("reviewText")
+    expect(nonForceResult).not.toHaveProperty("rating")
+    expect(nonForceResult).not.toHaveProperty("reviewText")
   })
 })
