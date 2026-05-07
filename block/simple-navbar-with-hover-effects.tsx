@@ -9,17 +9,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
-
-type NavItem = { name: string; href: string };
-
-const navItems: NavItem[] = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Learn", href: "/learn" },
-  { name: "Newsletter", href: "/newsletter" },
-];
-
-const contactItem: NavItem = { name: "Contact", href: "/contact" };
+import { navItems, contactItem, type NavItem } from "./nav-items";
 
 export default function SimpleNavbarWithHoverEffects() {
   return (
