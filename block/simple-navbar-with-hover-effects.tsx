@@ -2,12 +2,13 @@
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/lib/config";
 import avatar from "@/assets/avatar.webp";
-import { IconBrandGithub, IconMenu2, IconX } from "@tabler/icons-react";
+import { IconMenu2, IconX } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 type NavItem = { name: string; href: string };
 
@@ -16,8 +17,9 @@ const navItems: NavItem[] = [
   { name: "About", href: "/about" },
   { name: "Learn", href: "/learn" },
   { name: "Newsletter", href: "/newsletter" },
-  { name: "Contact", href: "/contact" },
 ];
+
+const contactItem: NavItem = { name: "Contact", href: "/contact" };
 
 export default function SimpleNavbarWithHoverEffects() {
   return (
@@ -74,15 +76,20 @@ const DesktopNav = ({ items }: NavProps) => {
           );
         })}
       </div>
-      <a
-        href={siteConfig.githubUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hidden items-center justify-center rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:inline-flex"
-      >
-        <IconBrandGithub size={18} />
-        <span className="sr-only">{siteConfig.name} on GitHub</span>
-      </a>
+      <div className="flex items-center gap-2">
+        <Link
+          href={contactItem.href}
+          className={cn(
+            "hidden items-center justify-center rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted md:inline-flex",
+            pathname === contactItem.href
+              ? "text-foreground"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          {contactItem.name}
+        </Link>
+        <ThemeToggle />
+      </div>
     </motion.div>
   );
 };
@@ -99,15 +106,18 @@ const MobileNav = ({ items }: NavProps) => {
     >
       <div className="flex w-full flex-row items-center justify-between">
         <Logo />
-        <button
-          type="button"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
-          className="text-foreground"
-        >
-          {open ? <IconX /> : <IconMenu2 />}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+            className="text-foreground"
+          >
+            {open ? <IconX /> : <IconMenu2 />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -134,15 +144,18 @@ const MobileNav = ({ items }: NavProps) => {
                 </Link>
               );
             })}
-            <a
-              href={siteConfig.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            <Link
+              href={contactItem.href}
+              onClick={() => setOpen(false)}
+              className={cn(
+                "inline-flex items-center justify-center rounded-full border border-border px-4 py-2 text-base font-medium transition-colors hover:bg-muted",
+                pathname === contactItem.href
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
             >
-              <IconBrandGithub size={20} />
-              <span className="sr-only">{siteConfig.name} on GitHub</span>
-            </a>
+              {contactItem.name}
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>

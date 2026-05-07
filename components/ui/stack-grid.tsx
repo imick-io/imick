@@ -8,6 +8,7 @@ type StackGridItem = {
   name: string
   designation: string
   image: string
+  imageDark?: string
 }
 
 export const StackGrid = ({ items }: { items: StackGridItem[] }) => {
@@ -48,8 +49,18 @@ export const StackGrid = ({ items }: { items: StackGridItem[] }) => {
           <img
             src={item.image}
             alt={item.name}
-            className="h-10 w-10 object-contain transition-transform duration-300 group-hover:scale-110"
+            className={`h-10 w-10 object-contain transition-transform duration-300 group-hover:scale-110 ${
+              item.imageDark ? "dark:hidden" : ""
+            }`}
           />
+          {item.imageDark && (
+            <img
+              src={item.imageDark}
+              alt=""
+              aria-hidden
+              className="hidden h-10 w-10 object-contain transition-transform duration-300 group-hover:scale-110 dark:block"
+            />
+          )}
         </div>
       ))}
     </div>

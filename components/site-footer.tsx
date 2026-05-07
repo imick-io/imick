@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { SubscribeForm } from "@/components/subscribe-form"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { siteConfig } from "@/lib/config"
 import { Signature } from "@/registry/signature"
 
@@ -50,26 +51,29 @@ export function SiteFooter() {
           <p className="text-xs text-muted-foreground">
             © {year} {siteConfig.name}. All rights reserved.
           </p>
-          <nav className="flex items-center gap-6">
-            <Link
-              href="/about"
-              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Contact
-            </Link>
-            <Link
-              href="/privacy"
-              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Privacy
-            </Link>
-          </nav>
+          <div className="flex items-center gap-6">
+            <nav className="flex items-center gap-6">
+              <Link
+                href="/about"
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                About
+              </Link>
+              <Link
+                href="/contact"
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Contact
+              </Link>
+              <Link
+                href="/privacy"
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Privacy
+              </Link>
+            </nav>
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </footer>

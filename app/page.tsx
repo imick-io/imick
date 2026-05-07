@@ -114,6 +114,7 @@ export default function HomePage() {
                   ? "AI"
                   : item.category.charAt(0).toUpperCase() + item.category.slice(1),
               image: `/icons/${item.iconSlug}.svg`,
+              imageDark: item.mono ? `/icons/${item.iconSlug}_dark.svg` : undefined,
             }))}
         />
       </section>
