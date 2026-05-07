@@ -135,7 +135,7 @@ export default async function BookmarkDetailPage({ params }: Props) {
       )}
 
       {/* About this tool (AI Summary) */}
-      {bookmark.aiSummary != null && (
+      {bookmark.aiSummary && (
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <h2 className="font-semibold text-sm">About this tool</h2>

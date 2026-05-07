@@ -158,7 +158,7 @@ export async function updateBookmark(
       pros: parseProsConsText(pros),
       cons: parseProsConsText(cons),
       reviewText: reviewText ?? null,
-      aiSummary: aiSummary || null,
+      aiSummary: aiSummary ?? null,
       updatedAt: new Date(),
     })
     .where(eq(bookmarks.id, id))
