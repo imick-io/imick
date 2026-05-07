@@ -1,10 +1,9 @@
 import Link from "next/link"
 import Image from "next/image"
-import { type Class } from "content-collections"
-import { formatComingSoonDate } from "@/lib/classes"
+import { type EnrichedClass, formatClassDate } from "@/lib/classes"
 
 type ClassCardProps = {
-  cls: Class & { isDraft: boolean; isComingSoon: boolean }
+  cls: EnrichedClass
 }
 
 export function ClassCard({ cls }: ClassCardProps) {
@@ -42,15 +41,7 @@ export function ClassCard({ cls }: ClassCardProps) {
         </h3>
         <p className="text-sm text-muted-foreground">{cls.tagline}</p>
         <div className="mt-auto pt-2 text-xs text-muted-foreground">
-          {cls.isComingSoon
-            ? formatComingSoonDate(cls.publishedAt)
-            : cls.isDraft
-              ? "Draft"
-              : new Date(cls.publishedAt!).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+          {formatClassDate(cls)}
         </div>
       </div>
     </Link>

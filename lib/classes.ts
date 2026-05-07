@@ -17,7 +17,7 @@ export function isPublished(cls: Class): boolean {
   return new Date(cls.publishedAt!).getTime() <= Date.now()
 }
 
-type EnrichedClass = Class & { isDraft: boolean; isComingSoon: boolean }
+export type EnrichedClass = Class & { isDraft: boolean; isComingSoon: boolean }
 
 export function getAllClassesForRender(): EnrichedClass[] {
   const showDrafts = process.env.NODE_ENV !== "production"
@@ -50,4 +50,14 @@ export function formatComingSoonDate(publishedAt: string | undefined): string {
   const month = date.toLocaleDateString("en-US", { month: "short" })
   const year = date.getFullYear()
   return `Coming ${month} ${year}`
+}
+
+export function formatClassDate(cls: EnrichedClass): string {
+  if (cls.isComingSoon) return formatComingSoonDate(cls.publishedAt)
+  if (cls.isDraft) return "Draft"
+  return new Date(cls.publishedAt!).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
 }

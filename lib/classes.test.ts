@@ -15,6 +15,7 @@ import {
   getAllClassesForRender,
   getClassBySlug,
   formatComingSoonDate,
+  formatClassDate,
 } from "./classes"
 
 function makeClass(overrides: Record<string, unknown> = {}) {
@@ -229,5 +230,22 @@ describe("formatComingSoonDate", () => {
 
   it("returns empty string for invalid date", () => {
     expect(formatComingSoonDate("not-a-date")).toBe("")
+  })
+})
+
+describe("formatClassDate", () => {
+  it("returns formatted coming-soon date for coming-soon class", () => {
+    const cls = { ...makeClass({ publishedAt: FUTURE_DATE }), isDraft: false, isComingSoon: true }
+    expect(formatClassDate(cls)).toBe("Coming Dec 2099")
+  })
+
+  it("returns 'Draft' for draft class", () => {
+    const cls = { ...makeClass({ publishedAt: undefined }), isDraft: true, isComingSoon: false }
+    expect(formatClassDate(cls)).toBe("Draft")
+  })
+
+  it("returns full date for published class", () => {
+    const cls = { ...makeClass({ publishedAt: "2024-01-15" }), isDraft: false, isComingSoon: false }
+    expect(formatClassDate(cls)).toBe("January 15, 2024")
   })
 })
