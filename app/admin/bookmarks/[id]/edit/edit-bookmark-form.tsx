@@ -6,6 +6,7 @@ import {
   type Bookmark,
   CATEGORY_LABELS,
   getCategoryLabel,
+  slugifyCategory,
 } from "@/lib/bookmarks-meta"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -96,7 +97,7 @@ function VisibilityField({
   )
 }
 
-function CategorySelect({
+function CategoryField({
   value,
   onChange,
   disabled,
@@ -110,6 +111,35 @@ function CategorySelect({
   const options = Object.keys(CATEGORY_LABELS).sort((a, b) =>
     getCategoryLabel(a).localeCompare(getCategoryLabel(b))
   )
+  const isCanonical = value === "" || value in CATEGORY_LABELS
+  const [custom, setCustom] = useState<boolean>(!isCanonical)
+
+  if (custom) {
+    return (
+      <div className="flex items-center gap-2">
+        <Input
+          id="category"
+          value={value}
+          onChange={(e) => onChange(slugifyCategory(e.target.value))}
+          placeholder="my-new-category"
+          disabled={disabled}
+          aria-invalid={invalid}
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            onChange("")
+            setCustom(false)
+          }}
+          disabled={disabled}
+        >
+          Pick from list
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <div className="flex items-center gap-2">
@@ -133,6 +163,18 @@ function CategorySelect({
           ))}
         </SelectContent>
       </Select>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => {
+          onChange("")
+          setCustom(true)
+        }}
+        disabled={disabled}
+      >
+        + New
+      </Button>
       {value && (
         <Button
           type="button"
@@ -275,7 +317,7 @@ export function EditBookmarkForm({ bookmark }: Props) {
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <input type="hidden" name="category" value={category} />
-            <CategorySelect
+            <CategoryField
               value={category}
               onChange={setCategory}
               disabled={pending}
