@@ -7,7 +7,7 @@ import {
   type UpdateBookmarkState,
   type CreateCategoryState,
 } from "../../actions"
-import { type Bookmark, slugifyCategory } from "@/lib/bookmarks-meta"
+import { type Bookmark, humanizeSlug, slugifyCategory } from "@/lib/bookmarks-meta"
 import type { Category } from "@/lib/categories"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -20,6 +20,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 function toDatetimeLocal(date: Date): string {
   const pad = (n: number) => n.toString().padStart(2, "0")
@@ -105,6 +113,7 @@ function CategoryField({
   onCategoryCreated,
   disabled,
   invalid,
+  suggestedCategory,
 }: {
   value: string
   onChange: (next: string) => void
@@ -112,7 +121,12 @@ function CategoryField({
   onCategoryCreated: (category: Category) => void
   disabled: boolean
   invalid: boolean
+  suggestedCategory: string | null
 }) {
+  const [open, setOpen] = useState<boolean>(false)
+  const [draftSlug, setDraftSlug] = useState<string>("")
+  const [draftLabel, setDraftLabel] = useState<string>("")
+
   const [createState, createAction, creating] = useActionState<
     CreateCategoryState | null,
     FormData
@@ -127,113 +141,169 @@ function CategoryField({
         }
         onCategoryCreated(newCategory)
         onChange(result.slug)
-        setCreating(false)
+        setOpen(false)
+        setDraftSlug("")
+        setDraftLabel("")
       }
       return result
     })
   }, null)
 
-  const [isCreating, setCreating] = useState<boolean>(false)
-  const [draftSlug, setDraftSlug] = useState<string>("")
-  const [draftLabel, setDraftLabel] = useState<string>("")
+  const errors = createState?.ok === false ? createState.errors : {}
+  const sorted = [...categories].sort((a, b) => a.label.localeCompare(b.label))
 
-  if (isCreating) {
-    const errors = createState?.ok === false ? createState.errors : {}
-    return (
-      <div className="space-y-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <Input
-            value={draftLabel}
-            onChange={(e) => {
-              const next = e.target.value
-              setDraftLabel(next)
-              setDraftSlug(slugifyCategory(next))
-            }}
-            placeholder="Label (e.g. Dev Tools)"
-            disabled={creating}
-            aria-invalid={!!errors.label}
-            className="w-auto flex-1"
-          />
-          <Input
-            value={draftSlug}
-            onChange={(e) => setDraftSlug(slugifyCategory(e.target.value))}
-            placeholder="slug"
-            disabled={creating}
-            aria-invalid={!!errors.slug}
-            className="w-40"
-          />
-          <form action={createAction}>
-            <input type="hidden" name="slug" value={draftSlug} />
-            <input type="hidden" name="label" value={draftLabel} />
-            <Button type="submit" size="sm" disabled={creating || !draftLabel || !draftSlug}>
-              {creating ? "Creating…" : "Create"}
-            </Button>
-          </form>
+  const showSuggestion =
+    !!suggestedCategory && !categories.some((c) => c.slug === suggestedCategory)
+
+  function openDialog(prefill?: { label: string; slug: string }) {
+    setDraftLabel(prefill?.label ?? "")
+    setDraftSlug(prefill?.slug ?? "")
+    setOpen(true)
+  }
+
+  function handleOpenChange(next: boolean) {
+    setOpen(next)
+    if (!next) {
+      setDraftLabel("")
+      setDraftSlug("")
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <Select
+          value={value || undefined}
+          onValueChange={(next) => onChange(next ?? "")}
+          disabled={disabled}
+        >
+          <SelectTrigger
+            id="category"
+            className="w-full"
+            aria-invalid={invalid}
+          >
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {sorted.map((cat) => (
+              <SelectItem key={cat.slug} value={cat.slug}>
+                {cat.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => openDialog()}
+          disabled={disabled}
+        >
+          + New
+        </Button>
+        {value && (
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => {
-              setCreating(false)
-              setDraftSlug("")
-              setDraftLabel("")
-            }}
-            disabled={creating}
+            onClick={() => onChange("")}
+            disabled={disabled}
+            aria-label="Clear category"
           >
-            Cancel
+            Clear
           </Button>
-        </div>
-        {errors.label && <p className="text-sm text-destructive">{errors.label[0]}</p>}
-        {errors.slug && <p className="text-sm text-destructive">{errors.slug[0]}</p>}
+        )}
       </div>
-    )
-  }
-
-  const sorted = [...categories].sort((a, b) => a.label.localeCompare(b.label))
-
-  return (
-    <div className="flex items-center gap-2">
-      <Select
-        value={value || undefined}
-        onValueChange={(next) => onChange(next ?? "")}
-        disabled={disabled}
-      >
-        <SelectTrigger
-          id="category"
-          className="w-full"
-          aria-invalid={invalid}
-        >
-          <SelectValue placeholder="Select a category" />
-        </SelectTrigger>
-        <SelectContent>
-          {sorted.map((cat) => (
-            <SelectItem key={cat.slug} value={cat.slug}>
-              {cat.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => setCreating(true)}
-        disabled={disabled}
-      >
-        + New
-      </Button>
-      {value && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => onChange("")}
-          disabled={disabled}
-          aria-label="Clear category"
-        >
-          Clear
-        </Button>
+      {showSuggestion && (
+        <p className="text-xs text-amber-600 dark:text-amber-400">
+          AI suggests{" "}
+          <code className="rounded bg-muted px-1 py-0.5 font-mono">
+            {suggestedCategory}
+          </code>
+          . Not in your categories yet,{" "}
+          <button
+            type="button"
+            className="underline underline-offset-2 hover:no-underline"
+            onClick={() =>
+              openDialog({
+                slug: suggestedCategory!,
+                label: humanizeSlug(suggestedCategory!),
+              })
+            }
+            disabled={disabled}
+          >
+            create it
+          </button>
+          .
+        </p>
       )}
+
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>New category</DialogTitle>
+            <DialogDescription>
+              Add a new category to use for bookmarks.
+            </DialogDescription>
+          </DialogHeader>
+          <form action={createAction} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="cat-label">Label</Label>
+              <Input
+                id="cat-label"
+                name="label"
+                value={draftLabel}
+                onChange={(e) => {
+                  const next = e.target.value
+                  setDraftLabel(next)
+                  setDraftSlug(slugifyCategory(next))
+                }}
+                placeholder="e.g. Dev Tools"
+                disabled={creating}
+                aria-invalid={!!errors.label}
+                autoFocus
+              />
+              {errors.label && (
+                <p className="text-xs text-destructive">{errors.label[0]}</p>
+              )}
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="cat-slug">Slug</Label>
+              <Input
+                id="cat-slug"
+                name="slug"
+                value={draftSlug}
+                onChange={(e) => setDraftSlug(slugifyCategory(e.target.value))}
+                placeholder="dev-tools"
+                disabled={creating}
+                aria-invalid={!!errors.slug}
+              />
+              {errors.slug && (
+                <p className="text-xs text-destructive">{errors.slug[0]}</p>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Used in URLs. Lowercase, hyphen-separated.
+              </p>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleOpenChange(false)}
+                disabled={creating}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={creating || !draftLabel || !draftSlug}
+              >
+                {creating ? "Creating…" : "Create"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
@@ -297,9 +367,19 @@ function ListEditor({
   )
 }
 
-type Props = { bookmark: Bookmark; allCategories: Category[] }
+type Props = {
+  bookmark: Bookmark
+  allCategories: Category[]
+  suggestedCategory?: string | null
+  onDismissSuggestion?: () => void
+}
 
-export function EditBookmarkForm({ bookmark, allCategories }: Props) {
+export function EditBookmarkForm({
+  bookmark,
+  allCategories,
+  suggestedCategory = null,
+  onDismissSuggestion,
+}: Props) {
   const [state, action, pending] = useActionState<UpdateBookmarkState | null, FormData>(
     updateBookmark,
     null
@@ -308,6 +388,13 @@ export function EditBookmarkForm({ bookmark, allCategories }: Props) {
   const [categories, setCategories] = useState<Category[]>(allCategories)
 
   const errors = state?.ok === false ? state.errors : {}
+
+  const handleCategoryCreated = (created: Category) => {
+    setCategories((cs) => [...cs, created])
+    if (suggestedCategory && created.slug === suggestedCategory) {
+      onDismissSuggestion?.()
+    }
+  }
 
   return (
     <form action={action} className="space-y-6">
@@ -369,9 +456,10 @@ export function EditBookmarkForm({ bookmark, allCategories }: Props) {
               value={category}
               onChange={setCategory}
               categories={categories}
-              onCategoryCreated={(c) => setCategories((cs) => [...cs, c])}
+              onCategoryCreated={handleCategoryCreated}
               disabled={pending}
               invalid={!!errors.category}
+              suggestedCategory={suggestedCategory}
             />
             <p className="text-xs text-muted-foreground">
               Required to publish this bookmark on the public site.

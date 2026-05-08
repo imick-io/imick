@@ -1,9 +1,11 @@
 import { cache } from "react"
-import { asc } from "drizzle-orm"
+import { asc, eq } from "drizzle-orm"
 import { db } from "./db"
 import { categories, type Category } from "./db/schema"
+import { humanizeSlug } from "./bookmarks-meta"
 
 export type { Category }
+export { humanizeSlug }
 
 export const getAllCategories = cache(async (): Promise<Category[]> => {
   return db.select().from(categories).orderBy(asc(categories.label))
@@ -14,13 +16,6 @@ export const getCategoryMap = cache(async (): Promise<Record<string, string>> =>
   return Object.fromEntries(rows.map((r) => [r.slug, r.label]))
 })
 
-export function humanizeSlug(slug: string): string {
-  return slug
-    .split("-")
-    .map((p) => (p ? p[0].toUpperCase() + p.slice(1) : p))
-    .join(" ")
-}
-
 export function getCategoryLabel(
   slug: string | null | undefined,
   map?: Record<string, string>
@@ -28,6 +23,15 @@ export function getCategoryLabel(
   if (!slug) return "Uncategorized"
   if (map && map[slug]) return map[slug]
   return humanizeSlug(slug)
+}
+
+export async function categoryExists(slug: string): Promise<boolean> {
+  const rows = await db
+    .select({ slug: categories.slug })
+    .from(categories)
+    .where(eq(categories.slug, slug))
+    .limit(1)
+  return rows.length > 0
 }
 
 export async function createCategory(input: {

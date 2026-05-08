@@ -1,14 +1,28 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, useEffect, useRef } from "react"
 import { generateWithAi, type GenerateAiState } from "../../actions"
 import { Button } from "@/components/ui/button"
 
-export function GenerateAiButton({ bookmarkId }: { bookmarkId: string }) {
+interface Props {
+  bookmarkId: string
+  onSuggestedCategory?: (slug: string | null) => void
+}
+
+export function GenerateAiButton({ bookmarkId, onSuggestedCategory }: Props) {
   const [state, action, pending] = useActionState<GenerateAiState | null, FormData>(
     generateWithAi,
     null
   )
+
+  const lastHandled = useRef<GenerateAiState | null>(null)
+  useEffect(() => {
+    if (!state || state === lastHandled.current) return
+    lastHandled.current = state
+    if (state.ok && onSuggestedCategory) {
+      onSuggestedCategory(state.suggestedCategory)
+    }
+  }, [state, onSuggestedCategory])
 
   return (
     <form action={action} className="flex flex-col items-end gap-1">

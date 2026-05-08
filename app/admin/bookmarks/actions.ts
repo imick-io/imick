@@ -11,7 +11,7 @@ import { extractPageText } from "@/lib/page-text"
 import { generateBookmarkAi, mergeAiFields } from "@/lib/ai-bookmark"
 import { slugifyCategory } from "@/lib/bookmarks-meta"
 import { getDistinctCategories } from "@/lib/bookmarks"
-import { createCategory as dbCreateCategory } from "@/lib/categories"
+import { createCategory as dbCreateCategory, categoryExists } from "@/lib/categories"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
@@ -281,7 +281,7 @@ export async function refetchMetadata(
 // ─── generate with AI ──────────────────────────────────────────────────────
 
 export type GenerateAiState =
-  | { ok: true; message: string }
+  | { ok: true; message: string; suggestedCategory: string | null }
   | { ok: false; error: string }
 
 export async function generateWithAi(
@@ -342,10 +342,23 @@ export async function generateWithAi(
     force
   )
 
+  let categoryToSave: string | null = merged.category
+  let suggestedCategory: string | null = null
+
+  if (
+    merged.category &&
+    merged.category !== existing.category &&
+    !(await categoryExists(merged.category))
+  ) {
+    suggestedCategory = merged.category
+    categoryToSave = existing.category
+  }
+
   await db
     .update(bookmarks)
     .set({
       ...merged,
+      category: categoryToSave,
       updatedAt: new Date(),
     })
     .where(eq(bookmarks.id, id))
@@ -353,5 +366,9 @@ export async function generateWithAi(
   revalidatePath(`/admin/bookmarks/${id}/edit`)
   revalidateBookmarksPublic()
 
-  return { ok: true, message: "AI generation complete." }
+  return {
+    ok: true,
+    message: "AI generation complete.",
+    suggestedCategory,
+  }
 }

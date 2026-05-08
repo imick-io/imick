@@ -8,6 +8,13 @@ export function slugifyCategory(input: string): string {
     .replace(/^-|-$/g, "")
 }
 
+export function humanizeSlug(slug: string): string {
+  return slug
+    .split("-")
+    .map((p) => (p ? p[0].toUpperCase() + p.slice(1) : p))
+    .join(" ")
+}
+
 export function isReviewed(b: { rating: number | null; reviewText: string | null }) {
   return b.rating != null || b.reviewText != null
 }
