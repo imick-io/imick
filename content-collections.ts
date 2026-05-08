@@ -4,7 +4,7 @@ import rehypePrettyCode, { type Options as RehypePrettyCodeOptions } from "rehyp
 import { codeToHtml, type BundledLanguage } from "shiki"
 import { z } from "zod"
 import { extractHeadings, readingTimeMinutes } from "./lib/mdx-helpers"
-import { validateFolioItems } from "./lib/folios"
+import { validateFolioItems } from "./lib/folios-validation"
 
 const prettyCodeOptions: RehypePrettyCodeOptions = {
   theme: { light: "github-light", dark: "github-dark" },
