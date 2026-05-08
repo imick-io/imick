@@ -338,11 +338,14 @@ export async function generateWithAi(
   console.log("[generateWithAi] AI returned", {
     bookmarkId: id,
     category: aiOutput.category,
+    suggestedCategory: aiOutput.suggestedCategory,
     tagsCount: aiOutput.tags.length,
     prosCount: aiOutput.pros.length,
     consCount: aiOutput.cons.length,
     aiSummaryLength: aiOutput.aiSummary.length,
   })
+
+  const { suggestedCategory: aiSuggested, ...mergeable } = aiOutput
 
   const merged = mergeAiFields(
     {
@@ -352,19 +355,20 @@ export async function generateWithAi(
       cons: existing.cons,
       aiSummary: existing.aiSummary,
     },
-    aiOutput,
+    mergeable,
     force
   )
 
   let categoryToSave: string | null = merged.category
-  let suggestedCategory: string | null = null
+  let suggestedCategory: string | null =
+    aiSuggested &&
+    aiSuggested !== merged.category &&
+    !(await categoryExists(aiSuggested))
+      ? aiSuggested
+      : null
 
-  if (
-    merged.category &&
-    merged.category !== existing.category &&
-    !(await categoryExists(merged.category))
-  ) {
-    suggestedCategory = merged.category
+  if (categoryToSave && !(await categoryExists(categoryToSave))) {
+    suggestedCategory = suggestedCategory ?? categoryToSave
     categoryToSave = existing.category
   }
 

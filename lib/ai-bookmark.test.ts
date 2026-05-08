@@ -27,6 +27,7 @@ const validAiOutput = {
   cons: ["Steep learning curve"],
   aiSummary:
     "A modern developer tool that streamlines web application development with a focus on type safety and component architecture.",
+  suggestedCategory: null,
 }
 
 beforeEach(() => {
@@ -45,7 +46,18 @@ describe("generateBookmarkAi", () => {
       pros: ["Fast build times", "Great documentation"],
       cons: ["Steep learning curve"],
       aiSummary: validAiOutput.aiSummary,
+      suggestedCategory: null,
     })
+  })
+
+  it("propagates a non-null suggestedCategory through unchanged", async () => {
+    mockGenerateObject.mockResolvedValueOnce({
+      object: { ...validAiOutput, suggestedCategory: "ai-productivity" },
+    })
+
+    const result = await generateBookmarkAi(validInput)
+
+    expect(result.suggestedCategory).toBe("ai-productivity")
   })
 
   it("throws when generateObject rejects (malformed response)", async () => {
