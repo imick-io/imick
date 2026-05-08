@@ -62,6 +62,15 @@ export const verification = pgTable("verification", {
 
 // --- Bookmarks ---
 
+export const categories = pgTable("categories", {
+  slug: text("slug").primaryKey(),
+  label: text("label").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+})
+
+export type Category = typeof categories.$inferSelect
+
 export const bookmarks = pgTable("bookmarks", {
   id: uuid("id").primaryKey().defaultRandom(),
   url: text("url").notNull(),
@@ -71,7 +80,9 @@ export const bookmarks = pgTable("bookmarks", {
   logoUrl: text("logo_url"),
   imageUrl: text("image_url"),
   colorHex: text("color_hex"),
-  category: text("category"),
+  category: text("category").references(() => categories.slug, {
+    onDelete: "set null",
+  }),
   tags: text("tags").array().notNull().default(sql`ARRAY[]::text[]`),
   pros: text("pros").array().notNull().default(sql`ARRAY[]::text[]`),
   cons: text("cons").array().notNull().default(sql`ARRAY[]::text[]`),

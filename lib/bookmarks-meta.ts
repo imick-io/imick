@@ -1,28 +1,5 @@
 export type { Bookmark, NewBookmark, BookmarkCategory } from "./db/schema"
 
-export const CATEGORY_LABELS: Record<string, string> = {
-  "dev-tools": "Dev Tools",
-  "libraries-frameworks": "Libraries & Frameworks",
-  "design": "Design",
-  "learning": "Learning",
-  "ai-productivity": "AI & Productivity",
-  "infrastructure": "Infrastructure",
-  "inspiration": "Inspiration",
-  "community": "Community",
-}
-
-export function getCategoryLabel(slug: string | null | undefined): string {
-  if (!slug) return "Uncategorized"
-  return CATEGORY_LABELS[slug] ?? humanizeSlug(slug)
-}
-
-function humanizeSlug(slug: string): string {
-  return slug
-    .split("-")
-    .map((p) => (p ? p[0].toUpperCase() + p.slice(1) : p))
-    .join(" ")
-}
-
 export function slugifyCategory(input: string): string {
   return input
     .toLowerCase()

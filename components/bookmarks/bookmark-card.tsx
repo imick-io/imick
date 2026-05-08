@@ -2,15 +2,17 @@ import Link from "next/link"
 import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
-import { getCategoryLabel, isReviewed, type Bookmark } from "@/lib/bookmarks-meta"
+import { isReviewed, type Bookmark } from "@/lib/bookmarks-meta"
+import { getCategoryLabel } from "@/lib/categories"
 
 type BookmarkCardProps = {
   bookmark: Bookmark
+  categoryMap?: Record<string, string>
 }
 
 const MAX_TAGS = 3
 
-export function BookmarkCard({ bookmark }: BookmarkCardProps) {
+export function BookmarkCard({ bookmark, categoryMap }: BookmarkCardProps) {
   const reviewed = isReviewed(bookmark)
   const detailHref = bookmark.category
     ? `/bookmarks/${bookmark.category}/${bookmark.slug}`
@@ -68,7 +70,7 @@ export function BookmarkCard({ bookmark }: BookmarkCardProps) {
       <div className="flex flex-wrap items-center gap-1.5">
         {bookmark.category && (
           <span className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-            {getCategoryLabel(bookmark.category)}
+            {getCategoryLabel(bookmark.category, categoryMap)}
           </span>
         )}
         {visibleTags.map((tag) => (

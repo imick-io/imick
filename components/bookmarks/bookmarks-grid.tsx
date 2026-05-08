@@ -9,9 +9,10 @@ const PAGE_SIZE = 12
 
 type Props = {
   bookmarks: Bookmark[]
+  categoryMap?: Record<string, string>
 }
 
-export function BookmarksGrid({ bookmarks }: Props) {
+export function BookmarksGrid({ bookmarks, categoryMap }: Props) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
   if (bookmarks.length === 0) {
@@ -33,7 +34,7 @@ export function BookmarksGrid({ bookmarks }: Props) {
       <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((bookmark) => (
           <li key={bookmark.id}>
-            <BookmarkCard bookmark={bookmark} />
+            <BookmarkCard bookmark={bookmark} categoryMap={categoryMap} />
           </li>
         ))}
       </ul>

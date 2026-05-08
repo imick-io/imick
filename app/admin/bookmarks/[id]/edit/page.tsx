@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation"
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
 import { getBookmarkById } from "@/lib/bookmarks"
+import { getAllCategories } from "@/lib/categories"
 import { EditBookmarkForm } from "./edit-bookmark-form"
 import { RefetchButton } from "./refetch-button"
 import { GenerateAiButton } from "./generate-ai-button"
@@ -19,7 +20,10 @@ export default async function EditBookmarkPage({ params }: Props) {
   }
 
   const { id } = await params
-  const bookmark = await getBookmarkById(id)
+  const [bookmark, allCategories] = await Promise.all([
+    getBookmarkById(id),
+    getAllCategories(),
+  ])
   if (!bookmark) notFound()
 
   return (
@@ -46,6 +50,7 @@ export default async function EditBookmarkPage({ params }: Props) {
       <EditBookmarkForm
         key={bookmark.updatedAt.getTime()}
         bookmark={bookmark}
+        allCategories={allCategories}
       />
     </div>
   )

@@ -5,10 +5,10 @@ import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { BookmarkCard } from "@/components/bookmarks/bookmark-card"
 import { siteConfig } from "@/lib/config"
 import {
-  getCategoryLabel,
   getPublishedCategoryCounts,
   getRecentlyReviewedBookmarks,
 } from "@/lib/bookmarks"
+import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
 
 export const revalidate = 3600
 
@@ -35,9 +35,10 @@ export const metadata: Metadata = {
 const HUB_LIMIT = 6
 
 export default async function BookmarksHubPage() {
-  const [recent, counts] = await Promise.all([
+  const [recent, counts, categoryMap] = await Promise.all([
     getRecentlyReviewedBookmarks(HUB_LIMIT),
     getPublishedCategoryCounts(),
+    getCategoryMap(),
   ])
 
   const visibleCategories = Object.keys(counts)
@@ -69,7 +70,7 @@ export default async function BookmarksHubPage() {
           <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {recent.map((bookmark) => (
               <li key={bookmark.id}>
-                <BookmarkCard bookmark={bookmark} />
+                <BookmarkCard bookmark={bookmark} categoryMap={categoryMap} />
               </li>
             ))}
           </ul>
@@ -94,7 +95,7 @@ export default async function BookmarksHubPage() {
                   >
                     <div className="min-w-0">
                       <p className="text-base font-semibold text-foreground group-hover:underline">
-                        {getCategoryLabel(cat)}
+                        {getCategoryLabel(cat, categoryMap)}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {count} {count === 1 ? "bookmark" : "bookmarks"}

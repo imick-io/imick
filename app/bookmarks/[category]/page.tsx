@@ -7,12 +7,12 @@ import { BookmarksGrid } from "@/components/bookmarks/bookmarks-grid"
 import { CategoryFilters } from "@/components/bookmarks/category-filters"
 import { siteConfig } from "@/lib/config"
 import {
-  getCategoryLabel,
   getDistinctCategories,
   getPublishedBookmarksByCategory,
   getPublishedTagsForCategory,
   isBookmarkSort,
 } from "@/lib/bookmarks"
+import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
 
 export const revalidate = 3600
 
@@ -30,7 +30,7 @@ export async function generateMetadata(
   const { category } = await params
   const known = await getDistinctCategories({ publishedOnly: true })
   if (!known.includes(category)) return {}
-  const label = getCategoryLabel(category)
+  const label = getCategoryLabel(category, await getCategoryMap())
   const description = `${label} bookmarks — tools and resources I rely on, curated by ${siteConfig.name}.`
   return {
     title: label,
@@ -68,12 +68,15 @@ export default async function BookmarkCategoryPage({
   const tags = await getPublishedTagsForCategory(category)
   const activeTag = rawTag && tags.includes(rawTag) ? rawTag : undefined
 
-  const bookmarks = await getPublishedBookmarksByCategory(category, {
-    sort,
-    tag: activeTag,
-  })
+  const [bookmarks, categoryMap] = await Promise.all([
+    getPublishedBookmarksByCategory(category, {
+      sort,
+      tag: activeTag,
+    }),
+    getCategoryMap(),
+  ])
 
-  const label = getCategoryLabel(category)
+  const label = getCategoryLabel(category, categoryMap)
 
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
@@ -105,7 +108,11 @@ export default async function BookmarkCategoryPage({
           activeTag={activeTag}
           sort={sort}
         />
-        <BookmarksGrid key={`${activeTag ?? "all"}-${sort}`} bookmarks={bookmarks} />
+        <BookmarksGrid
+          key={`${activeTag ?? "all"}-${sort}`}
+          bookmarks={bookmarks}
+          categoryMap={categoryMap}
+        />
       </section>
     </div>
   )

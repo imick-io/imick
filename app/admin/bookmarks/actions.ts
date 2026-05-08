@@ -11,6 +11,7 @@ import { extractPageText } from "@/lib/page-text"
 import { generateBookmarkAi, mergeAiFields } from "@/lib/ai-bookmark"
 import { slugifyCategory } from "@/lib/bookmarks-meta"
 import { getDistinctCategories } from "@/lib/bookmarks"
+import { createCategory as dbCreateCategory } from "@/lib/categories"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
@@ -38,6 +39,40 @@ function parseTags(raw: string | null | undefined): string[] {
 
 function revalidateBookmarksPublic() {
   revalidatePath("/bookmarks", "layout")
+}
+
+// ─── create category ───────────────────────────────────────────────────────
+
+const createCategorySchema = z.object({
+  slug: z
+    .string()
+    .min(1, "Slug is required")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Must be a kebab-case slug"),
+  label: z.string().min(1, "Label is required"),
+})
+
+export type CreateCategoryState =
+  | { ok: true; slug: string; label: string }
+  | { ok: false; errors: Record<string, string[]> }
+
+export async function createCategory(
+  _prev: CreateCategoryState | null,
+  formData: FormData
+): Promise<CreateCategoryState> {
+  await requireAdmin()
+
+  const parsed = createCategorySchema.safeParse({
+    slug: slugifyCategory(String(formData.get("slug") ?? "")),
+    label: String(formData.get("label") ?? "").trim(),
+  })
+  if (!parsed.success) {
+    return { ok: false, errors: parsed.error.flatten().fieldErrors }
+  }
+
+  const { slug, label } = parsed.data
+  await dbCreateCategory({ slug, label })
+
+  return { ok: true, slug, label }
 }
 
 // ─── create ─────────────────────────────────────────────────────────────────

@@ -1,13 +1,14 @@
 "use client"
 
 import { useActionState, useState } from "react"
-import { updateBookmark, type UpdateBookmarkState } from "../../actions"
 import {
-  type Bookmark,
-  CATEGORY_LABELS,
-  getCategoryLabel,
-  slugifyCategory,
-} from "@/lib/bookmarks-meta"
+  updateBookmark,
+  createCategory,
+  type UpdateBookmarkState,
+  type CreateCategoryState,
+} from "../../actions"
+import { type Bookmark, slugifyCategory } from "@/lib/bookmarks-meta"
+import type { Category } from "@/lib/categories"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -100,46 +101,95 @@ function VisibilityField({
 function CategoryField({
   value,
   onChange,
+  categories,
+  onCategoryCreated,
   disabled,
   invalid,
 }: {
   value: string
   onChange: (next: string) => void
+  categories: Category[]
+  onCategoryCreated: (category: Category) => void
   disabled: boolean
   invalid: boolean
 }) {
-  const options = Object.keys(CATEGORY_LABELS).sort((a, b) =>
-    getCategoryLabel(a).localeCompare(getCategoryLabel(b))
-  )
-  const isCanonical = value === "" || value in CATEGORY_LABELS
-  const [custom, setCustom] = useState<boolean>(!isCanonical)
+  const [createState, createAction, creating] = useActionState<
+    CreateCategoryState | null,
+    FormData
+  >((prev, formData) => {
+    return createCategory(prev, formData).then((result) => {
+      if (result.ok) {
+        const newCategory: Category = {
+          slug: result.slug,
+          label: result.label,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }
+        onCategoryCreated(newCategory)
+        onChange(result.slug)
+        setCreating(false)
+      }
+      return result
+    })
+  }, null)
 
-  if (custom) {
+  const [isCreating, setCreating] = useState<boolean>(false)
+  const [draftSlug, setDraftSlug] = useState<string>("")
+  const [draftLabel, setDraftLabel] = useState<string>("")
+
+  if (isCreating) {
+    const errors = createState?.ok === false ? createState.errors : {}
     return (
-      <div className="flex items-center gap-2">
-        <Input
-          id="category"
-          value={value}
-          onChange={(e) => onChange(slugifyCategory(e.target.value))}
-          placeholder="my-new-category"
-          disabled={disabled}
-          aria-invalid={invalid}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            onChange("")
-            setCustom(false)
-          }}
-          disabled={disabled}
-        >
-          Pick from list
-        </Button>
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Input
+            value={draftLabel}
+            onChange={(e) => {
+              const next = e.target.value
+              setDraftLabel(next)
+              setDraftSlug(slugifyCategory(next))
+            }}
+            placeholder="Label (e.g. Dev Tools)"
+            disabled={creating}
+            aria-invalid={!!errors.label}
+            className="w-auto flex-1"
+          />
+          <Input
+            value={draftSlug}
+            onChange={(e) => setDraftSlug(slugifyCategory(e.target.value))}
+            placeholder="slug"
+            disabled={creating}
+            aria-invalid={!!errors.slug}
+            className="w-40"
+          />
+          <form action={createAction}>
+            <input type="hidden" name="slug" value={draftSlug} />
+            <input type="hidden" name="label" value={draftLabel} />
+            <Button type="submit" size="sm" disabled={creating || !draftLabel || !draftSlug}>
+              {creating ? "Creating…" : "Create"}
+            </Button>
+          </form>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setCreating(false)
+              setDraftSlug("")
+              setDraftLabel("")
+            }}
+            disabled={creating}
+          >
+            Cancel
+          </Button>
+        </div>
+        {errors.label && <p className="text-sm text-destructive">{errors.label[0]}</p>}
+        {errors.slug && <p className="text-sm text-destructive">{errors.slug[0]}</p>}
       </div>
     )
   }
+
+  const sorted = [...categories].sort((a, b) => a.label.localeCompare(b.label))
 
   return (
     <div className="flex items-center gap-2">
@@ -156,9 +206,9 @@ function CategoryField({
           <SelectValue placeholder="Select a category" />
         </SelectTrigger>
         <SelectContent>
-          {options.map((slug) => (
-            <SelectItem key={slug} value={slug}>
-              {getCategoryLabel(slug)}
+          {sorted.map((cat) => (
+            <SelectItem key={cat.slug} value={cat.slug}>
+              {cat.label}
             </SelectItem>
           ))}
         </SelectContent>
@@ -167,10 +217,7 @@ function CategoryField({
         type="button"
         variant="outline"
         size="sm"
-        onClick={() => {
-          onChange("")
-          setCustom(true)
-        }}
+        onClick={() => setCreating(true)}
         disabled={disabled}
       >
         + New
@@ -250,14 +297,15 @@ function ListEditor({
   )
 }
 
-type Props = { bookmark: Bookmark }
+type Props = { bookmark: Bookmark; allCategories: Category[] }
 
-export function EditBookmarkForm({ bookmark }: Props) {
+export function EditBookmarkForm({ bookmark, allCategories }: Props) {
   const [state, action, pending] = useActionState<UpdateBookmarkState | null, FormData>(
     updateBookmark,
     null
   )
   const [category, setCategory] = useState<string>(bookmark.category ?? "")
+  const [categories, setCategories] = useState<Category[]>(allCategories)
 
   const errors = state?.ok === false ? state.errors : {}
 
@@ -320,6 +368,8 @@ export function EditBookmarkForm({ bookmark }: Props) {
             <CategoryField
               value={category}
               onChange={setCategory}
+              categories={categories}
+              onCategoryCreated={(c) => setCategories((cs) => [...cs, c])}
               disabled={pending}
               invalid={!!errors.category}
             />

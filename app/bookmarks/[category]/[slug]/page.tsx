@@ -5,7 +5,8 @@ import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
-import { getPublishedBookmark, getCategoryLabel, isReviewed } from "@/lib/bookmarks"
+import { getPublishedBookmark, isReviewed } from "@/lib/bookmarks"
+import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
 
 export const revalidate = 3600
 
@@ -31,7 +32,7 @@ export default async function BookmarkDetailPage({ params }: Props) {
   const bookmark = await getPublishedBookmark(category, slug)
   if (!bookmark) notFound()
 
-  const categoryLabel = getCategoryLabel(bookmark.category)
+  const categoryLabel = getCategoryLabel(bookmark.category, await getCategoryMap())
 
   const reviewed = isReviewed(bookmark)
 

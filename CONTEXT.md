@@ -58,7 +58,7 @@ Lifecycle is gated by `publishedAt` (same field as Articles, Snippets, Classes, 
 _Avoid_: Link, entry, item.
 
 **Category**:
-The single closed-list bucket a **Bookmark** belongs to (one of `dev-tools`, `libraries-frameworks`, `design`, `learning`, `ai-productivity`, `infrastructure`, `inspiration`, `community`).
+The single bucket a **Bookmark** belongs to. Categories live in their own DB table (`categories(slug, label)`); a bookmark's `category` column is a foreign key to `categories.slug` with `ON DELETE SET NULL`. The seed list (`dev-tools`, `libraries-frameworks`, `design`, `learning`, `ai-productivity`, `infrastructure`, `inspiration`, `community`) is a starting vocabulary, not a closed list — admins can add new ones inline from the bookmark editor.
 _Avoid_: Section, group.
 
 **Tag**:

@@ -6,10 +6,10 @@ import { auth } from "@/lib/auth"
 import {
   getAdminBookmarks,
   getDistinctCategories,
-  getCategoryLabel,
   isReviewed,
   type AdminStatus,
 } from "@/lib/bookmarks"
+import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
 
 export const metadata: Metadata = { title: "Bookmarks" }
 
@@ -29,7 +29,10 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
   const allCategories = await getDistinctCategories()
   const validCategory = category && allCategories.includes(category) ? category : undefined
 
-  const rows = await getAdminBookmarks({ category: validCategory, status: validStatus })
+  const [rows, categoryMap] = await Promise.all([
+    getAdminBookmarks({ category: validCategory, status: validStatus }),
+    getCategoryMap(),
+  ])
 
   return (
     <div className="space-y-6">
@@ -61,7 +64,7 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
               href={buildUrl({ category: cat, status: validStatus })}
               className={`px-2 py-0.5 rounded ${validCategory === cat ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
-              {getCategoryLabel(cat)}
+              {getCategoryLabel(cat, categoryMap)}
             </Link>
           ))}
         </div>
@@ -120,7 +123,7 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
                 </div>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-xs text-muted-foreground">
-                    {getCategoryLabel(b.category)}
+                    {getCategoryLabel(b.category, categoryMap)}
                   </span>
                   {b.tags.length > 0 && (
                     <>
