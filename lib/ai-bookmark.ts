@@ -38,6 +38,13 @@ export async function generateBookmarkAi(
       ? `Existing categories: ${existingCategories.join(", ")}. Strongly prefer reusing one of these. Only invent a new kebab-case category slug if none of the existing ones is a reasonable fit.`
       : `No categories exist yet — invent a concise kebab-case slug for this resource (e.g. "dev-tools", "design", "ai-productivity").`
 
+  const pageTextSection = pageText
+    ? [`Page text:`, pageText]
+    : [
+        `Page text could not be extracted from the URL (the site may be a JS-rendered SPA or block automated fetches).`,
+        `Rely on the URL, description, and your own knowledge of the site or product to infer reasonable metadata.`,
+      ]
+
   const result = await generateObject({
     model: anthropic("claude-sonnet-4-6"),
     temperature: 0.2,
@@ -51,8 +58,7 @@ export async function generateBookmarkAi(
       `URL: ${url}`,
       `Description: ${microlinkDescription}`,
       ``,
-      `Page text:`,
-      `${pageText}`,
+      ...pageTextSection,
       ``,
       categoryVocabulary,
       tagVocabulary,

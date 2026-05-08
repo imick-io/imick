@@ -303,17 +303,22 @@ export async function generateWithAi(
 
   if (!existing) return { ok: false, error: "Bookmark not found." }
 
-  const pageText = await extractPageText(existing.url)
-  if (!pageText) {
-    return {
-      ok: false,
-      error: "Couldn't extract enough text from the page, fill manually.",
-    }
-  }
+  const pageText = (await extractPageText(existing.url)) ?? ""
 
   const allTagRows = await db.select({ tags: bookmarks.tags }).from(bookmarks)
   const existingTags = [...new Set(allTagRows.flatMap((r) => r.tags))]
   const existingCategories = await getDistinctCategories()
+
+  console.log("[generateWithAi] calling AI", {
+    bookmarkId: id,
+    url: existing.url,
+    pageTextLength: pageText.length,
+    pageTextExtracted: pageText.length > 0,
+    microlinkDescriptionLength: (existing.description ?? "").length,
+    existingTagsCount: existingTags.length,
+    existingCategoriesCount: existingCategories.length,
+    force,
+  })
 
   let aiOutput
   try {
@@ -329,6 +334,15 @@ export async function generateWithAi(
     const message = err instanceof Error ? err.message : String(err)
     return { ok: false, error: `AI generation failed: ${message}` }
   }
+
+  console.log("[generateWithAi] AI returned", {
+    bookmarkId: id,
+    category: aiOutput.category,
+    tagsCount: aiOutput.tags.length,
+    prosCount: aiOutput.pros.length,
+    consCount: aiOutput.cons.length,
+    aiSummaryLength: aiOutput.aiSummary.length,
+  })
 
   const merged = mergeAiFields(
     {
@@ -353,6 +367,17 @@ export async function generateWithAi(
     suggestedCategory = merged.category
     categoryToSave = existing.category
   }
+
+  console.log("[generateWithAi] populating fields", {
+    bookmarkId: id,
+    force,
+    category: categoryToSave,
+    suggestedCategory,
+    tags: merged.tags,
+    prosCount: merged.pros.length,
+    consCount: merged.cons.length,
+    aiSummaryLength: merged.aiSummary.length,
+  })
 
   await db
     .update(bookmarks)

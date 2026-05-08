@@ -7,9 +7,13 @@ export async function extractPageText(
   let html: string;
   try {
     const response = await fetch(url);
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.warn("[extractPageText] non-OK response", { url, status: response.status });
+      return null;
+    }
     html = await response.text();
-  } catch {
+  } catch (err) {
+    console.warn("[extractPageText] fetch threw", { url, error: err instanceof Error ? err.message : String(err) });
     return null;
   }
 
@@ -19,6 +23,9 @@ export async function extractPageText(
   text = text.replace(/<[^>]+>/g, " ");
   text = text.replace(/\s+/g, " ").trim();
 
-  if (text.length < MIN_LENGTH) return null;
+  if (text.length < MIN_LENGTH) {
+    console.warn("[extractPageText] text below MIN_LENGTH", { url, length: text.length, minLength: MIN_LENGTH });
+    return null;
+  }
   return text.slice(0, MAX_LENGTH);
 }
