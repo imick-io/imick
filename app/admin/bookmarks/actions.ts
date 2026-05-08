@@ -9,7 +9,7 @@ import { bookmarks } from "@/lib/db/schema"
 import { fetchMicrolink } from "@/lib/microlink"
 import { extractPageText } from "@/lib/page-text"
 import { generateBookmarkAi, mergeAiFields } from "@/lib/ai-bookmark"
-import { slugifyCategory } from "@/lib/bookmarks-meta"
+import { CATEGORY_LABELS } from "@/lib/bookmarks-meta"
 import { getDistinctCategories } from "@/lib/bookmarks"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
@@ -103,7 +103,13 @@ const updateSchema = z.object({
     .regex(/^#[0-9a-fA-F]{3,6}$/, "Must be a hex color like #ff5500")
     .optional()
     .or(z.literal("")),
-  category: z.string().optional(),
+  category: z
+    .string()
+    .optional()
+    .refine(
+      (v) => !v || v in CATEGORY_LABELS,
+      "Category must be one of the canonical slugs."
+    ),
   tags: z.string().optional(),
   pros: z.array(z.string()).default([]),
   cons: z.array(z.string()).default([]),
@@ -162,13 +168,11 @@ export async function updateBookmark(
   const { id, tags, logoUrl, imageUrl, colorHex, description, pros, cons, reviewText, aiSummary, category, ...rest } =
     parsed.data
 
-  const normalizedCategory = category ? slugifyCategory(category) : null
-
   await db
     .update(bookmarks)
     .set({
       ...rest,
-      category: normalizedCategory || null,
+      category: category || null,
       description: description ?? null,
       logoUrl: logoUrl || null,
       imageUrl: imageUrl || null,

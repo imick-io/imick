@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { notFound, redirect } from "next/navigation"
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
-import { getBookmarkById, getDistinctCategories } from "@/lib/bookmarks"
+import { getBookmarkById } from "@/lib/bookmarks"
 import { EditBookmarkForm } from "./edit-bookmark-form"
 import { RefetchButton } from "./refetch-button"
 import { GenerateAiButton } from "./generate-ai-button"
@@ -21,8 +21,6 @@ export default async function EditBookmarkPage({ params }: Props) {
   const { id } = await params
   const bookmark = await getBookmarkById(id)
   if (!bookmark) notFound()
-
-  const knownCategories = await getDistinctCategories()
 
   return (
     <div className="max-w-2xl space-y-8">
@@ -48,7 +46,6 @@ export default async function EditBookmarkPage({ params }: Props) {
       <EditBookmarkForm
         key={bookmark.updatedAt.getTime()}
         bookmark={bookmark}
-        knownCategories={knownCategories}
       />
     </div>
   )

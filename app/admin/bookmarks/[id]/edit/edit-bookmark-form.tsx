@@ -99,19 +99,17 @@ function VisibilityField({
 function CategorySelect({
   value,
   onChange,
-  knownCategories,
   disabled,
   invalid,
 }: {
   value: string
   onChange: (next: string) => void
-  knownCategories: string[]
   disabled: boolean
   invalid: boolean
 }) {
-  const options = Array.from(
-    new Set([...Object.keys(CATEGORY_LABELS), ...knownCategories])
-  ).sort((a, b) => getCategoryLabel(a).localeCompare(getCategoryLabel(b)))
+  const options = Object.keys(CATEGORY_LABELS).sort((a, b) =>
+    getCategoryLabel(a).localeCompare(getCategoryLabel(b))
+  )
 
   return (
     <div className="flex items-center gap-2">
@@ -210,9 +208,9 @@ function ListEditor({
   )
 }
 
-type Props = { bookmark: Bookmark; knownCategories: string[] }
+type Props = { bookmark: Bookmark }
 
-export function EditBookmarkForm({ bookmark, knownCategories }: Props) {
+export function EditBookmarkForm({ bookmark }: Props) {
   const [state, action, pending] = useActionState<UpdateBookmarkState | null, FormData>(
     updateBookmark,
     null
@@ -280,7 +278,6 @@ export function EditBookmarkForm({ bookmark, knownCategories }: Props) {
             <CategorySelect
               value={category}
               onChange={setCategory}
-              knownCategories={knownCategories}
               disabled={pending}
               invalid={!!errors.category}
             />
