@@ -1,9 +1,9 @@
 import Link from "next/link"
-import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
-import { isReviewed, type Bookmark } from "@/lib/bookmarks-meta"
+import { getHostname, isReviewed, type Bookmark } from "@/lib/bookmarks-meta"
 import { getCategoryLabel } from "@/lib/categories"
+import { BookmarkLogo } from "./bookmark-logo"
 
 type BookmarkCardProps = {
   bookmark: Bookmark
@@ -18,6 +18,7 @@ export function BookmarkCard({ bookmark, categoryMap }: BookmarkCardProps) {
     ? `/bookmarks/${bookmark.category}/${bookmark.slug}`
     : bookmark.url
   const visibleTags = bookmark.tags.slice(0, MAX_TAGS)
+  const hostname = getHostname(bookmark.url)
 
   return (
     <div
@@ -29,27 +30,28 @@ export function BookmarkCard({ bookmark, categoryMap }: BookmarkCardProps) {
       }
     >
       <div className="flex items-start gap-3">
-        {bookmark.logoUrl ? (
-          <Image
-            src={bookmark.logoUrl}
-            alt=""
-            width={40}
-            height={40}
-            className="h-10 w-10 shrink-0 rounded-md border border-border bg-background object-contain"
-            unoptimized
-          />
-        ) : (
-          <div
-            aria-hidden
-            className="h-10 w-10 shrink-0 rounded-md border border-border bg-muted"
-          />
-        )}
+        <BookmarkLogo
+          logoUrl={bookmark.logoUrl}
+          url={bookmark.url}
+          colorHex={bookmark.colorHex}
+          size={40}
+        />
         <div className="min-w-0 flex-1">
-          <h3 className="text-base font-semibold leading-snug text-foreground">
+          <h3 className="line-clamp-3 text-base font-semibold leading-snug text-foreground">
             <Link href={detailHref} className="hover:underline">
               {bookmark.title}
             </Link>
           </h3>
+          {hostname ? (
+            <a
+              href={bookmark.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-0.5 inline-block max-w-full truncate text-xs text-muted-foreground hover:text-foreground hover:underline"
+            >
+              {hostname}
+            </a>
+          ) : null}
           {bookmark.description ? (
             <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
               {bookmark.description}

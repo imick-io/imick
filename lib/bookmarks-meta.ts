@@ -15,6 +15,14 @@ export function humanizeSlug(slug: string): string {
     .join(" ")
 }
 
+export function getHostname(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "")
+  } catch {
+    return ""
+  }
+}
+
 export function isReviewed(b: { rating: number | null; reviewText: string | null }) {
   return b.rating != null || b.reviewText != null
 }

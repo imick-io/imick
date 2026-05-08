@@ -1,11 +1,12 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import Image from "next/image"
 import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
+import { BookmarkLogo } from "@/components/bookmarks/bookmark-logo"
 import { getPublishedBookmark, isReviewed } from "@/lib/bookmarks"
+import { getHostname } from "@/lib/bookmarks-meta"
 import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
 
 export const revalidate = 3600
@@ -35,6 +36,7 @@ export default async function BookmarkDetailPage({ params }: Props) {
   const categoryLabel = getCategoryLabel(bookmark.category, await getCategoryMap())
 
   const reviewed = isReviewed(bookmark)
+  const hostname = getHostname(bookmark.url)
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-12 space-y-8">
@@ -55,18 +57,25 @@ export default async function BookmarkDetailPage({ params }: Props) {
         style={bookmark.colorHex ? { borderLeftColor: bookmark.colorHex, borderLeftWidth: 4 } : {}}
       >
         <div className="flex items-start gap-4">
-          {bookmark.logoUrl && (
-            <Image
-              src={bookmark.logoUrl}
-              alt={`${bookmark.title} logo`}
-              width={48}
-              height={48}
-              className="rounded-lg shrink-0"
-              unoptimized
-            />
-          )}
+          <BookmarkLogo
+            logoUrl={bookmark.logoUrl}
+            url={bookmark.url}
+            colorHex={bookmark.colorHex}
+            size={48}
+            rounded="rounded-lg"
+          />
           <div className="min-w-0 space-y-1">
             <h1 className="text-2xl font-bold leading-tight">{bookmark.title}</h1>
+            {hostname ? (
+              <a
+                href={bookmark.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block max-w-full truncate text-sm text-muted-foreground hover:text-foreground hover:underline"
+              >
+                {hostname}
+              </a>
+            ) : null}
             {bookmark.description && (
               <p className="text-muted-foreground">{bookmark.description}</p>
             )}
