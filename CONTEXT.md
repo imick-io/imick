@@ -54,6 +54,7 @@ _Avoid_: Read me, Overview (reserved for Classes), Intro, Foreword, Notes (reser
 
 **Bookmark**:
 A saved tool, library, site, or resource that the site owner finds useful, with optional human opinion.
+Lifecycle is gated by `publishedAt` (same field as Articles, Snippets, Classes, and Folios). Future-dated Bookmarks are hidden in production and visible in `next dev`, matching the Article/Snippet rule rather than the "Coming soon" rule used for Classes. The admin list exposes three states: Draft (`publishedAt IS NULL`), Scheduled (`publishedAt > now()`), Published (`publishedAt <= now()`).
 _Avoid_: Link, entry, item.
 
 **Category**:

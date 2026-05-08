@@ -2,11 +2,154 @@
 
 import { useActionState, useState } from "react"
 import { updateBookmark, type UpdateBookmarkState } from "../../actions"
-import { type Bookmark } from "@/lib/bookmarks-meta"
+import {
+  type Bookmark,
+  CATEGORY_LABELS,
+  getCategoryLabel,
+} from "@/lib/bookmarks-meta"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+function toDatetimeLocal(date: Date): string {
+  const pad = (n: number) => n.toString().padStart(2, "0")
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
+function VisibilityField({
+  publishedAt,
+  disabled,
+  canPublish,
+  blockedReason,
+}: {
+  publishedAt: Date | null
+  disabled: boolean
+  canPublish: boolean
+  blockedReason: string
+}) {
+  const initial = publishedAt ? toDatetimeLocal(new Date(publishedAt)) : ""
+  const [value, setValue] = useState<string>(initial)
+
+  const inputDisabled = disabled || !canPublish
+
+  let hint: string
+  if (!canPublish) {
+    hint = blockedReason
+  } else if (!value) {
+    hint = "Draft, not publicly visible"
+  } else {
+    const parsed = new Date(value)
+    if (Number.isNaN(parsed.getTime())) {
+      hint = "Invalid date"
+    } else if (parsed > new Date()) {
+      hint = `Scheduled for ${parsed.toLocaleString()}, hidden in production until then`
+    } else {
+      hint = `Published since ${parsed.toLocaleString()}`
+    }
+  }
+
+  return (
+    <fieldset className="space-y-2">
+      <legend className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+        Visibility
+      </legend>
+      <Label htmlFor="publishedAt">Published at</Label>
+      <div className="flex flex-wrap items-center gap-2">
+        <Input
+          id="publishedAt"
+          name="publishedAt"
+          type="datetime-local"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={inputDisabled}
+          className="w-auto"
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setValue(toDatetimeLocal(new Date()))}
+          disabled={inputDisabled}
+        >
+          Set to now
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setValue("")}
+          disabled={inputDisabled || !value}
+        >
+          Clear
+        </Button>
+      </div>
+      <p className="text-xs text-muted-foreground">{hint}</p>
+    </fieldset>
+  )
+}
+
+function CategorySelect({
+  value,
+  onChange,
+  knownCategories,
+  disabled,
+  invalid,
+}: {
+  value: string
+  onChange: (next: string) => void
+  knownCategories: string[]
+  disabled: boolean
+  invalid: boolean
+}) {
+  const options = Array.from(
+    new Set([...Object.keys(CATEGORY_LABELS), ...knownCategories])
+  ).sort((a, b) => getCategoryLabel(a).localeCompare(getCategoryLabel(b)))
+
+  return (
+    <div className="flex items-center gap-2">
+      <Select
+        value={value || undefined}
+        onValueChange={(next) => onChange(next ?? "")}
+        disabled={disabled}
+      >
+        <SelectTrigger
+          id="category"
+          className="w-full"
+          aria-invalid={invalid}
+        >
+          <SelectValue placeholder="Select a category" />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((slug) => (
+            <SelectItem key={slug} value={slug}>
+              {getCategoryLabel(slug)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {value && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => onChange("")}
+          disabled={disabled}
+          aria-label="Clear category"
+        >
+          Clear
+        </Button>
+      )}
+    </div>
+  )
+}
 
 function ListEditor({
   name,
@@ -74,6 +217,7 @@ export function EditBookmarkForm({ bookmark, knownCategories }: Props) {
     updateBookmark,
     null
   )
+  const [category, setCategory] = useState<string>(bookmark.category ?? "")
 
   const errors = state?.ok === false ? state.errors : {}
 
@@ -132,22 +276,16 @@ export function EditBookmarkForm({ bookmark, knownCategories }: Props) {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Input
-              id="category"
-              name="category"
-              list="known-categories"
-              defaultValue={bookmark.category ?? ""}
-              placeholder="dev-tools"
+            <input type="hidden" name="category" value={category} />
+            <CategorySelect
+              value={category}
+              onChange={setCategory}
+              knownCategories={knownCategories}
               disabled={pending}
-              aria-invalid={!!errors.category}
+              invalid={!!errors.category}
             />
-            <datalist id="known-categories">
-              {knownCategories.map((cat) => (
-                <option key={cat} value={cat} />
-              ))}
-            </datalist>
             <p className="text-xs text-muted-foreground">
-              kebab-case slug. Pick an existing one or invent a new one. Optional.
+              Required to publish this bookmark on the public site.
             </p>
             {errors.category && <p className="text-sm text-destructive">{errors.category[0]}</p>}
           </div>
@@ -299,25 +437,16 @@ export function EditBookmarkForm({ bookmark, knownCategories }: Props) {
         </div>
       </fieldset>
 
-      {/* ── Publish toggle ── */}
-      <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-          Visibility
-        </legend>
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            name="published"
-            defaultChecked={bookmark.published}
-            disabled={pending}
-            className="size-4 rounded accent-primary"
-          />
-          <span className="text-sm font-medium">Published</span>
-          <span className="text-xs text-muted-foreground">
-            {bookmark.published ? "Visible on public site" : "Draft — not publicly visible"}
-          </span>
-        </label>
-      </fieldset>
+      {/* ── Visibility ── */}
+      <VisibilityField
+        publishedAt={bookmark.publishedAt}
+        disabled={pending}
+        canPublish={!!category}
+        blockedReason="Set a category before publishing this bookmark."
+      />
+      {errors.publishedAt && (
+        <p className="text-sm text-destructive">{errors.publishedAt[0]}</p>
+      )}
 
       <div className="flex items-center gap-3 pt-2">
         <Button type="submit" disabled={pending}>

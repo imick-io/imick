@@ -78,7 +78,7 @@ export const bookmarks = pgTable("bookmarks", {
   aiSummary: text("ai_summary"),
   rating: integer("rating"),
   reviewText: text("review_text"),
-  published: boolean("published").notNull().default(false),
+  publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 })

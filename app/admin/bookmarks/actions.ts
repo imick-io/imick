@@ -36,6 +36,10 @@ function parseTags(raw: string | null | undefined): string[] {
   return raw.split(",").map((t) => t.trim()).filter(Boolean)
 }
 
+function revalidateBookmarksPublic() {
+  revalidatePath("/bookmarks", "layout")
+}
+
 // ─── create ─────────────────────────────────────────────────────────────────
 
 const createSchema = z.object({
@@ -78,7 +82,7 @@ export async function createBookmark(
       colorHex: meta.colorHex,
       category: null,
       tags: tagList,
-      published: false,
+      publishedAt: null,
     })
     .returning({ id: bookmarks.id })
 
@@ -110,8 +114,18 @@ const updateSchema = z.object({
     .refine((v) => v === null || (v >= 1 && v <= 5), "Rating must be 1–5"),
   reviewText: z.string().optional(),
   aiSummary: z.string().optional(),
-  published: z.boolean(),
-})
+  publishedAt: z
+    .string()
+    .optional()
+    .transform((v) => {
+      if (!v) return null
+      const d = new Date(v)
+      return Number.isNaN(d.getTime()) ? null : d
+    }),
+}).refine(
+  (data) => !(data.publishedAt && !data.category),
+  { path: ["publishedAt"], message: "Set a category before publishing." }
+)
 
 export type UpdateBookmarkState =
   | { ok: true }
@@ -138,7 +152,7 @@ export async function updateBookmark(
     rating: formData.get("rating") || undefined,
     reviewText: formData.get("reviewText") || undefined,
     aiSummary: formData.get("aiSummary") || undefined,
-    published: formData.get("published") === "on",
+    publishedAt: formData.get("publishedAt") || undefined,
   })
 
   if (!parsed.success) {
@@ -168,6 +182,10 @@ export async function updateBookmark(
     })
     .where(eq(bookmarks.id, id))
 
+  revalidatePath(`/admin/bookmarks/${id}/edit`)
+  revalidatePath("/admin/bookmarks")
+  revalidateBookmarksPublic()
+
   return { ok: true }
 }
 
@@ -178,6 +196,7 @@ export async function deleteBookmark(formData: FormData): Promise<void> {
   const id = formData.get("id") as string
   if (!id) redirect("/admin/bookmarks")
   await db.delete(bookmarks).where(eq(bookmarks.id, id))
+  revalidateBookmarksPublic()
   redirect("/admin/bookmarks")
 }
 
@@ -217,6 +236,9 @@ export async function refetchMetadata(
       updatedAt: new Date(),
     })
     .where(eq(bookmarks.id, id))
+
+  revalidatePath(`/admin/bookmarks/${id}/edit`)
+  revalidateBookmarksPublic()
 
   return { ok: true, message: "Metadata refreshed successfully." }
 }
@@ -294,6 +316,7 @@ export async function generateWithAi(
     .where(eq(bookmarks.id, id))
 
   revalidatePath(`/admin/bookmarks/${id}/edit`)
+  revalidateBookmarksPublic()
 
   return { ok: true, message: "AI generation complete." }
 }

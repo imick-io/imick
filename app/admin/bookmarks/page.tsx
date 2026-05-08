@@ -8,6 +8,7 @@ import {
   getDistinctCategories,
   getCategoryLabel,
   isReviewed,
+  type AdminStatus,
 } from "@/lib/bookmarks"
 
 export const metadata: Metadata = { title: "Bookmarks" }
@@ -23,8 +24,8 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
   }
 
   const { category, status } = await searchParams
-  const validStatus =
-    status === "published" || status === "draft" ? status : "all"
+  const validStatus: AdminStatus =
+    status === "published" || status === "draft" || status === "scheduled" ? status : "all"
   const allCategories = await getDistinctCategories()
   const validCategory = category && allCategories.includes(category) ? category : undefined
 
@@ -68,7 +69,7 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
         {/* status filter */}
         <div className="flex items-center gap-2 text-sm">
           <span className="text-muted-foreground">Status:</span>
-          {(["all", "published", "draft"] as const).map((s) => (
+          {(["all", "draft", "scheduled", "published"] as const).map((s) => (
             <Link
               key={s}
               href={buildUrl({ category: validCategory, status: s === "all" ? undefined : s })}
@@ -101,9 +102,14 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
                   >
                     {b.title}
                   </Link>
-                  {!b.published && (
+                  {b.publishedAt === null && (
                     <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground shrink-0">
                       Draft
+                    </span>
+                  )}
+                  {b.publishedAt !== null && b.publishedAt > new Date() && (
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
+                      Scheduled
                     </span>
                   )}
                   {isReviewed(b) && (

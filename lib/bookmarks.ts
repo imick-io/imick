@@ -6,12 +6,28 @@ import {
   or,
   asc,
   desc,
+  isNull,
   isNotNull,
+  lte,
+  gt,
   sql,
 } from "drizzle-orm"
+import type { SQL } from "drizzle-orm"
 import type { BookmarkSort } from "./bookmarks-meta"
 
 export * from "./bookmarks-meta"
+
+export type AdminStatus = "all" | "draft" | "scheduled" | "published"
+
+function isPubliclyVisible(): SQL {
+  if (process.env.NODE_ENV !== "production") {
+    return isNotNull(bookmarks.publishedAt)
+  }
+  return and(
+    isNotNull(bookmarks.publishedAt),
+    lte(bookmarks.publishedAt, sql`now()`)
+  )!
+}
 
 export async function getBookmarkById(id: string) {
   const rows = await db
@@ -24,16 +40,23 @@ export async function getBookmarkById(id: string) {
 
 export async function getAdminBookmarks(opts?: {
   category?: string
-  status?: "published" | "draft" | "all"
+  status?: AdminStatus
 }) {
-  const conditions = []
+  const conditions: SQL[] = []
 
   if (opts?.category) {
     conditions.push(eq(bookmarks.category, opts.category))
   }
 
-  if (opts?.status === "published") conditions.push(eq(bookmarks.published, true))
-  else if (opts?.status === "draft") conditions.push(eq(bookmarks.published, false))
+  if (opts?.status === "draft") {
+    conditions.push(isNull(bookmarks.publishedAt))
+  } else if (opts?.status === "scheduled") {
+    conditions.push(isNotNull(bookmarks.publishedAt))
+    conditions.push(gt(bookmarks.publishedAt, sql`now()`))
+  } else if (opts?.status === "published") {
+    conditions.push(isNotNull(bookmarks.publishedAt))
+    conditions.push(lte(bookmarks.publishedAt, sql`now()`))
+  }
 
   const rows = await db
     .select()
@@ -48,7 +71,7 @@ export async function getDistinctCategories(opts?: {
   publishedOnly?: boolean
 }): Promise<string[]> {
   const where = opts?.publishedOnly
-    ? and(isNotNull(bookmarks.category), eq(bookmarks.published, true))
+    ? and(isNotNull(bookmarks.category), isPubliclyVisible())
     : isNotNull(bookmarks.category)
 
   const rows = await db
@@ -70,7 +93,7 @@ export async function getPublishedBookmark(category: string, slug: string) {
       and(
         eq(bookmarks.slug, slug),
         eq(bookmarks.category, category),
-        eq(bookmarks.published, true)
+        isPubliclyVisible()
       )
     )
     .limit(1)
@@ -84,7 +107,7 @@ export async function getRecentlyReviewedBookmarks(limit = 6) {
     .from(bookmarks)
     .where(
       and(
-        eq(bookmarks.published, true),
+        isPubliclyVisible(),
         isNotNull(bookmarks.category),
         or(isNotNull(bookmarks.rating), isNotNull(bookmarks.reviewText))
       )
@@ -100,7 +123,7 @@ export async function getPublishedCategoryCounts(): Promise<Record<string, numbe
       count: sql<number>`count(*)::int`,
     })
     .from(bookmarks)
-    .where(and(eq(bookmarks.published, true), isNotNull(bookmarks.category)))
+    .where(and(isPubliclyVisible(), isNotNull(bookmarks.category)))
     .groupBy(bookmarks.category)
 
   const counts: Record<string, number> = {}
@@ -115,9 +138,9 @@ export async function getPublishedBookmarksByCategory(
   opts?: { sort?: BookmarkSort; tag?: string }
 ) {
   const sort: BookmarkSort = opts?.sort ?? "newest"
-  const conditions = [
+  const conditions: SQL[] = [
     eq(bookmarks.category, category),
-    eq(bookmarks.published, true),
+    isPubliclyVisible(),
   ]
   if (opts?.tag) {
     conditions.push(sql`${bookmarks.tags} @> ARRAY[${opts.tag}]::text[]`)
@@ -139,7 +162,7 @@ export async function getAllPublishedBookmarks() {
   return db
     .select()
     .from(bookmarks)
-    .where(and(eq(bookmarks.published, true), isNotNull(bookmarks.category)))
+    .where(and(isPubliclyVisible(), isNotNull(bookmarks.category)))
     .orderBy(desc(bookmarks.updatedAt))
 }
 
@@ -147,7 +170,7 @@ export async function getPublishedTagsForCategory(category: string): Promise<str
   const rows = await db
     .select({ tags: bookmarks.tags })
     .from(bookmarks)
-    .where(and(eq(bookmarks.category, category), eq(bookmarks.published, true)))
+    .where(and(eq(bookmarks.category, category), isPubliclyVisible()))
 
   const set = new Set<string>()
   for (const row of rows) for (const tag of row.tags) set.add(tag)
