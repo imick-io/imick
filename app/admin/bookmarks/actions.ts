@@ -5,11 +5,12 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { eq } from "drizzle-orm"
 import { db } from "@/lib/db"
-import { bookmarks, categoryEnum } from "@/lib/db/schema"
+import { bookmarks } from "@/lib/db/schema"
 import { fetchMicrolink } from "@/lib/microlink"
-import { parseProsConsText } from "@/lib/bookmark-helpers"
 import { extractPageText } from "@/lib/page-text"
 import { generateBookmarkAi, mergeAiFields } from "@/lib/ai-bookmark"
+import { slugifyCategory } from "@/lib/bookmarks-meta"
+import { getDistinctCategories } from "@/lib/bookmarks"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
@@ -39,7 +40,6 @@ function parseTags(raw: string | null | undefined): string[] {
 
 const createSchema = z.object({
   url: z.string().url("Must be a valid URL"),
-  category: z.enum(categoryEnum.enumValues),
   tags: z.string().optional(),
 })
 
@@ -55,14 +55,13 @@ export async function createBookmark(
 
   const parsed = createSchema.safeParse({
     url: formData.get("url"),
-    category: formData.get("category"),
     tags: formData.get("tags"),
   })
   if (!parsed.success) {
     return { ok: false, errors: parsed.error.flatten().fieldErrors }
   }
 
-  const { url, category, tags } = parsed.data
+  const { url, tags } = parsed.data
   const meta = await fetchMicrolink(url)
   const tagList = parseTags(tags)
   const slug = `${slugify(meta.title || new URL(url).hostname)}-${Date.now().toString(36)}`
@@ -77,7 +76,7 @@ export async function createBookmark(
       logoUrl: meta.logoUrl,
       imageUrl: meta.imageUrl,
       colorHex: meta.colorHex,
-      category,
+      category: null,
       tags: tagList,
       published: false,
     })
@@ -100,10 +99,10 @@ const updateSchema = z.object({
     .regex(/^#[0-9a-fA-F]{3,6}$/, "Must be a hex color like #ff5500")
     .optional()
     .or(z.literal("")),
-  category: z.enum(categoryEnum.enumValues),
+  category: z.string().optional(),
   tags: z.string().optional(),
-  pros: z.string().optional(),
-  cons: z.string().optional(),
+  pros: z.array(z.string()).default([]),
+  cons: z.array(z.string()).default([]),
   rating: z
     .string()
     .optional()
@@ -132,10 +131,10 @@ export async function updateBookmark(
     logoUrl: formData.get("logoUrl") || "",
     imageUrl: formData.get("imageUrl") || "",
     colorHex: formData.get("colorHex") || "",
-    category: formData.get("category"),
+    category: formData.get("category") || undefined,
     tags: formData.get("tags") || undefined,
-    pros: formData.get("pros") || undefined,
-    cons: formData.get("cons") || undefined,
+    pros: formData.getAll("pros").filter((v): v is string => typeof v === "string"),
+    cons: formData.getAll("cons").filter((v): v is string => typeof v === "string"),
     rating: formData.get("rating") || undefined,
     reviewText: formData.get("reviewText") || undefined,
     aiSummary: formData.get("aiSummary") || undefined,
@@ -146,20 +145,23 @@ export async function updateBookmark(
     return { ok: false, errors: parsed.error.flatten().fieldErrors }
   }
 
-  const { id, tags, logoUrl, imageUrl, colorHex, description, pros, cons, reviewText, aiSummary, ...rest } =
+  const { id, tags, logoUrl, imageUrl, colorHex, description, pros, cons, reviewText, aiSummary, category, ...rest } =
     parsed.data
+
+  const normalizedCategory = category ? slugifyCategory(category) : null
 
   await db
     .update(bookmarks)
     .set({
       ...rest,
+      category: normalizedCategory || null,
       description: description ?? null,
       logoUrl: logoUrl || null,
       imageUrl: imageUrl || null,
       colorHex: colorHex || null,
       tags: parseTags(tags),
-      pros: parseProsConsText(pros),
-      cons: parseProsConsText(cons),
+      pros: pros.map((s) => s.trim()).filter(Boolean),
+      cons: cons.map((s) => s.trim()).filter(Boolean),
       reviewText: reviewText ?? null,
       aiSummary: aiSummary ?? null,
       updatedAt: new Date(),
@@ -254,6 +256,7 @@ export async function generateWithAi(
 
   const allTagRows = await db.select({ tags: bookmarks.tags }).from(bookmarks)
   const existingTags = [...new Set(allTagRows.flatMap((r) => r.tags))]
+  const existingCategories = await getDistinctCategories()
 
   let aiOutput
   try {
@@ -262,9 +265,12 @@ export async function generateWithAi(
       pageText,
       microlinkDescription: existing.description ?? "",
       existingTags,
+      existingCategories,
     })
-  } catch {
-    return { ok: false, error: "AI generation failed. Please try again." }
+  } catch (err) {
+    console.error("generateBookmarkAi failed", err)
+    const message = err instanceof Error ? err.message : String(err)
+    return { ok: false, error: `AI generation failed: ${message}` }
   }
 
   const merged = mergeAiFields(

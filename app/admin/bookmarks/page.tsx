@@ -3,8 +3,12 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { headers } from "next/headers"
 import { auth } from "@/lib/auth"
-import { getAdminBookmarks, CATEGORY_LABELS, isReviewed } from "@/lib/bookmarks"
-import { categoryEnum } from "@/lib/db/schema"
+import {
+  getAdminBookmarks,
+  getDistinctCategories,
+  getCategoryLabel,
+  isReviewed,
+} from "@/lib/bookmarks"
 
 export const metadata: Metadata = { title: "Bookmarks" }
 
@@ -21,9 +25,8 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
   const { category, status } = await searchParams
   const validStatus =
     status === "published" || status === "draft" ? status : "all"
-  const validCategory = (categoryEnum.enumValues as readonly string[]).includes(category ?? "")
-    ? category
-    : undefined
+  const allCategories = await getDistinctCategories()
+  const validCategory = category && allCategories.includes(category) ? category : undefined
 
   const rows = await getAdminBookmarks({ category: validCategory, status: validStatus })
 
@@ -51,13 +54,13 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
           >
             All
           </Link>
-          {categoryEnum.enumValues.map((cat) => (
+          {allCategories.map((cat) => (
             <Link
               key={cat}
               href={buildUrl({ category: cat, status: validStatus })}
               className={`px-2 py-0.5 rounded ${validCategory === cat ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
-              {CATEGORY_LABELS[cat]}
+              {getCategoryLabel(cat)}
             </Link>
           ))}
         </div>
@@ -111,7 +114,7 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
                 </div>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-xs text-muted-foreground">
-                    {CATEGORY_LABELS[b.category]}
+                    {getCategoryLabel(b.category)}
                   </span>
                   {b.tags.length > 0 && (
                     <>

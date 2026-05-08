@@ -1,6 +1,5 @@
 import {
   pgTable,
-  pgEnum,
   text,
   timestamp,
   boolean,
@@ -63,17 +62,6 @@ export const verification = pgTable("verification", {
 
 // --- Bookmarks ---
 
-export const categoryEnum = pgEnum("category", [
-  "dev-tools",
-  "libraries-frameworks",
-  "design",
-  "learning",
-  "ai-productivity",
-  "infrastructure",
-  "inspiration",
-  "community",
-])
-
 export const bookmarks = pgTable("bookmarks", {
   id: uuid("id").primaryKey().defaultRandom(),
   url: text("url").notNull(),
@@ -83,7 +71,7 @@ export const bookmarks = pgTable("bookmarks", {
   logoUrl: text("logo_url"),
   imageUrl: text("image_url"),
   colorHex: text("color_hex"),
-  category: categoryEnum("category").notNull(),
+  category: text("category"),
   tags: text("tags").array().notNull().default(sql`ARRAY[]::text[]`),
   pros: text("pros").array().notNull().default(sql`ARRAY[]::text[]`),
   cons: text("cons").array().notNull().default(sql`ARRAY[]::text[]`),
@@ -97,4 +85,4 @@ export const bookmarks = pgTable("bookmarks", {
 
 export type Bookmark = typeof bookmarks.$inferSelect
 export type NewBookmark = typeof bookmarks.$inferInsert
-export type BookmarkCategory = (typeof categoryEnum.enumValues)[number]
+export type BookmarkCategory = string

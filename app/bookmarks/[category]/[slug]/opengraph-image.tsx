@@ -1,5 +1,5 @@
 import { ogContentType, ogSize, renderBookmarkCover } from "@/lib/og"
-import { CATEGORY_LABELS, getPublishedBookmark, isCategory } from "@/lib/bookmarks"
+import { getPublishedBookmark, getCategoryLabel } from "@/lib/bookmarks"
 
 export const contentType = ogContentType
 export const size = ogSize
@@ -10,7 +10,7 @@ export default async function Image(
   const { category, slug } = await params
   const bookmark = await getPublishedBookmark(category, slug)
 
-  const eyebrow = isCategory(category) ? CATEGORY_LABELS[category] : "Bookmark"
+  const eyebrow = bookmark ? getCategoryLabel(bookmark.category) : "Bookmark"
   const title = bookmark?.title ?? "Bookmark"
 
   return renderBookmarkCover({

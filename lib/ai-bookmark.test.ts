@@ -17,10 +17,11 @@ const validInput = {
   pageText: "This is a great developer tool for building web apps.",
   microlinkDescription: "A modern web development toolkit",
   existingTags: ["typescript", "react", "testing"],
+  existingCategories: ["dev-tools", "design", "learning"],
 }
 
 const validAiOutput = {
-  category: "dev-tools" as const,
+  category: "dev-tools",
   tags: ["TypeScript", " React "],
   pros: ["Fast build times", "Great documentation"],
   cons: ["Steep learning curve"],
@@ -57,7 +58,7 @@ describe("generateBookmarkAi", () => {
     )
   })
 
-  it("includes URL, microlink description, and existing tags in the prompt", async () => {
+  it("includes URL, microlink description, existing tags, and existing categories in the prompt", async () => {
     mockGenerateObject.mockResolvedValueOnce({ object: validAiOutput })
 
     await generateBookmarkAi(validInput)
@@ -69,6 +70,9 @@ describe("generateBookmarkAi", () => {
     expect(call.prompt).toContain("typescript")
     expect(call.prompt).toContain("react")
     expect(call.prompt).toContain("testing")
+    expect(call.prompt).toContain("dev-tools")
+    expect(call.prompt).toContain("design")
+    expect(call.prompt).toContain("learning")
   })
 
   it("sets temperature to approximately 0.2", async () => {
@@ -91,7 +95,7 @@ describe("mergeAiFields", () => {
   }
 
   const fullExisting = {
-    category: "dev-tools" as const,
+    category: "dev-tools",
     tags: ["react", "typescript"],
     pros: ["Fast", "Reliable"],
     cons: ["Complex setup"],
@@ -99,7 +103,7 @@ describe("mergeAiFields", () => {
   }
 
   const emptyExisting = {
-    category: "dev-tools" as const,
+    category: null,
     tags: [] as string[],
     pros: [] as string[],
     cons: [] as string[],
@@ -125,9 +129,14 @@ describe("mergeAiFields", () => {
     expect(result.aiSummary).toBe(aiOutput.aiSummary)
   })
 
-  it("preserves category in non-force mode (category is always populated)", () => {
+  it("fills category from AI when existing is null (non-force mode)", () => {
     const result = mergeAiFields(emptyExisting, aiOutput, false)
-    expect(result.category).toBe(emptyExisting.category)
+    expect(result.category).toBe(aiOutput.category)
+  })
+
+  it("preserves existing category when set (non-force mode)", () => {
+    const result = mergeAiFields(fullExisting, aiOutput, false)
+    expect(result.category).toBe(fullExisting.category)
   })
 
   it("preserves all populated fields when force is false", () => {

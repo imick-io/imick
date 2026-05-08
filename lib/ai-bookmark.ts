@@ -1,10 +1,12 @@
 import { generateObject } from "ai"
 import { anthropic } from "@ai-sdk/anthropic"
 import { z } from "zod"
-import { categoryEnum } from "@/lib/db/schema"
 
 const aiBookmarkSchema = z.object({
-  category: z.enum(categoryEnum.enumValues),
+  category: z
+    .string()
+    .min(1)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Category must be a kebab-case slug"),
   tags: z.array(z.string()).min(1).max(5),
   pros: z.array(z.string()).min(2).max(4),
   cons: z.array(z.string()).min(0).max(4),
@@ -18,17 +20,23 @@ interface GenerateBookmarkAiInput {
   pageText: string
   microlinkDescription: string
   existingTags: string[]
+  existingCategories: string[]
 }
 
 export async function generateBookmarkAi(
   input: GenerateBookmarkAiInput
 ): Promise<AiBookmarkOutput> {
-  const { url, pageText, microlinkDescription, existingTags } = input
+  const { url, pageText, microlinkDescription, existingTags, existingCategories } = input
 
   const tagVocabulary =
     existingTags.length > 0
       ? `Existing tag vocabulary: ${existingTags.join(", ")}. Prefer reusing existing tags when they fit.`
       : ""
+
+  const categoryVocabulary =
+    existingCategories.length > 0
+      ? `Existing categories: ${existingCategories.join(", ")}. Strongly prefer reusing one of these. Only invent a new kebab-case category slug if none of the existing ones is a reasonable fit.`
+      : `No categories exist yet — invent a concise kebab-case slug for this resource (e.g. "dev-tools", "design", "ai-productivity").`
 
   const result = await generateObject({
     model: anthropic("claude-sonnet-4-6"),
@@ -46,10 +54,11 @@ export async function generateBookmarkAi(
       `Page text:`,
       `${pageText}`,
       ``,
+      categoryVocabulary,
       tagVocabulary,
       ``,
       `Instructions:`,
-      `- Pick the single best category from the schema enum.`,
+      `- category: a single kebab-case slug. Reuse an existing category when one fits; only invent a new one if none does.`,
       `- Generate 1-5 relevant tags as lowercase keywords.`,
       `- Write 2-4 short pro bullets (factual strengths, ~80 chars each).`,
       `- Write 0-4 short con bullets (factual weaknesses, ~80 chars each). If none apply, return an empty array.`,
@@ -59,12 +68,13 @@ export async function generateBookmarkAi(
 
   return {
     ...result.object,
+    category: result.object.category.toLowerCase(),
     tags: result.object.tags.map((t) => t.trim().toLowerCase()),
   }
 }
 
 interface ExistingAiFields {
-  category: string
+  category: string | null
   tags: string[]
   pros: string[]
   cons: string[]
@@ -79,7 +89,7 @@ export function mergeAiFields(
   if (force) return { ...ai }
 
   return {
-    category: existing.category as AiBookmarkOutput["category"],
+    category: existing.category ?? ai.category,
     tags: existing.tags.length > 0 ? existing.tags : ai.tags,
     pros: existing.pros.length > 0 ? existing.pros : ai.pros,
     cons: existing.cons.length > 0 ? existing.cons : ai.cons,

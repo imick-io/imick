@@ -7,12 +7,11 @@ import { BookmarksGrid } from "@/components/bookmarks/bookmarks-grid"
 import { CategoryFilters } from "@/components/bookmarks/category-filters"
 import { siteConfig } from "@/lib/config"
 import {
-  CATEGORY_LABELS,
-  CATEGORY_VALUES,
+  getCategoryLabel,
+  getDistinctCategories,
   getPublishedBookmarksByCategory,
   getPublishedTagsForCategory,
   isBookmarkSort,
-  isCategory,
 } from "@/lib/bookmarks"
 
 export const revalidate = 3600
@@ -20,16 +19,18 @@ export const revalidate = 3600
 type Params = { category: string }
 type SearchParams = { tag?: string; sort?: string }
 
-export function generateStaticParams(): Params[] {
-  return CATEGORY_VALUES.map((category) => ({ category }))
+export async function generateStaticParams(): Promise<Params[]> {
+  const categories = await getDistinctCategories({ publishedOnly: true })
+  return categories.map((category) => ({ category }))
 }
 
 export async function generateMetadata(
   { params }: { params: Promise<Params> }
 ): Promise<Metadata> {
   const { category } = await params
-  if (!isCategory(category)) return {}
-  const label = CATEGORY_LABELS[category]
+  const known = await getDistinctCategories({ publishedOnly: true })
+  if (!known.includes(category)) return {}
+  const label = getCategoryLabel(category)
   const description = `${label} bookmarks — tools and resources I rely on, curated by ${siteConfig.name}.`
   return {
     title: label,
@@ -58,7 +59,8 @@ export default async function BookmarkCategoryPage({
   searchParams: Promise<SearchParams>
 }) {
   const { category } = await params
-  if (!isCategory(category)) notFound()
+  const known = await getDistinctCategories({ publishedOnly: true })
+  if (!known.includes(category)) notFound()
 
   const { tag: rawTag, sort: rawSort } = await searchParams
   const sort = isBookmarkSort(rawSort) ? rawSort : "newest"
@@ -71,7 +73,7 @@ export default async function BookmarkCategoryPage({
     tag: activeTag,
   })
 
-  const label = CATEGORY_LABELS[category]
+  const label = getCategoryLabel(category)
 
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">

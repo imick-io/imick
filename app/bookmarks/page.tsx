@@ -5,8 +5,7 @@ import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { BookmarkCard } from "@/components/bookmarks/bookmark-card"
 import { siteConfig } from "@/lib/config"
 import {
-  CATEGORY_LABELS,
-  CATEGORY_VALUES,
+  getCategoryLabel,
   getPublishedCategoryCounts,
   getRecentlyReviewedBookmarks,
 } from "@/lib/bookmarks"
@@ -41,7 +40,9 @@ export default async function BookmarksHubPage() {
     getPublishedCategoryCounts(),
   ])
 
-  const visibleCategories = CATEGORY_VALUES.filter((cat) => counts[cat] > 0)
+  const visibleCategories = Object.keys(counts)
+    .filter((cat) => counts[cat] > 0)
+    .sort((a, b) => a.localeCompare(b))
 
   return (
     <div className="flex flex-col gap-16 px-6 py-16 md:gap-20 md:py-20">
@@ -93,7 +94,7 @@ export default async function BookmarksHubPage() {
                   >
                     <div className="min-w-0">
                       <p className="text-base font-semibold text-foreground group-hover:underline">
-                        {CATEGORY_LABELS[cat]}
+                        {getCategoryLabel(cat)}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {count} {count === 1 ? "bookmark" : "bookmarks"}

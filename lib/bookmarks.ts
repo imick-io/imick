@@ -9,12 +9,7 @@ import {
   isNotNull,
   sql,
 } from "drizzle-orm"
-import {
-  isCategory,
-  CATEGORY_VALUES,
-  type BookmarkCategory,
-  type BookmarkSort,
-} from "./bookmarks-meta"
+import type { BookmarkSort } from "./bookmarks-meta"
 
 export * from "./bookmarks-meta"
 
@@ -33,7 +28,7 @@ export async function getAdminBookmarks(opts?: {
 }) {
   const conditions = []
 
-  if (isCategory(opts?.category)) {
+  if (opts?.category) {
     conditions.push(eq(bookmarks.category, opts.category))
   }
 
@@ -49,9 +44,25 @@ export async function getAdminBookmarks(opts?: {
   return rows
 }
 
-export async function getPublishedBookmark(category: string, slug: string) {
-  if (!isCategory(category)) return null
+export async function getDistinctCategories(opts?: {
+  publishedOnly?: boolean
+}): Promise<string[]> {
+  const where = opts?.publishedOnly
+    ? and(isNotNull(bookmarks.category), eq(bookmarks.published, true))
+    : isNotNull(bookmarks.category)
 
+  const rows = await db
+    .selectDistinct({ category: bookmarks.category })
+    .from(bookmarks)
+    .where(where)
+
+  return rows
+    .map((r) => r.category)
+    .filter((c): c is string => typeof c === "string" && c.length > 0)
+    .sort((a, b) => a.localeCompare(b))
+}
+
+export async function getPublishedBookmark(category: string, slug: string) {
   const rows = await db
     .select()
     .from(bookmarks)
@@ -74,6 +85,7 @@ export async function getRecentlyReviewedBookmarks(limit = 6) {
     .where(
       and(
         eq(bookmarks.published, true),
+        isNotNull(bookmarks.category),
         or(isNotNull(bookmarks.rating), isNotNull(bookmarks.reviewText))
       )
     )
@@ -81,20 +93,20 @@ export async function getRecentlyReviewedBookmarks(limit = 6) {
     .limit(limit)
 }
 
-export async function getPublishedCategoryCounts(): Promise<Record<BookmarkCategory, number>> {
+export async function getPublishedCategoryCounts(): Promise<Record<string, number>> {
   const rows = await db
     .select({
       category: bookmarks.category,
       count: sql<number>`count(*)::int`,
     })
     .from(bookmarks)
-    .where(eq(bookmarks.published, true))
+    .where(and(eq(bookmarks.published, true), isNotNull(bookmarks.category)))
     .groupBy(bookmarks.category)
 
-  const counts = Object.fromEntries(
-    CATEGORY_VALUES.map((c) => [c, 0])
-  ) as Record<BookmarkCategory, number>
-  for (const row of rows) counts[row.category] = row.count
+  const counts: Record<string, number> = {}
+  for (const row of rows) {
+    if (row.category) counts[row.category] = row.count
+  }
   return counts
 }
 
@@ -102,8 +114,6 @@ export async function getPublishedBookmarksByCategory(
   category: string,
   opts?: { sort?: BookmarkSort; tag?: string }
 ) {
-  if (!isCategory(category)) return []
-
   const sort: BookmarkSort = opts?.sort ?? "newest"
   const conditions = [
     eq(bookmarks.category, category),
@@ -129,13 +139,11 @@ export async function getAllPublishedBookmarks() {
   return db
     .select()
     .from(bookmarks)
-    .where(eq(bookmarks.published, true))
+    .where(and(eq(bookmarks.published, true), isNotNull(bookmarks.category)))
     .orderBy(desc(bookmarks.updatedAt))
 }
 
 export async function getPublishedTagsForCategory(category: string): Promise<string[]> {
-  if (!isCategory(category)) return []
-
   const rows = await db
     .select({ tags: bookmarks.tags })
     .from(bookmarks)

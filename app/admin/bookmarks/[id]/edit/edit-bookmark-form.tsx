@@ -1,17 +1,75 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, useState } from "react"
 import { updateBookmark, type UpdateBookmarkState } from "../../actions"
-import { type Bookmark, CATEGORY_LABELS } from "@/lib/bookmarks-meta"
-import { categoryEnum } from "@/lib/db/schema"
+import { type Bookmark } from "@/lib/bookmarks-meta"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 
-type Props = { bookmark: Bookmark }
+function ListEditor({
+  name,
+  label,
+  defaultValues,
+  placeholder,
+  disabled,
+}: {
+  name: string
+  label: string
+  defaultValues: string[]
+  placeholder?: string
+  disabled?: boolean
+}) {
+  const [items, setItems] = useState<string[]>(defaultValues)
 
-export function EditBookmarkForm({ bookmark }: Props) {
+  const update = (idx: number, value: string) =>
+    setItems(items.map((v, i) => (i === idx ? value : v)))
+  const remove = (idx: number) => setItems(items.filter((_, i) => i !== idx))
+  const add = () => setItems([...items, ""])
+
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="space-y-2">
+        {items.map((value, idx) => (
+          <div key={idx} className="flex gap-2">
+            <Input
+              name={name}
+              value={value}
+              onChange={(e) => update(idx, e.target.value)}
+              placeholder={placeholder}
+              disabled={disabled}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => remove(idx)}
+              disabled={disabled}
+              aria-label={`Remove ${label.toLowerCase()} ${idx + 1}`}
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+      </div>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={add}
+        disabled={disabled}
+      >
+        Add {label.toLowerCase()}
+      </Button>
+    </div>
+  )
+}
+
+type Props = { bookmark: Bookmark; knownCategories: string[] }
+
+export function EditBookmarkForm({ bookmark, knownCategories }: Props) {
   const [state, action, pending] = useActionState<UpdateBookmarkState | null, FormData>(
     updateBookmark,
     null
@@ -74,21 +132,23 @@ export function EditBookmarkForm({ bookmark }: Props) {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <select
+            <Input
               id="category"
               name="category"
-              defaultValue={bookmark.category}
-              required
+              list="known-categories"
+              defaultValue={bookmark.category ?? ""}
+              placeholder="dev-tools"
               disabled={pending}
-              className="h-9 w-full rounded-4xl border border-input bg-input/30 px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
               aria-invalid={!!errors.category}
-            >
-              {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
+            />
+            <datalist id="known-categories">
+              {knownCategories.map((cat) => (
+                <option key={cat} value={cat} />
               ))}
-            </select>
+            </datalist>
+            <p className="text-xs text-muted-foreground">
+              kebab-case slug. Pick an existing one or invent a new one. Optional.
+            </p>
             {errors.category && <p className="text-sm text-destructive">{errors.category[0]}</p>}
           </div>
 
@@ -188,31 +248,21 @@ export function EditBookmarkForm({ bookmark }: Props) {
           {errors.rating && <p className="text-sm text-destructive">{errors.rating[0]}</p>}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="pros">Pros</Label>
-          <Textarea
-            id="pros"
-            name="pros"
-            defaultValue={bookmark.pros.join("\n")}
-            rows={4}
-            placeholder={"- Fast build times\n- Great DX\n- Well documented"}
-            disabled={pending}
-          />
-          <p className="text-xs text-muted-foreground">One per line.</p>
-        </div>
+        <ListEditor
+          name="pros"
+          label="Pros"
+          defaultValues={bookmark.pros}
+          placeholder="Fast build times"
+          disabled={pending}
+        />
 
-        <div className="space-y-2">
-          <Label htmlFor="cons">Cons</Label>
-          <Textarea
-            id="cons"
-            name="cons"
-            defaultValue={bookmark.cons.join("\n")}
-            rows={4}
-            placeholder={"- Complex configuration\n- Large bundle size"}
-            disabled={pending}
-          />
-          <p className="text-xs text-muted-foreground">One per line.</p>
-        </div>
+        <ListEditor
+          name="cons"
+          label="Cons"
+          defaultValues={bookmark.cons}
+          placeholder="Complex configuration"
+          disabled={pending}
+        />
 
         <div className="space-y-2">
           <Label htmlFor="reviewText">Review</Label>

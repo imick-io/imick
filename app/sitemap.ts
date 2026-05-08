@@ -6,7 +6,6 @@ import { isDraft } from "@/lib/posts"
 import { isSnippetDraft } from "@/lib/snippets"
 import { isFolioDraft } from "@/lib/folios"
 import {
-  CATEGORY_VALUES,
   getAllPublishedBookmarks,
   getPublishedCategoryCounts,
 } from "@/lib/bookmarks"
@@ -91,8 +90,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getAllPublishedBookmarks(),
   ])
 
-  for (const category of CATEGORY_VALUES) {
-    if (counts[category] === 0) continue
+  for (const [category, count] of Object.entries(counts)) {
+    if (count === 0) continue
     entries.push({
       url: url(`/bookmarks/${category}`),
       lastModified: new Date(),
@@ -102,6 +101,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   for (const bookmark of publishedBookmarks) {
+    if (!bookmark.category) continue
     entries.push({
       url: url(`/bookmarks/${bookmark.category}/${bookmark.slug}`),
       lastModified: new Date(bookmark.updatedAt),
