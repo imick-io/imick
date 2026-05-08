@@ -30,11 +30,18 @@ export async function fetchMicrolink(url: string): Promise<MicrolinkData> {
     const json = await res.json()
     const data = json?.data
 
-    const palette = data?.palette as Record<string, string> | undefined
-    const dominant =
-      palette?.["vibrant"] ??
-      palette?.["dominant"] ??
-      palette?.["darkVibrant"] ??
+    const palette = data?.palette
+    const firstFromPalette = Array.isArray(palette)
+      ? palette.find((c): c is string => typeof c === "string") ?? null
+      : typeof palette === "object" && palette !== null
+        ? (Object.values(palette).find((c): c is string => typeof c === "string") ?? null)
+        : null
+
+    const accent =
+      data?.color ??
+      data?.background_color ??
+      data?.alternative_color ??
+      firstFromPalette ??
       null
 
     return {
@@ -42,7 +49,7 @@ export async function fetchMicrolink(url: string): Promise<MicrolinkData> {
       description: data?.description ?? null,
       logoUrl: data?.logo?.url ?? null,
       imageUrl: data?.screenshot?.url ?? data?.image?.url ?? null,
-      colorHex: dominant ?? null,
+      colorHex: accent,
     }
   } catch {
     return fallback
