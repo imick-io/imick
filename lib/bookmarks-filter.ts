@@ -1,8 +1,8 @@
-import type { Bookmark } from "./db/schema"
-import { isReviewed } from "./bookmarks-meta"
-import { getHostname } from "./bookmarks-meta"
+import type { Bookmark } from "./bookmarks-meta"
+import { isReviewed, getHostname } from "./bookmarks-meta"
 
-export type ReviewedFilter = "all" | "yes" | "no"
+export const reviewedValues = ["all", "yes", "no"] as const
+export type ReviewedFilter = (typeof reviewedValues)[number]
 
 export type BookmarkFilters = {
   category?: string

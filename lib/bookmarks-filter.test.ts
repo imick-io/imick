@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { filterBookmarks, type BookmarkFilters } from "./bookmarks-filter"
-import type { Bookmark } from "./db/schema"
+import type { Bookmark } from "./bookmarks-meta"
 
 function makeBookmark(overrides: Partial<Bookmark> & { id: string }): Bookmark {
   return {

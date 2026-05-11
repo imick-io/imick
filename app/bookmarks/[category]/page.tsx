@@ -111,6 +111,7 @@ export default async function BookmarkCategoryPage({
         />
         <ReviewedSegmented />
         <ReviewedBookmarksGrid
+          key={`${activeTag ?? "all"}-${sort}`}
           bookmarks={bookmarks}
           categoryMap={categoryMap}
         />

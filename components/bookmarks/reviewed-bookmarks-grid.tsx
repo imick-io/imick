@@ -1,11 +1,9 @@
 "use client"
 
 import { useQueryState, parseAsStringLiteral } from "nuqs"
-import { filterBookmarks } from "@/lib/bookmarks-filter"
+import { filterBookmarks, reviewedValues } from "@/lib/bookmarks-filter"
 import { BookmarksGrid } from "./bookmarks-grid"
 import type { Bookmark } from "@/lib/bookmarks-meta"
-
-const reviewedValues = ["all", "yes", "no"] as const
 
 type Props = {
   bookmarks: Bookmark[]
@@ -20,5 +18,5 @@ export function ReviewedBookmarksGrid({ bookmarks, categoryMap }: Props) {
 
   const filtered = filterBookmarks(bookmarks, { reviewed })
 
-  return <BookmarksGrid bookmarks={filtered} categoryMap={categoryMap} />
+  return <BookmarksGrid key={reviewed} bookmarks={filtered} categoryMap={categoryMap} />
 }

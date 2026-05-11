@@ -2,15 +2,13 @@
 
 import { useQueryState, parseAsStringLiteral } from "nuqs"
 import { cn } from "@/lib/utils"
-import type { ReviewedFilter } from "@/lib/bookmarks-filter"
+import { reviewedValues, type ReviewedFilter } from "@/lib/bookmarks-filter"
 
 const options: Array<{ value: ReviewedFilter; label: string }> = [
   { value: "all", label: "All" },
   { value: "yes", label: "Reviewed" },
   { value: "no", label: "Unreviewed" },
 ]
-
-const reviewedValues = ["all", "yes", "no"] as const
 
 export function ReviewedSegmented() {
   const [reviewed, setReviewed] = useQueryState(
