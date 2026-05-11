@@ -10,7 +10,7 @@ import { getAllClassesForRender } from "@/lib/classes"
 import { getAllPostsForRender } from "@/lib/posts"
 import { getAllSnippetsForRender } from "@/lib/snippets"
 
-const description = `Articles, code snippets, and (soon) classes by ${siteConfig.name}.`
+const description = `Articles, code snippets, and classes by ${siteConfig.name}.`
 
 export const metadata: Metadata = {
   title: "Learn",
@@ -42,7 +42,7 @@ export default function LearnHubPage() {
       <header className="mx-auto flex w-full max-w-5xl flex-col gap-3">
         <p className="text-sm font-medium text-muted-foreground">Learn</p>
         <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-          Writing, snippets, and (soon) classes
+          Writing, snippets, and classes
         </h1>
         <p className="text-base text-muted-foreground md:text-lg">
           A growing library of articles, copy-pastable code, and structured courses.
