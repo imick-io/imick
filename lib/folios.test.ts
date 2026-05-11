@@ -138,6 +138,124 @@ describe("isFolioDraft", () => {
   })
 })
 
+const { getFoliosForItem } = await import("./folios")
+
+describe("getFoliosForItem", () => {
+  const folioA = {
+    title: "Claude Code Journey",
+    excerpt: "Walk through Claude Code features",
+    publishedAt: "2025-03-01",
+    items: [
+      { type: "article" as const, slug: "first-article" },
+      { type: "snippet" as const, slug: "middle-snippet" },
+      { type: "article" as const, slug: "last-article" },
+    ],
+    slug: "claude-code-journey",
+    content: "",
+    code: "",
+  }
+
+  const folioB = {
+    title: "Prompting Guide",
+    excerpt: "Learn prompting techniques",
+    publishedAt: "2025-04-01",
+    items: [
+      { type: "snippet" as const, slug: "middle-snippet" },
+      { type: "article" as const, slug: "some-other-article" },
+    ],
+    slug: "prompting-guide",
+    content: "",
+    code: "",
+  }
+
+  const draftFolio = {
+    title: "Future Folio",
+    excerpt: "Not yet published",
+    publishedAt: "2099-12-31",
+    items: [
+      { type: "article" as const, slug: "first-article" },
+      { type: "article" as const, slug: "some-other-article" },
+    ],
+    slug: "future-folio",
+    content: "",
+    code: "",
+  }
+
+  it("returns an empty array for an item in zero folios", () => {
+    mockFolios.push(folioA)
+    const result = getFoliosForItem("article", "nonexistent")
+    expect(result).toEqual([])
+  })
+
+  it("returns correct position, total, previous, and next for an item in one folio", () => {
+    mockFolios.push(folioA)
+    const result = getFoliosForItem("snippet", "middle-snippet")
+    expect(result).toHaveLength(1)
+    expect(result[0].folio.slug).toBe("claude-code-journey")
+    expect(result[0].position).toBe(2)
+    expect(result[0].total).toBe(3)
+    expect(result[0].previous).toEqual({ type: "article", slug: "first-article" })
+    expect(result[0].next).toEqual({ type: "article", slug: "last-article" })
+  })
+
+  it("returns previous: null for the first item in a folio", () => {
+    mockFolios.push(folioA)
+    const result = getFoliosForItem("article", "first-article")
+    expect(result).toHaveLength(1)
+    expect(result[0].position).toBe(1)
+    expect(result[0].previous).toBeNull()
+    expect(result[0].next).toEqual({ type: "snippet", slug: "middle-snippet" })
+  })
+
+  it("returns next: null for the last item in a folio", () => {
+    mockFolios.push(folioA)
+    const result = getFoliosForItem("article", "last-article")
+    expect(result).toHaveLength(1)
+    expect(result[0].position).toBe(3)
+    expect(result[0].previous).toEqual({ type: "snippet", slug: "middle-snippet" })
+    expect(result[0].next).toBeNull()
+  })
+
+  it("returns multiple entries for an item in multiple folios", () => {
+    mockFolios.push(folioA, folioB)
+    const result = getFoliosForItem("snippet", "middle-snippet")
+    expect(result).toHaveLength(2)
+
+    const fromA = result.find((r) => r.folio.slug === "claude-code-journey")!
+    expect(fromA.position).toBe(2)
+    expect(fromA.total).toBe(3)
+
+    const fromB = result.find((r) => r.folio.slug === "prompting-guide")!
+    expect(fromB.position).toBe(1)
+    expect(fromB.total).toBe(2)
+    expect(fromB.previous).toBeNull()
+    expect(fromB.next).toEqual({ type: "article", slug: "some-other-article" })
+  })
+
+  it("excludes draft folios in production", () => {
+    vi.stubEnv("NODE_ENV", "production")
+    try {
+      mockFolios.push(folioA, draftFolio)
+      const result = getFoliosForItem("article", "first-article")
+      expect(result).toHaveLength(1)
+      expect(result[0].folio.slug).toBe("claude-code-journey")
+    } finally {
+      vi.unstubAllEnvs()
+    }
+  })
+
+  it("includes draft folios in development", () => {
+    vi.stubEnv("NODE_ENV", "development")
+    try {
+      mockFolios.push(folioA, draftFolio)
+      const result = getFoliosForItem("article", "first-article")
+      expect(result).toHaveLength(2)
+    } finally {
+      vi.unstubAllEnvs()
+    }
+  })
+})
+
 describe("getAllFoliosForRender", () => {
   const publishedFolio = {
     title: "Claude Code Journey",
