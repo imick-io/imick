@@ -8,6 +8,7 @@ import { siteConfig } from "@/lib/config"
 import {
   getDistinctCategories,
   getAllPublishedBookmarks,
+  getPublishedCategoryCounts,
 } from "@/lib/bookmarks"
 import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
 import { buildTagMap } from "@/lib/bookmarks-filter"
@@ -57,9 +58,10 @@ export default async function BookmarkCategoryPage({
   const known = await getDistinctCategories({ publishedOnly: true })
   if (!known.includes(category)) notFound()
 
-  const [bookmarks, categoryMap] = await Promise.all([
+  const [bookmarks, categoryMap, categoryCounts] = await Promise.all([
     getAllPublishedBookmarks(),
     getCategoryMap(),
+    getPublishedCategoryCounts(),
   ])
 
   const tagMap = buildTagMap(bookmarks)
@@ -87,6 +89,7 @@ export default async function BookmarkCategoryPage({
         <BookmarksFilteredView
           bookmarks={bookmarks}
           categoryMap={categoryMap}
+          categoryCounts={categoryCounts}
           tagMap={tagMap}
           category={category}
         />

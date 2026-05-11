@@ -38,6 +38,14 @@ export type BookmarkFilters = {
   sort?: BookmarkSort
 }
 
+export function hasActiveNarrowingFilters(filters: BookmarkFilters): boolean {
+  if (filters.q && filters.q.trim()) return true
+  if (filters.tags && filters.tags.length > 0) return true
+  if (filters.reviewed && filters.reviewed !== "all") return true
+  if (filters.sort && filters.sort !== "newest") return true
+  return false
+}
+
 export function filterBookmarks(
   bookmarks: Bookmark[],
   filters: BookmarkFilters

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { filterBookmarks, buildTagMap, type BookmarkFilters } from "./bookmarks-filter"
+import { filterBookmarks, buildTagMap, hasActiveNarrowingFilters, type BookmarkFilters } from "./bookmarks-filter"
 import type { Bookmark } from "./db/schema"
 
 function makeBookmark(overrides: Partial<Bookmark> & { id: string }): Bookmark {
@@ -466,5 +466,48 @@ describe("buildTagMap", () => {
   it("returns empty global entry for bookmarks with no tags", () => {
     const map = buildTagMap([makeBookmark({ id: "x", category: "misc", tags: [] })])
     expect(map[""]).toEqual([])
+  })
+})
+
+describe("hasActiveNarrowingFilters", () => {
+  it("returns false when all filters are default", () => {
+    expect(hasActiveNarrowingFilters({})).toBe(false)
+  })
+
+  it("returns false for explicit defaults", () => {
+    expect(
+      hasActiveNarrowingFilters({ q: "", tags: [], reviewed: "all", sort: "newest" })
+    ).toBe(false)
+  })
+
+  it("returns true when q is set", () => {
+    expect(hasActiveNarrowingFilters({ q: "react" })).toBe(true)
+  })
+
+  it("returns false when q is only whitespace", () => {
+    expect(hasActiveNarrowingFilters({ q: "   " })).toBe(false)
+  })
+
+  it("returns true when tags has entries", () => {
+    expect(hasActiveNarrowingFilters({ tags: ["cli"] })).toBe(true)
+  })
+
+  it("returns true when reviewed is not all", () => {
+    expect(hasActiveNarrowingFilters({ reviewed: "yes" })).toBe(true)
+    expect(hasActiveNarrowingFilters({ reviewed: "no" })).toBe(true)
+  })
+
+  it("returns true when sort is not newest", () => {
+    expect(hasActiveNarrowingFilters({ sort: "top-rated" })).toBe(true)
+  })
+
+  it("ignores category (category is path-driven)", () => {
+    expect(hasActiveNarrowingFilters({ category: "tools" })).toBe(false)
+  })
+
+  it("returns true when multiple narrowing filters are active", () => {
+    expect(
+      hasActiveNarrowingFilters({ q: "test", tags: ["cli"], reviewed: "yes", sort: "top-rated" })
+    ).toBe(true)
   })
 })

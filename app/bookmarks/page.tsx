@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { BookmarksFilteredView } from "@/components/bookmarks/bookmarks-filtered-view"
 import { siteConfig } from "@/lib/config"
-import { getAllPublishedBookmarks } from "@/lib/bookmarks"
+import { getAllPublishedBookmarks, getPublishedCategoryCounts } from "@/lib/bookmarks"
 import { getCategoryMap } from "@/lib/categories"
 import { buildTagMap } from "@/lib/bookmarks-filter"
 
@@ -28,9 +28,10 @@ export const metadata: Metadata = {
 }
 
 export default async function BookmarksHubPage() {
-  const [bookmarks, categoryMap] = await Promise.all([
+  const [bookmarks, categoryMap, categoryCounts] = await Promise.all([
     getAllPublishedBookmarks(),
     getCategoryMap(),
+    getPublishedCategoryCounts(),
   ])
 
   const tagMap = buildTagMap(bookmarks)
@@ -52,6 +53,7 @@ export default async function BookmarksHubPage() {
         <BookmarksFilteredView
           bookmarks={bookmarks}
           categoryMap={categoryMap}
+          categoryCounts={categoryCounts}
           tagMap={tagMap}
         />
       </section>
