@@ -3,8 +3,9 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
-import { BookmarksGrid } from "@/components/bookmarks/bookmarks-grid"
+import { ReviewedBookmarksGrid } from "@/components/bookmarks/reviewed-bookmarks-grid"
 import { CategoryFilters } from "@/components/bookmarks/category-filters"
+import { ReviewedSegmented } from "@/components/bookmarks/reviewed-segmented"
 import { siteConfig } from "@/lib/config"
 import {
   getDistinctCategories,
@@ -108,8 +109,8 @@ export default async function BookmarkCategoryPage({
           activeTag={activeTag}
           sort={sort}
         />
-        <BookmarksGrid
-          key={`${activeTag ?? "all"}-${sort}`}
+        <ReviewedSegmented />
+        <ReviewedBookmarksGrid
           bookmarks={bookmarks}
           categoryMap={categoryMap}
         />
