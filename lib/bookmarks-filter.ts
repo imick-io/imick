@@ -3,6 +3,9 @@ import { getHostname, isReviewed, type BookmarkSort } from "./bookmarks-meta"
 
 export type TagMap = Record<string, string[]>
 
+export const reviewedValues = ["all", "yes", "no"] as const
+export type ReviewedFilter = (typeof reviewedValues)[number]
+
 export function buildTagMap(bookmarks: Bookmark[]): TagMap {
   const byCat = new Map<string, Set<string>>()
   const all = new Set<string>()
@@ -29,7 +32,7 @@ export type BookmarkFilters = {
   category?: string
   tags?: string[]
   q?: string
-  reviewed?: "all" | "yes" | "no"
+  reviewed?: ReviewedFilter
   sort?: BookmarkSort
 }
 

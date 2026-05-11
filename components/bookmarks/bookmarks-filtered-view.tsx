@@ -1,11 +1,12 @@
 "use client"
 
 import { useState, useRef, useMemo, useEffect } from "react"
-import { useQueryState, parseAsArrayOf, parseAsString } from "nuqs"
-import { filterBookmarks, type TagMap } from "@/lib/bookmarks-filter"
+import { useQueryState, parseAsArrayOf, parseAsString, parseAsStringLiteral } from "nuqs"
+import { filterBookmarks, reviewedValues, type TagMap } from "@/lib/bookmarks-filter"
 import type { Bookmark } from "@/lib/bookmarks-meta"
 import { BookmarkCard } from "./bookmark-card"
 import { TagChipRow } from "./tag-chip-row"
+import { ReviewedSegmented } from "./reviewed-segmented"
 import { Button } from "@/components/ui/button"
 
 const PAGE_SIZE = 12
@@ -28,6 +29,11 @@ export function BookmarksFilteredView({
     parseAsArrayOf(parseAsString, ",").withDefault([])
   )
 
+  const [reviewed] = useQueryState(
+    "reviewed",
+    parseAsStringLiteral(reviewedValues).withDefault("all")
+  )
+
   const prevCategory = useRef(category)
   useEffect(() => {
     if (prevCategory.current !== category) {
@@ -37,11 +43,11 @@ export function BookmarksFilteredView({
   }, [category, setTags])
 
   const filtered = useMemo(
-    () => filterBookmarks(bookmarks, { category, tags: tags.length > 0 ? tags : undefined }),
-    [bookmarks, category, tags]
+    () => filterBookmarks(bookmarks, { category, tags: tags.length > 0 ? tags : undefined, reviewed }),
+    [bookmarks, category, tags, reviewed]
   )
 
-  const filterSig = `${category ?? ""}-${tags.join(",")}`
+  const filterSig = `${category ?? ""}-${tags.join(",")}-${reviewed}`
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [lastSig, setLastSig] = useState(filterSig)
   if (filterSig !== lastSig) {
@@ -55,6 +61,7 @@ export function BookmarksFilteredView({
   return (
     <div className="flex flex-col gap-6">
       <TagChipRow tagMap={tagMap} category={category} />
+      <ReviewedSegmented />
 
       <p className="text-sm text-muted-foreground">
         {filtered.length} {filtered.length === 1 ? "bookmark" : "bookmarks"}
