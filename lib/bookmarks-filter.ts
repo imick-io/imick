@@ -6,6 +6,8 @@ export type TagMap = Record<string, string[]>
 export const reviewedValues = ["all", "yes", "no"] as const
 export type ReviewedFilter = (typeof reviewedValues)[number]
 
+export const sortValues = ["newest", "top-rated"] as const
+
 export function buildTagMap(bookmarks: Bookmark[]): TagMap {
   const byCat = new Map<string, Set<string>>()
   const all = new Set<string>()

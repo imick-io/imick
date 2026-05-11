@@ -206,12 +206,12 @@ describe("filterBookmarks", () => {
   describe("reviewed filter", () => {
     it("returns all bookmarks when reviewed is 'all'", () => {
       const result = filterBookmarks(reviewFixtures, { reviewed: "all" })
-      expect(ids(result)).toEqual(ids(reviewFixtures))
+      expect(ids(result)).toEqual(["u1", "r1", "r2", "r3", "u2"])
     })
 
     it("returns all bookmarks when reviewed is undefined (default)", () => {
       const result = filterBookmarks(reviewFixtures, empty)
-      expect(ids(result)).toEqual(ids(reviewFixtures))
+      expect(ids(result)).toEqual(["u1", "r1", "r2", "r3", "u2"])
     })
 
     it("returns only reviewed bookmarks when reviewed is 'yes'", () => {
@@ -262,12 +262,142 @@ describe("filterBookmarks", () => {
 
     it("returns all when q is empty string", () => {
       const result = filterBookmarks(reviewFixtures, { q: "" })
-      expect(ids(result)).toEqual(ids(reviewFixtures))
+      expect(ids(result)).toEqual(["u1", "r1", "r2", "r3", "u2"])
     })
 
     it("returns all when q is only whitespace", () => {
       const result = filterBookmarks(reviewFixtures, { q: "   " })
-      expect(ids(result)).toEqual(ids(reviewFixtures))
+      expect(ids(result)).toEqual(["u1", "r1", "r2", "r3", "u2"])
+    })
+  })
+
+  describe("sort filter", () => {
+    it("sorts newest first by default (no sort specified)", () => {
+      const result = filterBookmarks(fixtures, empty)
+      expect(ids(result)).toEqual(["a", "b", "c", "d"])
+    })
+
+    it("sorts newest first when sort is 'newest'", () => {
+      const result = filterBookmarks(fixtures, { sort: "newest" })
+      expect(ids(result)).toEqual(["a", "b", "c", "d"])
+    })
+
+    it("sorts by rating desc when sort is 'top-rated'", () => {
+      const result = filterBookmarks(fixtures, { sort: "top-rated" })
+      expect(ids(result)).toEqual(["a", "c", "b"])
+    })
+
+    it("breaks rating ties by updatedAt desc", () => {
+      const tied1 = makeBookmark({
+        id: "t1",
+        rating: 4,
+        reviewText: "Good",
+        createdAt: new Date("2025-01-01"),
+        updatedAt: new Date("2025-06-01"),
+      })
+      const tied2 = makeBookmark({
+        id: "t2",
+        rating: 4,
+        reviewText: "Also good",
+        createdAt: new Date("2025-02-01"),
+        updatedAt: new Date("2025-05-01"),
+      })
+      const result = filterBookmarks([tied1, tied2], { sort: "top-rated" })
+      expect(ids(result)).toEqual(["t1", "t2"])
+    })
+
+    it("drops unreviewed bookmarks when sort is 'top-rated'", () => {
+      const result = filterBookmarks(reviewFixtures, { sort: "top-rated" })
+      expect(ids(result)).not.toContain("u1")
+      expect(ids(result)).not.toContain("u2")
+    })
+
+    it("keeps all bookmarks (including unreviewed) when sort is 'newest'", () => {
+      const result = filterBookmarks(reviewFixtures, { sort: "newest" })
+      expect(ids(result)).toContain("u1")
+      expect(ids(result)).toContain("u2")
+    })
+
+    it("top-rated orders reviewed bookmarks by rating desc then updatedAt desc", () => {
+      const result = filterBookmarks(reviewFixtures, { sort: "top-rated" })
+      expect(ids(result)).toEqual(["r1", "r2", "r3"])
+    })
+
+    it("top-rated treats null rating as 0 for ordering", () => {
+      const withRating = makeBookmark({
+        id: "wr",
+        rating: 1,
+        reviewText: "Low rating",
+        updatedAt: new Date("2025-01-01"),
+      })
+      const noRating = makeBookmark({
+        id: "nr",
+        rating: null,
+        reviewText: "Has review text but no rating",
+        updatedAt: new Date("2025-06-01"),
+      })
+      const result = filterBookmarks([withRating, noRating], { sort: "top-rated" })
+      expect(ids(result)).toEqual(["wr", "nr"])
+    })
+  })
+
+  describe("sort combined with other filters", () => {
+    it("top-rated + category narrows and sorts", () => {
+      const result = filterBookmarks(reviewFixtures, {
+        category: "dev-tools",
+        sort: "top-rated",
+      })
+      expect(ids(result)).toEqual(["r1", "r3"])
+    })
+
+    it("top-rated + tags narrows and sorts", () => {
+      const result = filterBookmarks(reviewFixtures, {
+        tags: ["typescript"],
+        sort: "top-rated",
+      })
+      expect(ids(result)).toEqual(["r1", "r3"])
+    })
+
+    it("top-rated + search narrows and sorts", () => {
+      const result = filterBookmarks(reviewFixtures, {
+        q: "reviewed",
+        sort: "top-rated",
+      })
+      expect(ids(result)).toEqual(["r1", "r2"])
+    })
+
+    it("top-rated + reviewed=yes is redundant but consistent", () => {
+      const result = filterBookmarks(reviewFixtures, {
+        reviewed: "yes",
+        sort: "top-rated",
+      })
+      expect(ids(result)).toEqual(["r1", "r2", "r3"])
+    })
+
+    it("top-rated + reviewed=no returns empty (all unreviewed dropped)", () => {
+      const result = filterBookmarks(reviewFixtures, {
+        reviewed: "no",
+        sort: "top-rated",
+      })
+      expect(result).toEqual([])
+    })
+
+    it("top-rated + category + tags + q combined", () => {
+      const result = filterBookmarks(reviewFixtures, {
+        category: "dev-tools",
+        tags: ["typescript"],
+        q: "review only",
+        sort: "top-rated",
+      })
+      expect(ids(result)).toEqual(["r3"])
+    })
+
+    it("newest + category preserves createdAt order", () => {
+      const result = filterBookmarks(reviewFixtures, {
+        category: "dev-tools",
+        sort: "newest",
+      })
+      expect(ids(result)).toEqual(["u1", "r1", "r3"])
     })
   })
 
