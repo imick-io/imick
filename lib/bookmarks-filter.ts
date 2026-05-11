@@ -39,7 +39,7 @@ export function filterBookmarks(
 ): Bookmark[] {
   const { category, tags, q, reviewed, sort } = filters
 
-  let result = bookmarks
+  let result = [...bookmarks]
 
   if (category) {
     result = result.filter((b) => b.category === category)

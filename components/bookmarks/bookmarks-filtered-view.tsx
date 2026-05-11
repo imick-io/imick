@@ -13,7 +13,6 @@ const PAGE_SIZE = 12
 type Props = {
   bookmarks: Bookmark[]
   categoryMap?: Record<string, string>
-  categoryCounts?: Record<string, number>
   tagMap: TagMap
   category?: string
 }

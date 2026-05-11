@@ -123,20 +123,6 @@ describe("filterBookmarks", () => {
     })
   })
 
-  describe("buildTagMap", () => {
-    it("groups tags by category and includes a global entry", () => {
-      const map = buildTagMap(fixtures)
-      expect(map[""]).toEqual(["cli", "figma", "node", "react", "ui"])
-      expect(map["tools"]).toEqual(["cli", "node", "react"])
-      expect(map["design"]).toEqual(["figma", "ui"])
-    })
-
-    it("returns empty global entry for bookmarks with no tags", () => {
-      const map = buildTagMap([makeBookmark({ id: "x", category: "misc", tags: [] })])
-      expect(map[""]).toEqual([])
-    })
-  })
-
   describe("default sort", () => {
     it("returns bookmarks sorted newest first by default", () => {
       const result = filterBookmarks(fixtures, empty)
@@ -154,5 +140,19 @@ describe("filterBookmarks", () => {
       const result = filterBookmarks(fixtures, { category: "unknown" })
       expect(result).toEqual([])
     })
+  })
+})
+
+describe("buildTagMap", () => {
+  it("groups tags by category and includes a global entry", () => {
+    const map = buildTagMap(fixtures)
+    expect(map[""]).toEqual(["cli", "figma", "node", "react", "ui"])
+    expect(map["tools"]).toEqual(["cli", "node", "react"])
+    expect(map["design"]).toEqual(["figma", "ui"])
+  })
+
+  it("returns empty global entry for bookmarks with no tags", () => {
+    const map = buildTagMap([makeBookmark({ id: "x", category: "misc", tags: [] })])
+    expect(map[""]).toEqual([])
   })
 })
