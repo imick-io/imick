@@ -20,7 +20,7 @@ vi.mock("content-collections", () => ({
   },
 }))
 
-const { getAllFoliosForRender, isFolioDraft } = await import("./folios")
+const { getAllFoliosForRender, getFoliosForItem, isFolioDraft } = await import("./folios")
 
 beforeEach(() => {
   mockFolios.length = 0
@@ -137,8 +137,6 @@ describe("isFolioDraft", () => {
     expect(isFolioDraft({ publishedAt: "not-a-date" })).toBe(true)
   })
 })
-
-const { getFoliosForItem } = await import("./folios")
 
 describe("getFoliosForItem", () => {
   const folioA = {
