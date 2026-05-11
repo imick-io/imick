@@ -14,6 +14,8 @@ import { ClearFiltersButton } from "./clear-filters-button"
 import { Button } from "@/components/ui/button"
 
 const PAGE_SIZE = 12
+const CLEAR_BUTTON_CLASS =
+  "inline-flex h-8 items-center rounded-full border border-border bg-card px-3.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
 
 type Props = {
   bookmarks: Bookmark[]
@@ -84,15 +86,10 @@ export function BookmarksFilteredView({
   const visible = filtered.slice(0, visibleCount)
   const hasMore = filtered.length > visibleCount
 
-  const clearButtonClass =
-    "inline-flex h-8 items-center rounded-full border border-border bg-card px-3.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-
   return (
     <div className="flex flex-col gap-6">
-      {/* Search */}
       <BookmarkSearchInput />
 
-      {/* Categories */}
       {categoryMap && (
         <CategoryChipRow
           categoryMap={categoryMap}
@@ -101,14 +98,12 @@ export function BookmarksFilteredView({
         />
       )}
 
-      {/* Tags */}
       <TagChipRow tagMap={tagMap} category={category} />
 
-      {/* Reviewed + Sort + Clear filters */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <ReviewedSegmented />
         <SortSegmented />
-        {filtersActive && <ClearFiltersButton className={clearButtonClass} />}
+        {filtersActive && <ClearFiltersButton className={CLEAR_BUTTON_CLASS} />}
       </div>
 
       <p className="text-sm text-muted-foreground">
@@ -123,7 +118,7 @@ export function BookmarksFilteredView({
           </p>
           {filtersActive && (
             <div className="mt-4">
-              <ClearFiltersButton className={clearButtonClass} />
+              <ClearFiltersButton className={CLEAR_BUTTON_CLASS} />
             </div>
           )}
         </div>

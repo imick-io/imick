@@ -3,6 +3,10 @@
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
+const chipBase = "inline-flex h-8 items-center rounded-full border px-3.5 text-sm transition-colors"
+const chipActive = "border-foreground bg-foreground text-background"
+const chipInactive = "border-border bg-card text-muted-foreground hover:text-foreground"
+
 type Props = {
   categoryMap: Record<string, string>
   categoryCounts: Record<string, number>
@@ -21,12 +25,7 @@ export function CategoryChipRow({ categoryMap, categoryCounts, activeCategory }:
         <Link
           href="/bookmarks"
           scroll={false}
-          className={cn(
-            "inline-flex h-8 items-center rounded-full border px-3.5 text-sm transition-colors",
-            !activeCategory
-              ? "border-foreground bg-foreground text-background"
-              : "border-border bg-card text-muted-foreground hover:text-foreground"
-          )}
+          className={cn(chipBase, !activeCategory ? chipActive : chipInactive)}
         >
           All ({totalCount})
         </Link>
@@ -40,12 +39,7 @@ export function CategoryChipRow({ categoryMap, categoryCounts, activeCategory }:
             <Link
               href={`/bookmarks/${slug}`}
               scroll={false}
-              className={cn(
-                "inline-flex h-8 items-center rounded-full border px-3.5 text-sm transition-colors",
-                isActive
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border bg-card text-muted-foreground hover:text-foreground"
-              )}
+              className={cn(chipBase, isActive ? chipActive : chipInactive)}
             >
               {label} ({count})
             </Link>
