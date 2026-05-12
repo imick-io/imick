@@ -6,6 +6,7 @@ import { humanizeSlug } from "./bookmarks-meta"
 
 export type { Category }
 export { humanizeSlug }
+export { getCategoryLabel } from "./categories-meta"
 
 export const getAllCategories = cache(async (): Promise<Category[]> => {
   return db.select().from(categories).orderBy(asc(categories.label))
@@ -15,15 +16,6 @@ export const getCategoryMap = cache(async (): Promise<Record<string, string>> =>
   const rows = await getAllCategories()
   return Object.fromEntries(rows.map((r) => [r.slug, r.label]))
 })
-
-export function getCategoryLabel(
-  slug: string | null | undefined,
-  map?: Record<string, string>
-): string {
-  if (!slug) return "Uncategorized"
-  if (map && map[slug]) return map[slug]
-  return humanizeSlug(slug)
-}
 
 export async function categoryExists(slug: string): Promise<boolean> {
   const rows = await db

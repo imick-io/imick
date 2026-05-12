@@ -2,7 +2,7 @@ import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { getHostname, isReviewed, type Bookmark } from "@/lib/bookmarks-meta"
-import { getCategoryLabel } from "@/lib/categories"
+import { getCategoryLabel } from "@/lib/categories-meta"
 import { BookmarkLogo } from "./bookmark-logo"
 
 type BookmarkCardProps = {
