@@ -49,6 +49,7 @@ next-env.d.ts
 /content/posts/
 /content/snippets/
 /content/folios/
+/public/assets/content/
 /.content-cache/
 
 # personal working notes (drafts, learning plans, todos)

@@ -1,14 +1,15 @@
-// Hydrates `content/posts` and `content/snippets` from the private
-// `imick-io/imick-io-content` repo. Runs on `pnpm install` (postinstall) and
-// before any production build.
+// Hydrates `content/{posts,snippets,folios,classes}` and `public/assets/content/`
+// from the private `imick-io/imick-io-content` repo. Runs on `pnpm install`
+// (postinstall) and before any production build.
 //
 // Auth: reads `CONTENT_REPO_TOKEN` (fine-grained PAT, Contents:read on the
 // content repo) from the environment. On Vercel, set it as a project env var.
 // Locally, put it in `.env.local`.
 //
 // Behaviour:
-//   - Token + reachable network: shallow-clones the repo and mirrors
-//     `posts/` and `snippets/` into `content/`.
+//   - Token + reachable network: shallow-clones the repo, mirrors the MDX
+//     subdirs into `content/`, and mirrors `assets/` into
+//     `public/assets/content/`.
 //   - No token but `content/` already populated: skips with a notice.
 //     Lets contributors run `pnpm install` after a manual clone without
 //     needing a PAT.
@@ -24,6 +25,7 @@ loadEnvConfig(process.cwd())
 
 const ROOT = process.cwd()
 const CONTENT_DIR = join(ROOT, "content")
+const PUBLIC_ASSETS_DIR = join(ROOT, "public", "assets", "content")
 const CACHE_DIR = join(ROOT, ".content-cache")
 const REPO = "imick-io/imick-io-content"
 const BRANCH = "main"
@@ -51,21 +53,27 @@ function shallowClone(token: string) {
   )
 }
 
+function mirrorDir(src: string, dest: string, label: string) {
+  if (!existsSync(src)) {
+    console.warn(
+      `fetch-content: '${label}' not present in ${REPO}, skipping (local copy left as-is)`,
+    )
+    return
+  }
+  rmSync(dest, { recursive: true, force: true })
+  mkdirSync(dest, { recursive: true })
+  cpSync(src, dest, { recursive: true })
+  console.log(`fetch-content: mirrored ${label}`)
+}
+
 function mirrorIntoContent() {
   for (const sub of SUBDIRS) {
-    const src = join(CACHE_DIR, sub)
-    const dest = join(CONTENT_DIR, sub)
-    if (!existsSync(src)) {
-      console.warn(
-        `fetch-content: '${sub}/' not present in ${REPO}, skipping (local content/${sub}/ left as-is)`,
-      )
-      continue
-    }
-    rmSync(dest, { recursive: true, force: true })
-    mkdirSync(dest, { recursive: true })
-    cpSync(src, dest, { recursive: true })
-    console.log(`fetch-content: mirrored ${sub}/`)
+    mirrorDir(join(CACHE_DIR, sub), join(CONTENT_DIR, sub), `${sub}/`)
   }
+}
+
+function mirrorAssets() {
+  mirrorDir(join(CACHE_DIR, "assets"), PUBLIC_ASSETS_DIR, "assets/ -> public/assets/content/")
 }
 
 async function main() {
@@ -90,6 +98,7 @@ async function main() {
   console.log(`fetch-content: cloning ${REPO}#${BRANCH}`)
   shallowClone(token)
   mirrorIntoContent()
+  mirrorAssets()
   console.log("fetch-content: done")
 }
 
