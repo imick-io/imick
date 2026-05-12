@@ -47,8 +47,8 @@ export function formatComingSoonDate(publishedAt: string | undefined): string {
   if (!publishedAt) return ""
   const date = new Date(publishedAt)
   if (Number.isNaN(date.getTime())) return ""
-  const month = date.toLocaleDateString("en-US", { month: "short" })
-  const year = date.getFullYear()
+  const month = date.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" })
+  const year = date.getUTCFullYear()
   return `Coming ${month} ${year}`
 }
 
@@ -59,5 +59,6 @@ export function formatClassDate(cls: EnrichedClass): string {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC",
   })
 }
