@@ -53,6 +53,7 @@
     "zod": "^4.4.1"
   },
   "devDependencies": {
+    "@ai-hero/sandcastle": "^0.5.10",
     "@next/env": "^16.2.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
