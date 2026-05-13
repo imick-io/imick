@@ -7,41 +7,30 @@ export type RoleChip = {
   href?: string
 }
 
-const TAKEUP_OUTCOME = "Two years senior full-stack"
-const FLINKS_OUTCOME = "acquired $100M"
-const ZUMRAILS_OUTCOME = "$100M+ raise"
-
-function findEngagement(entries: Experience[], name: string) {
-  for (const entry of entries) {
-    const match = entry.engagements?.find((e) => e.name === name)
-    if (match) return match
-  }
-  return undefined
+type ChipSource = {
+  company: string
+  outcome: string
+  find: (entries: Experience[]) => { role: string } | undefined
 }
 
-function findEmployer(entries: Experience[], company: string) {
-  return entries.find((e) => e.company === company)
-}
+const findEmployer = (company: string) => (entries: Experience[]) =>
+  entries.find((e) => e.company === company)
+
+const findEngagement = (name: string) => (entries: Experience[]) =>
+  entries.flatMap((e) => e.engagements ?? []).find((e) => e.name === name)
+
+const CHIPS: readonly ChipSource[] = [
+  { company: "Takeup", outcome: "Two years senior full-stack", find: findEngagement("Takeup") },
+  { company: "Flinks", outcome: "acquired $100M", find: findEmployer("Flinks") },
+  { company: "Zumrails", outcome: "$100M+ raise", find: findEmployer("Zumrails") },
+]
 
 export function getPreviousRolesStrip(): RoleChip[] {
-  const takeup = findEngagement(experience, "Takeup")
-  if (!takeup) {
-    throw new Error("getPreviousRolesStrip: missing Takeup engagement in experience data")
-  }
-
-  const flinks = findEmployer(experience, "Flinks")
-  if (!flinks) {
-    throw new Error("getPreviousRolesStrip: missing Flinks employer in experience data")
-  }
-
-  const zumrails = findEmployer(experience, "Zumrails")
-  if (!zumrails) {
-    throw new Error("getPreviousRolesStrip: missing Zumrails employer in experience data")
-  }
-
-  return [
-    { company: "Takeup", role: takeup.role, outcome: TAKEUP_OUTCOME },
-    { company: "Flinks", role: flinks.role, outcome: FLINKS_OUTCOME },
-    { company: "Zumrails", role: zumrails.role, outcome: ZUMRAILS_OUTCOME },
-  ]
+  return CHIPS.map(({ company, outcome, find }) => {
+    const match = find(experience)
+    if (!match) {
+      throw new Error(`getPreviousRolesStrip: missing ${company} in experience data`)
+    }
+    return { company, role: match.role, outcome }
+  })
 }

@@ -61,7 +61,7 @@ export default function HomePage() {
             <Link
               key={card.href}
               href={card.href}
-              className="group flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/30"
+              className="flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/30"
             >
               <h3 className="text-lg font-semibold tracking-tight text-foreground">
                 {card.title}
