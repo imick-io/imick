@@ -64,6 +64,7 @@ Five Claude Code skills drive an issue from planning to refactor. They are user-
 
 | Step | Skill | What it does |
 | --- | --- | --- |
+| 0 | `/parallel-plan [label]` | (Optional) Reads open `ready-for-agent` issues (or the passed label), builds a dependency graph, and emits a `<plan>` JSON block of unblocked candidates. Use to pick the next issue when several are ready. Read-only. |
 | 1 | `/plan-work <issue>` | Reads the issue + linked PRD, explores the code, enters Plan Mode with a structured plan that declares `Approach: RGR` or `Approach: direct (rationale)`. Read-only. |
 | 2 | `/do-work` | Implements per the approved plan in the same session. Runs `pnpm typecheck` and `pnpm test` with a self-fix cap of 5. Never commits. |
 | 3 | `/commit-work` | Drafts a `feat:`/`fix:`/`chore:` commit with `Refs #N` footer (no auto-close). Final typecheck + test gate. Waits for approval before committing. |
@@ -73,6 +74,9 @@ Five Claude Code skills drive an issue from planning to refactor. They are user-
 Typical flow:
 
 ```bash
+# optional: pick the next unblocked issue
+/parallel-plan    # review the <plan> JSON, pick an id
+
 git checkout -b sandcastle/issue-23-fix-foo
 # in Claude Code:
 /plan-work 23     # review plan in Plan Mode, approve
@@ -84,6 +88,6 @@ git checkout -b sandcastle/issue-23-fix-foo
 gh issue close 23
 ```
 
-Skip `/review-work` and `/commit-review` for trivial changes. Skip `/plan-work` only when the work is genuinely too small to plan.
+Skip `/review-work` and `/commit-review` for trivial changes. Skip `/plan-work` only when the work is genuinely too small to plan. Skip `/parallel-plan` when you already know which issue you are picking up.
 
 The legacy `.sandcastle/` orchestrator (`pnpm sandcastle`) is retained for autonomous batched runs; the skills above are the manual path.
