@@ -13,10 +13,9 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "npx tsx scripts/migrate.mts",
     "db:studio": "drizzle-kit studio",
-    "sandcastle": "npx tsx .sandcastle/main.mts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf node_modules .next .content-collections && pnpm install"
+    "clean": "rm -rf node_modules .next .content-collections"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.75",
@@ -54,7 +53,6 @@
     "zod": "^4.4.1"
   },
   "devDependencies": {
-    "@ai-hero/sandcastle": "^0.5.8",
     "@next/env": "^16.2.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
