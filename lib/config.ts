@@ -13,4 +13,9 @@ export const siteConfig = {
   repoBranch: "main",
   newsletterArchiveUrl: "https://imick.beehiiv.com",
   newsletterSubscriberMilestone: 0,
+  featuredPostSlugs: [
+    "hello-imick-io",
+    "dont-modify-shadcn-components",
+    "what-is-homebrew",
+  ],
 } as const

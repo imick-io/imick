@@ -6,6 +6,7 @@ import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/lib/config"
 import { selectedWork } from "@/lib/data/selected-work"
+import { getFeaturedPosts } from "@/lib/featured-posts"
 import { getPreviousRolesStrip } from "@/lib/previous-roles"
 
 const HOW_I_WORK_FOLIO_SLUG = "how-i-work"
@@ -40,6 +41,7 @@ export default function HomePage() {
   if (!howIWorkFolio) {
     throw new Error(`HomePage: missing folio "${HOW_I_WORK_FOLIO_SLUG}" in content-collections`)
   }
+  const featuredPosts = getFeaturedPosts()
 
   return (
     <div className="flex flex-col gap-20 px-6 py-16 md:gap-28 md:py-24 lg:gap-32">
@@ -120,6 +122,34 @@ export default function HomePage() {
             Read the folio
             <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
           </span>
+        </Link>
+      </section>
+
+      <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+        <h2 className="text-sm font-medium text-muted-foreground">Writing</h2>
+        <ul className="flex flex-col gap-3">
+          {featuredPosts.map((post) => (
+            <li key={post.slug}>
+              <Link
+                href={`/learn/articles/${post.slug}`}
+                className="flex flex-col gap-1 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/30"
+              >
+                <h3 className="text-base font-semibold tracking-tight text-foreground">
+                  {post.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {post.excerpt}
+                </p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <Link
+          href="/learn/articles"
+          className="text-sm font-medium text-muted-foreground hover:text-foreground"
+        >
+          All writing
+          <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
         </Link>
       </section>
 
