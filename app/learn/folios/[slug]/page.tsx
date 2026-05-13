@@ -53,14 +53,12 @@ function getFolioForRender(slug: string) {
   return { ...folio, isDraft: draft }
 }
 
-function resolveItem(item: FolioItem): { href: string; title: string } | null {
+function resolveItem(item: FolioItem): { href: string; title: string } {
   if (item.type === "article") {
-    const post = allPosts.find((p) => p.slug === item.slug)
-    if (!post) return null
+    const post = allPosts.find((p) => p.slug === item.slug)!
     return { href: `/learn/articles/${post.slug}`, title: post.title }
   }
-  const snippet = allSnippets.find((s) => s.slug === item.slug)
-  if (!snippet) return null
+  const snippet = allSnippets.find((s) => s.slug === item.slug)!
   return { href: `/learn/snippets/${snippet.slug}`, title: snippet.title }
 }
 
@@ -71,9 +69,7 @@ export default async function FolioPage(
   const folio = getFolioForRender(slug)
   if (!folio) notFound()
 
-  const resolvedItems = folio.items
-    .map((item) => ({ item, resolved: resolveItem(item) }))
-    .filter((entry): entry is { item: FolioItem; resolved: { href: string; title: string } } => entry.resolved !== null)
+  const resolvedItems = folio.items.map((item) => ({ item, resolved: resolveItem(item) }))
 
   return (
     <article className="flex flex-col gap-12 px-6 py-12 md:py-16">
