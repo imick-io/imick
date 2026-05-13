@@ -1,7 +1,12 @@
 import type { Metadata } from "next"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { GithubIcon, ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+import { GithubIcon, ArrowUpRight01Icon, ArrowDown01Icon } from "@hugeicons/core-free-icons"
 import { ResumeGateDialog } from "@/components/resume-gate-dialog"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import { siteConfig } from "@/lib/config"
 import { experience } from "@/lib/data/experience"
 import { education } from "@/lib/data/education"
@@ -104,57 +109,66 @@ export default function AboutPage() {
                 </ul>
               ) : null}
               {item.engagements && item.engagements.length > 0 ? (
-                <div className="mt-2 flex flex-col gap-2">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    Engagements
-                  </p>
-                  <ol className="flex flex-col gap-6 border-l border-border/60 pl-5">
-                    {[...item.engagements]
-                      .sort((a, b) => a.order - b.order)
-                      .map((eng) => (
-                        <li key={eng.name} className="flex flex-col gap-2">
-                          <div className="flex flex-col gap-1">
-                            <div className="flex flex-wrap items-baseline justify-between gap-2">
-                              <h4 className="text-base font-medium text-foreground">
-                                {eng.name}
-                                <span className="font-normal text-muted-foreground">
-                                  {" · "}
-                                  {eng.role}
+                <Collapsible className="mt-2 flex flex-col gap-2">
+                  <CollapsibleTrigger className="group inline-flex w-fit items-center gap-1.5 rounded-md text-xs font-medium uppercase tracking-wide text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50">
+                    <span>
+                      {item.engagements.length} client engagements - show details
+                    </span>
+                    <HugeiconsIcon
+                      icon={ArrowDown01Icon}
+                      size={14}
+                      className="transition-transform group-data-[panel-open]:rotate-180"
+                    />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <ol className="flex flex-col gap-6 border-l border-border/60 pl-5">
+                      {[...item.engagements]
+                        .sort((a, b) => a.order - b.order)
+                        .map((eng) => (
+                          <li key={eng.name} className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-1">
+                              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                                <h4 className="text-base font-medium text-foreground">
+                                  {eng.name}
+                                  <span className="font-normal text-muted-foreground">
+                                    {" · "}
+                                    {eng.role}
+                                  </span>
+                                </h4>
+                                <span className="text-xs text-muted-foreground">
+                                  {formatRange(eng.startDate, eng.endDate, eng.current)}
                                 </span>
-                              </h4>
-                              <span className="text-xs text-muted-foreground">
-                                {formatRange(eng.startDate, eng.endDate, eng.current)}
-                              </span>
+                              </div>
+                              {eng.summary ? (
+                                <p className="text-sm leading-relaxed text-foreground/90">
+                                  {eng.summary}
+                                </p>
+                              ) : null}
                             </div>
-                            {eng.summary ? (
-                              <p className="text-sm leading-relaxed text-foreground/90">
-                                {eng.summary}
-                              </p>
+                            {eng.highlights.length > 0 ? (
+                              <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-foreground/90 marker:text-muted-foreground">
+                                {eng.highlights.map((highlight, i) => (
+                                  <li key={i}>{highlight}</li>
+                                ))}
+                              </ul>
                             ) : null}
-                          </div>
-                          {eng.highlights.length > 0 ? (
-                            <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-foreground/90 marker:text-muted-foreground">
-                              {eng.highlights.map((highlight, i) => (
-                                <li key={i}>{highlight}</li>
-                              ))}
-                            </ul>
-                          ) : null}
-                          {eng.tech && eng.tech.length > 0 ? (
-                            <ul className="flex flex-wrap gap-1.5 pt-1">
-                              {eng.tech.map((t) => (
-                                <li
-                                  key={t}
-                                  className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs text-muted-foreground"
-                                >
-                                  {t}
-                                </li>
-                              ))}
-                            </ul>
-                          ) : null}
-                        </li>
-                      ))}
-                  </ol>
-                </div>
+                            {eng.tech && eng.tech.length > 0 ? (
+                              <ul className="flex flex-wrap gap-1.5 pt-1">
+                                {eng.tech.map((t) => (
+                                  <li
+                                    key={t}
+                                    className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs text-muted-foreground"
+                                  >
+                                    {t}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : null}
+                          </li>
+                        ))}
+                    </ol>
+                  </CollapsibleContent>
+                </Collapsible>
               ) : null}
             </li>
           ))}
