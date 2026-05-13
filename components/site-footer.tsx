@@ -16,7 +16,7 @@ export function SiteFooter() {
               Stay in the loop.
             </p>
             <p className="text-sm text-muted-foreground">
-              The {siteConfig.handle} newsletter — engineering, product, and
+              The {siteConfig.handle} newsletter. Engineering, product, and
               what I&apos;m shipping. Every other Tuesday.
             </p>
           </div>
@@ -71,6 +71,14 @@ export function SiteFooter() {
               >
                 Privacy
               </Link>
+              <a
+                href="https://www.concreo.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Concreo
+              </a>
             </nav>
             <ThemeToggle />
           </div>

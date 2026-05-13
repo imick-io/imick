@@ -1,95 +1,52 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon, UserIcon, Mail01Icon } from "@hugeicons/core-free-icons"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
-import { FlipWords } from "@/components/ui/flip-words"
-import { NoiseBackground } from "@/components/ui/noise-background"
-import { StackGrid } from "@/components/ui/stack-grid"
-import { cn } from "@/lib/utils"
 import { siteConfig } from "@/lib/config"
-import { stack } from "@/lib/data/stack"
-import profileThumb from "@/assets/profile-thumb.jpeg"
 
-const description = `Personal site of ${siteConfig.name} — ${siteConfig.tagline}`
+const description = `Personal site of ${siteConfig.name}. ${siteConfig.tagline}`
 
 export const metadata: Metadata = {
-  title: { absolute: `${siteConfig.name} — ${siteConfig.role}` },
+  title: { absolute: `${siteConfig.name}, ${siteConfig.role}` },
   description,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "/",
     siteName: siteConfig.handle,
-    title: `${siteConfig.name} — ${siteConfig.role}`,
+    title: `${siteConfig.name}, ${siteConfig.role}`,
     description,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} — ${siteConfig.role}`,
+    title: `${siteConfig.name}, ${siteConfig.role}`,
     description,
   },
 }
 
-const sectionLinks = [
-  {
-    href: "/about",
-    title: "About",
-    description: "Work history, education, and open-source highlights.",
-    icon: UserIcon,
-  },
-  {
-    href: "/contact",
-    title: "Contact",
-    description: "Reach out about collaboration, hiring, or just to say hello.",
-    icon: Mail01Icon,
-  },
-]
+const headline = "Senior Product Engineer. I ship at startup speed, end-to-end."
+const subLine =
+  "Business head, engineering hands. Structure and KPIs from CGI, then two fintech startups that went on to win: Flinks (acquired, $100M) and Zumrails ($100M+ raise). Two years senior full-stack at Takeup. I deliver across the stack: strategy, architecture, code, deploy. Powered by an AI-native workflow I built and run in production."
 
 export default function HomePage() {
   return (
     <div className="flex flex-col gap-20 px-6 py-16 md:gap-28 md:py-24 lg:gap-32">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <Image
-          src={profileThumb}
-          alt={siteConfig.name}
-          width={160}
-          height={160}
-          priority
-          placeholder="blur"
-          className="size-20 rounded-xl md:size-24 hover:scale-150 duration-300 hover:rotate-6 ease-in-out object-cover object-top"
-        />
+        <p className="text-sm font-medium text-muted-foreground">
+          {siteConfig.name}
+        </p>
         <h1 className="text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
-          Hi, I&apos;m Michael.
+          {headline}
         </h1>
-        <div className="relative">
-          <FlipWords
-            words={[
-              "AI Product Engineer",
-              "Senior Full-Stack Engineer",
-              "AI-Native Product Builder",
-              "Next.js Specialist",
-            ]}
-            className="px-0 text-lg text-muted-foreground md:text-xl"
-          />
-        </div>
+        <p className="text-lg leading-relaxed text-muted-foreground md:text-xl">
+          {subLine}
+        </p>
         <div className="flex flex-wrap gap-3 pt-2">
-          <Link href="/about" className={buttonVariants({ size: "lg" })}>
-            View Resume
+          <Link href="/contact" className={buttonVariants({ size: "lg" })}>
+            Get in touch
             <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
           </Link>
-          <NoiseBackground containerClassName="rounded-full p-0.5">
-            <Link
-              href="/contact"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "relative w-full bg-background/80 backdrop-blur-sm hover:bg-background/40",
-              )}
-            >
-              Get in Touch
-            </Link>
-          </NoiseBackground>
         </div>
       </section>
 
@@ -101,49 +58,18 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-        <h2 className="text-sm font-medium text-muted-foreground">Tech Stack</h2>
-        <StackGrid
-          items={[...stack]
-            .sort((a, b) => a.order - b.order)
-            .filter((item) => item.iconSlug)
-            .map((item, idx) => ({
-              id: idx,
-              name: item.name,
-              designation:
-                item.category === "ai"
-                  ? "AI"
-                  : item.category.charAt(0).toUpperCase() + item.category.slice(1),
-              image: `/icons/${item.iconSlug}.svg`,
-              imageDark: item.mono ? `/icons/${item.iconSlug}_dark.svg` : undefined,
-            }))}
-        />
-      </section>
-
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-        <h2 className="text-sm font-medium text-muted-foreground">Explore</h2>
-        <ul className="grid gap-3 sm:grid-cols-2">
-          {sectionLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="group flex h-full flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:bg-muted/50"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-foreground">
-                    <HugeiconsIcon icon={link.icon} size={18} />
-                    <span className="text-base font-medium">{link.title}</span>
-                  </div>
-                  <HugeiconsIcon
-                    icon={ArrowRight01Icon}
-                    size={16}
-                    className="text-muted-foreground transition-transform group-hover:translate-x-0.5"
-                  />
-                </div>
-                <p className="text-sm text-muted-foreground">{link.description}</p>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+          Have a project in mind?
+        </h2>
+        <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
+          Tell me about it. I read every message.
+        </p>
+        <div className="flex flex-wrap gap-3 pt-2">
+          <Link href="/contact" className={buttonVariants({ size: "lg" })}>
+            Get in touch
+            <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
+          </Link>
+        </div>
       </section>
     </div>
   )
