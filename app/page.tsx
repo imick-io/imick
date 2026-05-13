@@ -1,11 +1,14 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { allFolios } from "content-collections"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/lib/config"
 import { selectedWork } from "@/lib/data/selected-work"
 import { getPreviousRolesStrip } from "@/lib/previous-roles"
+
+const HOW_I_WORK_FOLIO_SLUG = "how-i-work"
 
 const description = `Personal site of ${siteConfig.name}. ${siteConfig.tagline}`
 
@@ -33,6 +36,10 @@ const subLine =
 
 export default function HomePage() {
   const previousRoles = getPreviousRolesStrip()
+  const howIWorkFolio = allFolios.find((folio) => folio.slug === HOW_I_WORK_FOLIO_SLUG)
+  if (!howIWorkFolio) {
+    throw new Error(`HomePage: missing folio "${HOW_I_WORK_FOLIO_SLUG}" in content-collections`)
+  }
 
   return (
     <div className="flex flex-col gap-20 px-6 py-16 md:gap-28 md:py-24 lg:gap-32">
@@ -94,6 +101,25 @@ export default function HomePage() {
         >
           See all projects
           <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
+        </Link>
+      </section>
+
+      <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+        <h2 className="text-sm font-medium text-muted-foreground">How I Work</h2>
+        <Link
+          href={`/learn/folios/${howIWorkFolio.slug}`}
+          className="flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/30"
+        >
+          <h3 className="text-lg font-semibold tracking-tight text-foreground">
+            {howIWorkFolio.title}
+          </h3>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {howIWorkFolio.excerpt}
+          </p>
+          <span className="inline-flex items-center text-sm font-medium text-foreground">
+            Read the folio
+            <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
+          </span>
         </Link>
       </section>
 
