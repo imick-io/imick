@@ -40,7 +40,7 @@ export const experience: Experience[] = [
   {
     company: "Concreo",
     role: "Founder, AI Product Engineer",
-    startDate: "YYYY-MM" /* TODO confirm */,
+    startDate: "2021-05",
     current: true,
     location: "Remote, Canada & USA",
     description:
@@ -54,7 +54,7 @@ export const experience: Experience[] = [
       {
         name: "Takeup",
         role: "AI Product Engineer",
-        startDate: "YYYY-MM" /* TODO confirm */,
+        startDate: "2021-12",
         endDate: "2026-05",
         summary:
           "Shipped product UI for an AI-powered pricing platform managing live room rates for hotels, boutique hotels, and B&Bs.",
@@ -82,8 +82,7 @@ export const experience: Experience[] = [
       {
         name: "Humanly",
         role: "Full-Stack Developer",
-        startDate: "YYYY-MM" /* TODO confirm */,
-        endDate: "YYYY-MM" /* TODO confirm */,
+        startDate: "2024-06",
         summary:
           "Built and maintained Humanly's multi-page marketing website with a CMS-driven content pipeline.",
         highlights: [
@@ -98,8 +97,8 @@ export const experience: Experience[] = [
       {
         name: "Teamable",
         role: "Front-End Developer",
-        startDate: "YYYY-MM" /* TODO confirm */,
-        endDate: "YYYY-MM" /* TODO confirm */,
+        startDate: "2022-11",
+        endDate: "2024-05 (Acquired by Humanly)",
         summary:
           "Designed and shipped Teamable.com's user interface in Next.js and React, focused on performance, accessibility, and design system reuse.",
         highlights: [
@@ -114,8 +113,8 @@ export const experience: Experience[] = [
       {
         name: "Wearesky",
         role: "Full-Stack & 3D Developer",
-        startDate: "YYYY-MM" /* TODO confirm */,
-        endDate: "YYYY-MM" /* TODO confirm */,
+        startDate: "2022-07",
+        endDate: "2024-04",
         summary:
           "Designed and built a 3D-centric web experience as the brand's primary visual differentiator.",
         highlights: [
@@ -129,8 +128,8 @@ export const experience: Experience[] = [
       {
         name: "Takein",
         role: "Full-Stack Developer",
-        startDate: "YYYY-MM" /* TODO confirm */,
-        endDate: "YYYY-MM" /* TODO confirm */,
+        startDate: "2020-08",
+        endDate: "2021-06",
         summary:
           "Refactored core portions of Takein's codebase and built backend handling for concurrent order processing.",
         highlights: [
@@ -145,8 +144,8 @@ export const experience: Experience[] = [
       {
         name: "Grics",
         role: "Front-End Developer",
-        startDate: "YYYY-MM" /* TODO confirm */,
-        endDate: "YYYY-MM" /* TODO confirm */,
+        startDate: "2021-08" /* TODO confirm */,
+        endDate: "2022-02" /* TODO confirm */,
         summary:
           "Built a reusable component suite for an internal admin dashboard, with Storybook documentation and Jest test coverage.",
         highlights: [
@@ -162,9 +161,9 @@ export const experience: Experience[] = [
   {
     company: "Zumrails",
     role: "Product Owner & Front-End Developer",
-    startDate: "YYYY-MM" /* TODO confirm */,
-    endDate: "YYYY-MM" /* TODO confirm */,
-    location: "Montreal, Canada" /* TODO confirm */,
+    startDate: "2020-01",
+    endDate: "2021-05",
+    location: "Montreal, Canada",
     description:
       "Drove product strategy and shipped front-end interfaces for Zumrails' fintech platform.",
     highlights: [
@@ -178,9 +177,9 @@ export const experience: Experience[] = [
   {
     company: "Flinks",
     role: "Product Owner",
-    startDate: "YYYY-MM" /* TODO confirm */,
-    endDate: "YYYY-MM" /* TODO confirm */,
-    location: "Montreal, Canada" /* TODO confirm */,
+    startDate: "2019-03",
+    endDate: "2019-11",
+    location: "Montreal, Canada",
     description:
       "Owned the PLG initiative and the Wealth Data product expanding Flinks' coverage from banking to wealth accounts. Led a team of 1 to 5.",
     highlights: [
@@ -194,8 +193,8 @@ export const experience: Experience[] = [
   {
     company: "CGI",
     role: "Business Intelligence Consultant",
-    startDate: "YYYY-MM" /* TODO confirm */,
-    endDate: "YYYY-MM" /* TODO confirm */,
+    startDate: "2017-06",
+    endDate: "2019-03",
     location: "Montreal, Canada",
     description:
       "Joined as a Business Analyst, moved into Business Intelligence work for enterprise clients including a major Canadian bank.",
@@ -206,28 +205,5 @@ export const experience: Experience[] = [
       "Translated ambiguous business questions into rigorous analytic frameworks, often on tight timelines.",
     ],
     order: 4,
-  },
-  // Below: kept for record, excluded from imick.io render. Surface only on LinkedIn.
-  {
-    company: "IG Wealth Management",
-    role: "Financial Advisor",
-    startDate: "YYYY-MM" /* TODO confirm */,
-    endDate: "YYYY-MM" /* TODO confirm */,
-    location: "Quebec, Canada" /* TODO confirm */,
-    description: "Advised individual clients on wealth management strategy.",
-    highlights: [],
-    linkedinOnly: true,
-    order: 5,
-  },
-  {
-    company: "Local SMB",
-    role: "Accountant",
-    startDate: "YYYY-MM" /* TODO confirm */,
-    endDate: "YYYY-MM" /* TODO confirm */,
-    location: "Quebec, Canada" /* TODO confirm */,
-    description: "Accounting work for a small and medium business.",
-    highlights: [],
-    linkedinOnly: true,
-    order: 6,
   },
 ]
