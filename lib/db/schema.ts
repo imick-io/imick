@@ -16,6 +16,9 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   image: text("image"),
+  isAnonymous: boolean("is_anonymous").notNull().default(false),
+  company: text("company"),
+  linkedinUrl: text("linkedin_url"),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 })
@@ -59,6 +62,21 @@ export const verification = pgTable("verification", {
   createdAt: timestamp("created_at"),
   updatedAt: timestamp("updated_at"),
 })
+
+export const formSubmissions = pgTable("form_submissions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  source: text("source").notNull(),
+  intention: text("intention"),
+  subject: text("subject"),
+  message: text("message"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+})
+
+export type FormSubmission = typeof formSubmissions.$inferSelect
+export type NewFormSubmission = typeof formSubmissions.$inferInsert
 
 // --- Bookmarks ---
 

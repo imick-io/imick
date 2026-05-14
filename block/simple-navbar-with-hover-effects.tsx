@@ -13,7 +13,7 @@ import { navItems, contactItem, type NavItem } from "./nav-items";
 
 export default function SimpleNavbarWithHoverEffects() {
   return (
-    <div className="sticky inset-x-0 top-4 z-50 w-full px-4">
+    <div className="sticky inset-x-0 top-4 z-50 w-full px-4 print:hidden">
       <Navbar />
     </div>
   );

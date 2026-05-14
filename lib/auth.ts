@@ -1,9 +1,11 @@
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
-import { magicLink } from "better-auth/plugins"
+import { anonymous, magicLink } from "better-auth/plugins"
 import { Resend } from "resend"
 import { db } from "./db"
 import { user, session, account, verification } from "./db/schema"
+
+const THIRTY_DAYS_IN_SECONDS = 60 * 60 * 24 * 30
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
@@ -12,7 +14,11 @@ export const auth = betterAuth({
     provider: "pg",
     schema: { user, session, account, verification },
   }),
+  session: {
+    expiresIn: THIRTY_DAYS_IN_SECONDS,
+  },
   plugins: [
+    anonymous(),
     magicLink({
       sendMagicLink: async ({ email, url }) => {
         if (email !== process.env.ADMIN_EMAIL) return
