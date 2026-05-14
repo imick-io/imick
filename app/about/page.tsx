@@ -41,6 +41,29 @@ function formatMonth(value: string) {
   return date.toLocaleString("en-US", { month: "short", year: "numeric" })
 }
 
+function StackChipIcon({ slug, mono }: { slug: string; mono?: boolean }) {
+  const base = "h-3.5 w-3.5 object-contain"
+  if (!mono) {
+    return <img src={`/icons/${slug}.svg`} alt="" aria-hidden className={base} />
+  }
+  return (
+    <>
+      <img
+        src={`/icons/${slug}.svg`}
+        alt=""
+        aria-hidden
+        className={`${base} dark:hidden`}
+      />
+      <img
+        src={`/icons/${slug}_dark.svg`}
+        alt=""
+        aria-hidden
+        className={`hidden ${base} dark:block`}
+      />
+    </>
+  )
+}
+
 function formatRange(startDate: string, endDate?: string, current?: boolean) {
   const start = formatMonth(startDate)
   const end = current ? "Present" : endDate ? formatMonth(endDate) : "Present"
@@ -113,24 +136,7 @@ export default function AboutPage() {
                     className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted/30 px-2 py-1 text-xs text-foreground"
                   >
                     {item.iconSlug ? (
-                      <>
-                        <img
-                          src={`/icons/${item.iconSlug}.svg`}
-                          alt=""
-                          aria-hidden
-                          className={`h-3.5 w-3.5 object-contain ${
-                            item.mono ? "dark:hidden" : ""
-                          }`}
-                        />
-                        {item.mono ? (
-                          <img
-                            src={`/icons/${item.iconSlug}_dark.svg`}
-                            alt=""
-                            aria-hidden
-                            className="hidden h-3.5 w-3.5 object-contain dark:block"
-                          />
-                        ) : null}
-                      </>
+                      <StackChipIcon slug={item.iconSlug} mono={item.mono} />
                     ) : null}
                     <span>{item.name}</span>
                   </li>
