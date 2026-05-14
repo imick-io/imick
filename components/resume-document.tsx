@@ -61,8 +61,8 @@ function Header({ header }: { header: ResumeData["header"] }) {
         {header.role}
       </p>
       <p className="text-xs text-muted-foreground print:text-[9pt] print:text-black">
-        {header.email} · {header.linkedin.display} · {header.github.display} ·{" "}
-        {header.website} · {header.location}
+        {header.email} · {header.linkedin} · {header.github} · {header.website}{" "}
+        · {header.location}
       </p>
     </header>
   )

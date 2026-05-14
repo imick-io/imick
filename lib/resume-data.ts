@@ -8,8 +8,8 @@ export type ResumeHeader = {
   name: string
   role: string
   email: string
-  linkedin: { url: string; display: string }
-  github: { url: string; display: string }
+  linkedin: string
+  github: string
   website: string
   location: string
 }
@@ -65,14 +65,8 @@ export function buildResumeData(
       name: siteConfig.name,
       role: siteConfig.role,
       email: siteConfig.resumeEmail,
-      linkedin: {
-        url: siteConfig.resumeLinkedinUrl,
-        display: siteConfig.resumeLinkedinDisplay,
-      },
-      github: {
-        url: siteConfig.resumeGithubUrl,
-        display: siteConfig.resumeGithubDisplay,
-      },
+      linkedin: siteConfig.resumeLinkedin,
+      github: siteConfig.resumeGithub,
       website: siteConfig.handle,
       location: siteConfig.resumeLocation,
     },

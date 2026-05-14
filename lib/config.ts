@@ -8,10 +8,8 @@ export const siteConfig = {
   url: "https://imick.io",
   contactEmail: "michael@concreo.io",
   resumeEmail: "michael@imick.io",
-  resumeLinkedinUrl: "https://linkedin.com/in/i-mick/",
-  resumeLinkedinDisplay: "linkedin.com/in/i-mick/",
-  resumeGithubUrl: "https://github.com/imick-io",
-  resumeGithubDisplay: "github.com/imick-io",
+  resumeLinkedin: "linkedin.com/in/i-mick/",
+  resumeGithub: "github.com/imick-io",
   resumeLocation: "Remote, Canada (Montreal)",
   resumeBio:
     "Senior product engineer with product DNA from Flinks and Zumrails and a year and a half senior full-stack at Takeup. Combines business and engineering: structure and KPIs from CGI, ship-fast pragmatism from startups. Builds with AI in the loop and a human eye on the bar.",

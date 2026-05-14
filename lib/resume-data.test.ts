@@ -80,8 +80,8 @@ describe("buildResumeData", () => {
 
     expect(result.header.email).toBe(siteConfig.resumeEmail)
     expect(result.header.email).not.toBe(siteConfig.contactEmail)
-    expect(result.header.linkedin.display).toBe(siteConfig.resumeLinkedinDisplay)
-    expect(result.header.github.display).toBe(siteConfig.resumeGithubDisplay)
+    expect(result.header.linkedin).toBe(siteConfig.resumeLinkedin)
+    expect(result.header.github).toBe(siteConfig.resumeGithub)
     expect(result.header.website).toBe(siteConfig.handle)
     expect(result.header.location).toBe(siteConfig.resumeLocation)
     expect(result.header.name).toBe(siteConfig.name)
