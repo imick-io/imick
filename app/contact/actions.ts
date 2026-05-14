@@ -1,7 +1,9 @@
 "use server"
 
 import { Resend } from "resend"
+import { createAnonymousSessionFromForm } from "@/lib/anonymous-session"
 import { contactSchema } from "@/lib/contact-schema"
+import { recordFormSubmission } from "@/lib/form-submissions"
 
 type Result = { ok: true } | { ok: false; error: string }
 
@@ -57,9 +59,28 @@ export async function submitContactMessage(input: unknown): Promise<Result> {
       console.error("Resend error", error)
       return { ok: false, error: "Could not send your message. Please try again." }
     }
-    return { ok: true }
   } catch (err) {
     console.error("Resend exception", err)
     return { ok: false, error: "Could not send your message. Please try again." }
   }
+
+  const session = await createAnonymousSessionFromForm({
+    source: "contact",
+    name: data.name,
+    email: data.email,
+  })
+  if (!session.ok) {
+    return { ok: false, error: session.error }
+  }
+
+  const recorded = await recordFormSubmission({
+    userId: session.userId,
+    source: "contact",
+    payload: { subject: data.subject, message: data.message },
+  })
+  if (!recorded.ok) {
+    return { ok: false, error: recorded.error }
+  }
+
+  return { ok: true }
 }
