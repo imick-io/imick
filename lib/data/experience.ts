@@ -1,11 +1,22 @@
-// Experience data — populated during /grill-me bio interview.
+// Experience data, populated during /grill-me bio interview.
 //
 // Structure decisions (locked):
-// - Q5a: Hierarchical. Concreo is the top-level employer; Toptal/Concreo client work is nested as engagements.
-// - Q5b: CGI is a full entry. IG Wealth Management and SMB Accountant are linkedinOnly (kept for record, not rendered on imick.io).
-// - Q5c: Toptal Top 3% mentioned as a footnote in Concreo's description.
-// - Q5d: Verb-framing rewrite applied to all entries.
-// - Q5e: Dates pending — every YYYY-MM marked /* TODO confirm */ still needs the real date pasted from LinkedIn.
+// - Concreo is a top-level employer entry. Takeup is promoted to a top-level
+//   sibling with `via: { name: "Concreo" }` because its weight (senior full-stack)
+//   deserves visual parity with Zumrails/Flinks/CGI rather than burial as a
+//   Concreo engagement.
+// - Humanly and Teamable remain nested under Concreo with full descriptions
+//   (logos do reputation work).
+// - Wearesky, Takein, Grics remain nested under Concreo as compact entries
+//   (renderer surfaces name + role + summary + tech only; highlights array
+//   kept for export but hidden on imick.io).
+// - CGI is a full entry. IG Wealth Management and SMB Accountant are
+//   intentionally omitted from this file.
+// - Toptal Top 3% mentioned in Concreo's description.
+// - Verb-framing rewrite applied to all entries.
+// - Concreo startDate aligned with Takein startDate (Takein was the first
+//   engagement that became Concreo client work; formal incorporation date
+//   intentionally aligned to that point).
 
 export type Engagement = {
   name: string
@@ -17,6 +28,10 @@ export type Engagement = {
   highlights: string[]
   tech?: string[]
   url?: string
+  /** Optional company outcome label (e.g. acquisition or raise). Rendered as a small badge. */
+  outcome?: string
+  /** When true, the renderer surfaces only name + role + summary + tech. The highlights array is kept for export but hidden on imick.io. */
+  compact?: boolean
   order: number
 }
 
@@ -31,6 +46,10 @@ export type Experience = {
   highlights: string[]
   /** Nested client engagements rendered under this employer (used by Concreo). */
   engagements?: Engagement[]
+  /** Contractual wrapper for engagements that flowed through a parent agency (e.g. Takeup via Concreo). */
+  via?: { name: string; role?: string; url?: string }
+  /** Optional company outcome label (e.g. acquisition or raise). Rendered as a small badge. */
+  outcome?: string
   /** When true, entry is kept in the data file for record but excluded from imick.io render. Surface only on LinkedIn. */
   linkedinOnly?: boolean
   order: number
@@ -39,76 +58,48 @@ export type Experience = {
 export const experience: Experience[] = [
   {
     company: "Concreo",
-    role: "Founder, AI Product Engineer",
-    startDate: "2021-05",
+    role: "Founder & Senior Product Engineer",
+    startDate: "2020-08",
     current: true,
     location: "Remote, Canada & USA",
     description:
       "Independent agency delivering senior product, design, and engineering on AI-native products. Member of the Toptal Top 3% network.",
     highlights: [
-      "Lead AI product engagements end-to-end for selected clients across the full surface: design, frontend, backend integration, and the production craft around AI features.",
-      "Design and ship full-stack products in Next.js, React, Server Actions, and shadcn/ui, integrating Python and FastAPI services and AI APIs.",
-      "Combine product ownership (roadmap, metrics, stakeholder alignment) with hands-on engineering (architecture, observability, eval design) on every engagement.",
+      "Lead AI product engagements end-to-end for selected clients: design, frontend, backend, and the production craft around AI features.",
+      "Ship full-stack products in Next.js, React, and Server Actions, integrating Python and FastAPI services and AI APIs.",
+      "Run product ownership and hands-on engineering on every engagement, not one or the other.",
     ],
     engagements: [
-      {
-        name: "Takeup",
-        role: "AI Product Engineer",
-        startDate: "2021-12",
-        endDate: "2026-05",
-        summary:
-          "Shipped product UI for an AI-powered pricing platform managing live room rates for hotels, boutique hotels, and B&Bs.",
-        highlights: [
-          "Built complex pricing workflows in Next.js, React, shadcn/ui, and Server Actions, designing how operators preview, edit, and approve AI-driven rate recommendations.",
-          "Integrated org-based authentication with Clerk for multi-property access patterns across the app.",
-          "Connected front-end flows to Python and FastAPI services running pricing logic and AI inference, owning the latency and error-handling story across the boundary.",
-          "Operated in a high-autonomy team alongside senior engineers, owning UI features end-to-end from product spec to production.",
-        ],
-        tech: [
-          "React",
-          "Next.js",
-          "shadcn/ui",
-          "Server Actions",
-          "Clerk",
-          "Python",
-          "FastAPI",
-          "PostHog",
-          "Claude Code",
-          "Vercel",
-          "GitHub",
-        ],
-        order: 1,
-      },
       {
         name: "Humanly",
         role: "Full-Stack Developer",
         startDate: "2024-06",
+        current: true,
         summary:
           "Built and maintained Humanly's multi-page marketing website with a CMS-driven content pipeline.",
         highlights: [
-          "Built and maintained Humanly's marketing site in Next.js, Sanity, Tailwind, and shadcn/ui.",
-          "Established a reusable component layer that accelerated downstream page work and kept design consistent across breakpoints.",
-          "Integrated Sanity content modeling so non-technical teammates ship copy and content edits without engineering involvement.",
-          "Shipped polished animated experiences with WCAG-aligned accessibility preserved across desktop, tablet, and mobile.",
+          "Built a reusable component layer in Next.js and shadcn/ui that shortened time-to-feature on later pages.",
+          "Wired Sanity content modeling so non-technical teammates ship copy edits without engineering.",
+          "Shipped animated, responsive experiences with WCAG accessibility on desktop, tablet, and mobile.",
         ],
         tech: ["Next.js", "Sanity", "Tailwind CSS", "shadcn/ui", "GitHub"],
-        order: 2,
+        order: 1,
       },
       {
         name: "Teamable",
         role: "Front-End Developer",
         startDate: "2022-11",
-        endDate: "2024-05 (Acquired by Humanly)",
+        endDate: "2024-05",
         summary:
-          "Designed and shipped Teamable.com's user interface in Next.js and React, focused on performance, accessibility, and design system reuse.",
+          "Designed and shipped Teamable.com's UI in Next.js and React, optimizing for performance, accessibility, and component reuse.",
         highlights: [
-          "Designed and shipped Teamable.com's user interface in Next.js and React, with Tailwind for the visual system.",
-          "Established a reusable React component library that reduced time-to-feature on subsequent work.",
-          "Deployed and maintained the platform on Vercel with attention to load times and reliability.",
-          "Implemented responsive design and WCAG-aligned accessibility across desktop, tablet, and mobile.",
+          "Built a reusable React component library that shortened time-to-feature on later pages.",
+          "Deployed and maintained the platform on Vercel.",
+          "Shipped responsive, WCAG-accessible UI across desktop, tablet, and mobile.",
         ],
         tech: ["Next.js", "React", "Vercel", "Tailwind CSS", "GitHub"],
-        order: 3,
+        outcome: "Acquired by Humanly (2024)",
+        order: 2,
       },
       {
         name: "Wearesky",
@@ -118,11 +109,26 @@ export const experience: Experience[] = [
         summary:
           "Designed and built a 3D-centric web experience as the brand's primary visual differentiator.",
         highlights: [
-          "Designed and built a 3D-centric web experience using Nuxt.js, Vue, and Three.js, with the 3D treatment as the brand differentiator.",
-          "Engineered the site for fast load on 3D assets and deployed on Vercel.",
-          "Shipped a reusable Vue component library tailored for 3D-driven layouts and responsive 3D rendering.",
+          "Optimized loading for heavy 3D assets and deployed on Vercel.",
+          "Built a reusable Vue component library for 3D-driven, responsive layouts.",
         ],
         tech: ["Nuxt.js", "Vue", "Tailwind CSS", "Vercel", "Three.js", "GitHub"],
+        compact: true,
+        order: 3,
+      },
+      {
+        name: "Grics",
+        role: "Front-End Developer",
+        startDate: "2021-08" /* TODO confirm */,
+        endDate: "2022-02" /* TODO confirm */,
+        summary:
+          "Built a reusable component suite for an internal admin dashboard, with Storybook documentation and Jest test coverage.",
+        highlights: [
+          "Built a reusable component suite with Storybook docs that became the team's component reference.",
+          "Wrote Jest test suites that hardened component-level QA.",
+        ],
+        tech: ["React", "Storybook", "Jest", "Microsoft Azure DevOps"],
+        compact: true,
         order: 4,
       },
       {
@@ -133,30 +139,34 @@ export const experience: Experience[] = [
         summary:
           "Refactored core portions of Takein's codebase and built backend handling for concurrent order processing.",
         highlights: [
-          "Refactored core portions of the codebase to improve performance and maintainability across user and order systems.",
-          "Worked across the data model managing concurrent user and order state.",
-          "Built backend handling for high-concurrency food orders and integrated payment gateways for secure transactions.",
-          "Shipped front-end flows for the customer-facing ordering experience.",
+          "Refactored core code paths in user and order systems for performance and maintainability.",
+          "Built data-model handling for concurrent user and order state.",
+          "Built backend handling for high-concurrency food orders, including payment gateway integration.",
+          "Shipped customer-facing ordering flows.",
         ],
         tech: ["Next.js", "Firebase", "Docker", "GitHub"],
+        compact: true,
         order: 5,
-      },
-      {
-        name: "Grics",
-        role: "Front-End Developer",
-        startDate: "2021-08" /* TODO confirm */,
-        endDate: "2022-02" /* TODO confirm */,
-        summary:
-          "Built a reusable component suite for an internal admin dashboard, with Storybook documentation and Jest test coverage.",
-        highlights: [
-          "Built a reusable component suite for an internal admin dashboard, with Storybook documentation that became the team's component reference.",
-          "Wrote Jest test suites covering component behavior, hardening the dashboard's QA process.",
-        ],
-        tech: ["React", "Storybook", "Jest", "Microsoft Azure DevOps"],
-        order: 6,
       },
     ],
     order: 1,
+  },
+  {
+    company: "Takeup",
+    role: "Senior Full-Stack Engineer",
+    startDate: "2024-12",
+    endDate: "2026-05",
+    location: "Remote",
+    description:
+      "Shipped product UI for an AI-powered pricing platform managing live room rates for hotels, boutique hotels, and B&Bs.",
+    highlights: [
+      "Built pricing workflows in Next.js, React, shadcn/ui, and Server Actions, designing how operators preview, edit, and approve AI-driven rate recommendations.",
+      "Wired org-based authentication with Clerk for multi-property access patterns.",
+      "Connected front-end flows to Python and FastAPI services running pricing logic and AI inference, owning the latency and error-handling story across the boundary.",
+      "Owned UI features end-to-end inside a high-autonomy senior-eng team, from product spec to production.",
+    ],
+    via: { name: "Concreo" },
+    order: 2,
   },
   {
     company: "Zumrails",
@@ -167,12 +177,13 @@ export const experience: Experience[] = [
     description:
       "Drove product strategy and shipped front-end interfaces for Zumrails' fintech platform.",
     highlights: [
-      "Owned product roadmap, metrics, and customer-feedback loops for the Zumrails fintech platform.",
-      "Identified strategic opportunities and prioritized roadmap across competing initiatives.",
-      "Translated requirements into shipped features by partnering directly with engineering and stakeholders.",
-      "Built the application's front-end interfaces, bridging product ownership and IC delivery.",
+      "Owned the product roadmap, metrics, and customer feedback loop for Zumrails' fintech platform.",
+      "Prioritized roadmap across competing initiatives based on customer and growth signals.",
+      "Shipped features from requirement to release, partnering directly with engineering and stakeholders.",
+      "Built the application's front-end interfaces myself, working as both PO and IC.",
     ],
-    order: 2,
+    outcome: "Raised Series A at $100M+ valuation (February 2024)",
+    order: 3,
   },
   {
     company: "Flinks",
@@ -184,11 +195,12 @@ export const experience: Experience[] = [
       "Owned the PLG initiative and the Wealth Data product expanding Flinks' coverage from banking to wealth accounts. Led a team of 1 to 5.",
     highlights: [
       "Owned the PLG (Product-Led Growth) initiative, setting metrics, instrumentation, and roadmap to drive self-serve adoption.",
-      "Owned the Wealth Data product, expanding Flinks' data coverage from banking to investment and wealth accounts for fintech consumers.",
-      "Led roadmap, prioritization, release planning, and stakeholder alignment for both initiatives.",
-      "Managed a team of 1 to 5, removing impediments and elaborating user stories for delivery.",
+      "Owned the Wealth Data product, expanding Flinks' data coverage from banking to investment and wealth accounts.",
+      "Drove roadmap, prioritization, and release planning across both initiatives, aligning stakeholders end to end.",
+      "Managed a team of 1 to 5, unblocking delivery and writing user stories alongside the engineers.",
     ],
-    order: 3,
+    outcome: "Acquired by National Bank of Canada, $100M (2021)",
+    order: 4,
   },
   {
     company: "CGI",
@@ -200,10 +212,10 @@ export const experience: Experience[] = [
       "Joined as a Business Analyst, moved into Business Intelligence work for enterprise clients including a major Canadian bank.",
     highlights: [
       "Built reporting and forecasting surfaces in Tableau and Power BI for enterprise clients, including a major Canadian bank.",
-      "Designed scenario and sensitivity models to inform strategic initiatives and predict financial outcomes.",
-      "Established management dashboards that became the source of truth for executive KPI monitoring.",
-      "Translated ambiguous business questions into rigorous analytic frameworks, often on tight timelines.",
+      "Designed scenario and sensitivity models to predict financial outcomes and pressure-test strategic initiatives.",
+      "Built management dashboards that became the source of truth for executive KPI monitoring.",
+      "Translated ambiguous business questions into rigorous analytic frameworks under tight timelines.",
     ],
-    order: 4,
+    order: 5,
   },
 ]

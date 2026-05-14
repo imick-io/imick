@@ -20,7 +20,7 @@ const findEngagement = (name: string) => (entries: Experience[]) =>
   entries.flatMap((e) => e.engagements ?? []).find((e) => e.name === name)
 
 const CHIPS: readonly ChipSource[] = [
-  { company: "Takeup", outcome: "Two years senior full-stack", find: findEngagement("Takeup") },
+  { company: "Takeup", outcome: "Two years senior full-stack", find: findEmployer("Takeup") },
   { company: "Flinks", outcome: "acquired $100M", find: findEmployer("Flinks") },
   { company: "Zumrails", outcome: "$100M+ raise", find: findEmployer("Zumrails") },
 ]
