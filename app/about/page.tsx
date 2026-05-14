@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { GithubIcon, ArrowUpRight01Icon, ArrowDown01Icon } from "@hugeicons/core-free-icons"
-import { ResumeGateDialog } from "@/components/resume-gate-dialog"
+import { buttonVariants } from "@/components/ui/button"
 import {
   Collapsible,
   CollapsibleContent,
@@ -11,6 +12,7 @@ import { siteConfig } from "@/lib/config"
 import { experience } from "@/lib/data/experience"
 import { education } from "@/lib/data/education"
 import { projects } from "@/lib/data/projects"
+import { getStackByCategory } from "@/lib/stack-grouped"
 
 const aboutDescription = `${siteConfig.name} is a senior full-stack engineer designing and shipping AI-native products end-to-end.`
 
@@ -62,13 +64,28 @@ export default function AboutPage() {
 
   const sortedProjects = [...projects].sort((a, b) => a.order - b.order)
 
+  const stackByCategory = getStackByCategory()
+
   return (
     <div className="flex flex-col gap-20 px-6 py-16 md:gap-24 md:py-24">
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-        <p className="text-sm font-medium text-muted-foreground">{siteConfig.role}</p>
-        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
-          {siteConfig.name}
-        </h1>
+      <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="flex flex-col gap-4">
+          <p className="text-sm font-medium text-muted-foreground">{siteConfig.role}</p>
+          <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
+            {siteConfig.name}
+          </h1>
+        </div>
+        <Link
+          href="/resume"
+          className="group inline-flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          View Resume
+          <HugeiconsIcon
+            icon={ArrowUpRight01Icon}
+            size={14}
+            className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+          />
+        </Link>
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-3">
@@ -76,6 +93,52 @@ export default function AboutPage() {
         <p className="text-base leading-relaxed text-foreground md:text-lg">
           {siteConfig.bio}
         </p>
+      </section>
+
+      <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+        <h2 className="text-sm font-medium text-muted-foreground">Tech Stack</h2>
+        <ol className="flex flex-col gap-4">
+          {stackByCategory.map((group) => (
+            <li
+              key={group.category}
+              className="flex flex-col gap-2 md:flex-row md:items-start md:gap-4"
+            >
+              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground md:w-32 md:shrink-0 md:pt-1.5">
+                {group.label}
+              </span>
+              <ul className="flex flex-1 flex-wrap gap-1.5">
+                {group.items.map((item) => (
+                  <li
+                    key={item.name}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted/30 px-2 py-1 text-xs text-foreground"
+                  >
+                    {item.iconSlug ? (
+                      <>
+                        <img
+                          src={`/icons/${item.iconSlug}.svg`}
+                          alt=""
+                          aria-hidden
+                          className={`h-3.5 w-3.5 object-contain ${
+                            item.mono ? "dark:hidden" : ""
+                          }`}
+                        />
+                        {item.mono ? (
+                          <img
+                            src={`/icons/${item.iconSlug}_dark.svg`}
+                            alt=""
+                            aria-hidden
+                            className="hidden h-3.5 w-3.5 object-contain dark:block"
+                          />
+                        ) : null}
+                      </>
+                    ) : null}
+                    <span>{item.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
@@ -230,10 +293,9 @@ export default function AboutPage() {
 
       <section className="mx-auto flex w-full max-w-3xl flex-col items-start gap-3">
         <h2 className="text-sm font-medium text-muted-foreground">Resume</h2>
-        <p className="text-sm text-muted-foreground">
-          Download the full PDF resume.
-        </p>
-        <ResumeGateDialog />
+        <Link href="/resume" className={buttonVariants({ size: "lg" })}>
+          View Resume
+        </Link>
       </section>
     </div>
   )
