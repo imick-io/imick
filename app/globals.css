@@ -130,3 +130,10 @@
     @apply font-sans;
   }
 }
+
+@media print {
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+}

@@ -4,6 +4,7 @@ import { headers } from "next/headers"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { PrintResumeButton } from "@/components/print-resume-button"
+import { ResumeDocument } from "@/components/resume-document"
 import { ResumeGateFormInline } from "@/components/resume-gate-form-inline"
 import { ResumePreviewSkeleton } from "@/components/resume-preview-skeleton"
 import { auth } from "@/lib/auth"
@@ -20,7 +21,7 @@ export default async function ResumePage() {
   const session = await auth.api.getSession({ headers: await headers() })
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-background print:static print:overflow-visible">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-background print:static print:overflow-visible print:bg-white">
       {session ? <GatedResume /> : <GateOverlay />}
     </div>
   )
@@ -48,14 +49,10 @@ function GatedResume() {
         Back to {siteConfig.handle}
       </Link>
       <PrintResumeButton />
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-6 py-20">
-        <p className="text-base text-muted-foreground">
-          Resume content coming next slice.
-        </p>
-        <p className="text-xs text-muted-foreground print:hidden">
-          Tip: use your browser Print menu to save as PDF.
-        </p>
-      </div>
+      <ResumeDocument />
+      <p className="mx-auto w-full max-w-3xl px-6 pb-12 text-xs text-muted-foreground print:hidden">
+        Tip: use your browser Print menu to save as PDF.
+      </p>
     </div>
   )
 }
