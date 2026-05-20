@@ -7,12 +7,6 @@ export const siteConfig = {
   description: "Senior product engineer. Ships at startup speed, end-to-end.",
   url: "https://imick.io",
   contactEmail: "michael@concreo.io",
-  resumeEmail: "michael@imick.io",
-  resumeLinkedin: "linkedin.com/in/i-mick/",
-  resumeGithub: "github.com/imick-io",
-  resumeLocation: "Remote, Canada (Montreal)",
-  resumeBio:
-    "Senior product engineer with product DNA from Flinks and Zumrails and a year and a half senior full-stack at Takeup. Combines business and engineering: structure and KPIs from CGI, ship-fast pragmatism from startups. Builds with AI in the loop and a human eye on the bar.",
   githubSponsorsUrl: "https://github.com/sponsors/PLACEHOLDER",
   githubUrl: "https://github.com/imick-io",
   repoUrl: "https://github.com/mboutin-toptal/imick-io",

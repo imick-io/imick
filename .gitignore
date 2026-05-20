@@ -57,3 +57,6 @@ _*.md
 
 # shadcn config (local-only)
 components.json
+
+# resume PDF generator tmp output
+/.tmp-resume-pdf/

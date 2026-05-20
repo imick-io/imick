@@ -13,6 +13,7 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "npx tsx scripts/migrate.mts",
     "db:studio": "drizzle-kit studio",
+    "generate-resume-pdf": "npx tsx scripts/generate-resume-pdf.mts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf node_modules .next .content-collections",

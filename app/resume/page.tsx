@@ -3,9 +3,9 @@ import Link from "next/link"
 import { headers } from "next/headers"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
-import { PrintResumeButton } from "@/components/print-resume-button"
 import { ResumeDocument } from "@/components/resume-document"
 import { ResumeGateFormInline } from "@/components/resume-gate-form-inline"
+import { ResumePdfButton } from "@/components/resume-pdf-button"
 import { ResumePreviewSkeleton } from "@/components/resume-preview-skeleton"
 import { auth } from "@/lib/auth"
 import { siteConfig } from "@/lib/config"
@@ -21,8 +21,9 @@ export default async function ResumePage() {
   const session = await auth.api.getSession({ headers: await headers() })
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-background print:static print:overflow-visible print:bg-white">
-      {session ? <GatedResume /> : <GateOverlay />}
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-muted print:static print:overflow-visible print:bg-background">
+      {/* {session ? <GatedResume /> : <GateOverlay />} */}
+      <GatedResume />
     </div>
   )
 }
@@ -40,19 +41,18 @@ function GateOverlay() {
 
 function GatedResume() {
   return (
-    <div className="relative min-h-full">
+    <div className="relative min-h-full pb-12">
       <Link
         href="/"
-        className="fixed left-4 top-4 z-50 inline-flex items-center gap-1 rounded-md border border-border bg-background px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground print:hidden"
+        className="fixed left-4 top-4 z-50 inline-flex items-center gap-1 rounded-md border border-border bg-card px-3 py-1.5 text-sm text-muted-foreground shadow-sm transition-colors hover:text-foreground print:hidden"
       >
         <HugeiconsIcon icon={ArrowLeft01Icon} />
         Back to {siteConfig.handle}
       </Link>
-      <PrintResumeButton />
-      <ResumeDocument />
-      <p className="mx-auto w-full max-w-3xl px-6 pb-12 text-xs text-muted-foreground print:hidden">
-        Tip: use your browser Print menu to save as PDF.
-      </p>
+      <ResumePdfButton />
+      <div className="mx-auto w-full max-w-5xl px-4 pt-16 print:max-w-none print:px-0 print:pt-0">
+        <ResumeDocument />
+      </div>
     </div>
   )
 }
