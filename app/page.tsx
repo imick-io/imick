@@ -38,9 +38,6 @@ const subLine =
 export default function HomePage() {
   const previousRoles = getPreviousRolesStrip()
   const howIWorkFolio = allFolios.find((folio) => folio.slug === HOW_I_WORK_FOLIO_SLUG)
-  if (!howIWorkFolio) {
-    throw new Error(`HomePage: missing folio "${HOW_I_WORK_FOLIO_SLUG}" in content-collections`)
-  }
   const featuredPosts = getFeaturedPosts()
 
   return (
@@ -106,24 +103,26 @@ export default function HomePage() {
         </Link>
       </section>
 
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-        <h2 className="text-sm font-medium text-muted-foreground">How I Work</h2>
-        <Link
-          href={`/learn/folios/${howIWorkFolio.slug}`}
-          className="flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/30"
-        >
-          <h3 className="text-lg font-semibold tracking-tight text-foreground">
-            {howIWorkFolio.title}
-          </h3>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            {howIWorkFolio.excerpt}
-          </p>
-          <span className="inline-flex items-center text-sm font-medium text-foreground">
-            Read the folio
-            <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
-          </span>
-        </Link>
-      </section>
+      {howIWorkFolio ? (
+        <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+          <h2 className="text-sm font-medium text-muted-foreground">How I Work</h2>
+          <Link
+            href={`/learn/folios/${howIWorkFolio.slug}`}
+            className="flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/30"
+          >
+            <h3 className="text-lg font-semibold tracking-tight text-foreground">
+              {howIWorkFolio.title}
+            </h3>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {howIWorkFolio.excerpt}
+            </p>
+            <span className="inline-flex items-center text-sm font-medium text-foreground">
+              Read the folio
+              <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
+            </span>
+          </Link>
+        </section>
+      ) : null}
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
         <h2 className="text-sm font-medium text-muted-foreground">Writing</h2>
