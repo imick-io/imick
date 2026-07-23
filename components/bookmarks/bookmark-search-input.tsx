@@ -25,7 +25,7 @@ export function BookmarkSearchInput() {
       placeholder="Search bookmarks..."
       defaultValue={q}
       onChange={handleChange}
-      className="max-w-sm"
+      className="max-w-md"
     />
   )
 }

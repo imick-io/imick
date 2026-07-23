@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+import { ArrowUpRight01Icon, StarIcon } from "@hugeicons/core-free-icons"
 import { getHostname, isReviewed, type Bookmark } from "@/lib/bookmarks-meta"
 import { getCategoryLabel } from "@/lib/categories-meta"
 import { BookmarkLogo } from "./bookmark-logo"
@@ -10,31 +10,22 @@ type BookmarkCardProps = {
   categoryMap?: Record<string, string>
 }
 
-const MAX_TAGS = 3
-
 export function BookmarkCard({ bookmark, categoryMap }: BookmarkCardProps) {
   const reviewed = isReviewed(bookmark)
   const detailHref = bookmark.category
     ? `/bookmarks/${bookmark.category}/${bookmark.slug}`
     : bookmark.url
-  const visibleTags = bookmark.tags.slice(0, MAX_TAGS)
   const hostname = getHostname(bookmark.url)
+  const showFooter = Boolean(bookmark.category) || reviewed
 
   return (
-    <div
-      className="group flex h-full flex-col gap-3 rounded-lg border border-border bg-card p-5 transition-colors hover:bg-muted/40"
-      style={
-        bookmark.colorHex
-          ? { borderLeftColor: bookmark.colorHex, borderLeftWidth: 4 }
-          : undefined
-      }
-    >
+    <div className="group flex h-full flex-col gap-3 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground">
       <div className="flex items-start gap-3">
         <BookmarkLogo
           logoUrl={bookmark.logoUrl}
           url={bookmark.url}
           colorHex={bookmark.colorHex}
-          size={40}
+          size={32}
         />
         <div className="min-w-0 flex-1">
           <h3 className="line-clamp-3 text-base font-semibold leading-snug text-foreground">
@@ -63,54 +54,36 @@ export function BookmarkCard({ bookmark, categoryMap }: BookmarkCardProps) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Visit ${bookmark.title}`}
-          className="shrink-0 text-muted-foreground hover:text-foreground"
+          className="shrink-0 text-muted-foreground transition-transform hover:text-foreground group-hover:translate-x-0.5"
         >
           <HugeiconsIcon icon={ArrowUpRight01Icon} size={18} />
         </a>
       </div>
 
-      <div className="flex flex-wrap items-center gap-1.5">
-        {bookmark.category && (
-          <span className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-            {getCategoryLabel(bookmark.category, categoryMap)}
-          </span>
-        )}
-        {visibleTags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-full border border-border bg-background px-2 py-0.5 text-xs text-muted-foreground"
-          >
-            {tag}
-          </span>
-        ))}
-        {reviewed ? (
-          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-            Reviewed
-          </span>
-        ) : null}
-      </div>
-
-      {reviewed ? (
+      {showFooter ? (
         <div className="mt-auto flex items-center justify-between gap-3 pt-1">
-          {bookmark.rating != null ? (
-            <span
-              className="text-sm leading-none tracking-tight text-amber-500"
-              aria-label={`Rating: ${bookmark.rating} out of 5`}
-            >
-              {"★".repeat(bookmark.rating)}
-              <span className="text-muted-foreground/40">
-                {"★".repeat(5 - bookmark.rating)}
+          <span className="flex items-center gap-3 text-xs text-muted-foreground">
+            {bookmark.category ? (
+              <span>{getCategoryLabel(bookmark.category, categoryMap)}</span>
+            ) : null}
+            {reviewed && bookmark.rating != null ? (
+              <span
+                className="inline-flex items-center gap-1"
+                aria-label={`Rating: ${bookmark.rating} out of 5`}
+              >
+                <HugeiconsIcon icon={StarIcon} size={12} aria-hidden />
+                {bookmark.rating}/5
               </span>
-            </span>
-          ) : (
-            <span aria-hidden />
-          )}
-          <Link
-            href={detailHref}
-            className="text-xs font-medium text-primary hover:underline"
-          >
-            Read review →
-          </Link>
+            ) : null}
+          </span>
+          {reviewed ? (
+            <Link
+              href={detailHref}
+              className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+            >
+              Read review
+            </Link>
+          ) : null}
         </div>
       ) : null}
     </div>

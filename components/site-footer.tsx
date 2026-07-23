@@ -12,7 +12,7 @@ export function SiteFooter() {
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-12 md:py-16">
         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between md:gap-12">
           <div className="flex flex-col gap-2 md:max-w-sm">
-            <p className="text-base font-medium text-foreground">
+            <p className="font-heading text-2xl tracking-tight text-foreground">
               Stay in the loop.
             </p>
             <p className="text-sm text-muted-foreground">
@@ -55,19 +55,19 @@ export function SiteFooter() {
             <nav className="flex items-center gap-6">
               <Link
                 href="/about"
-                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                className="text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
               >
                 About
               </Link>
               <Link
                 href="/contact"
-                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                className="text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
               >
                 Contact
               </Link>
               <Link
                 href="/privacy"
-                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                className="text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
               >
                 Privacy
               </Link>
@@ -75,7 +75,7 @@ export function SiteFooter() {
                 href="https://www.concreo.io"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                className="text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
               >
                 Concreo
               </a>

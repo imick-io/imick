@@ -41,8 +41,8 @@ export default function NewsletterPage() {
   return (
     <div className="flex flex-col gap-12 px-6 py-16 md:gap-16 md:py-24">
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
-        <p className="text-sm font-medium text-muted-foreground">Newsletter</p>
-        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
+        <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Newsletter</p>
+        <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
           Notes on shipping software.
         </h1>
         <p className="text-base text-muted-foreground md:text-lg">
@@ -52,7 +52,7 @@ export default function NewsletterPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-        <h2 className="text-sm font-medium text-muted-foreground">
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
           What you&apos;ll get
         </h2>
         <ul className="flex list-disc flex-col gap-2 pl-5 text-base leading-relaxed text-foreground/90 marker:text-muted-foreground">
@@ -88,7 +88,7 @@ export default function NewsletterPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
           Recent issues
         </h2>
         <p className="text-sm leading-relaxed text-foreground/90">

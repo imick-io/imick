@@ -25,21 +25,22 @@ export function ArticleCard({ post }: ArticleCardProps) {
         />
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex items-center gap-2">
-          <span className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-            {categoryLabel[post.category]}
-          </span>
-          {post.isDraft ? (
+        {post.isDraft ? (
+          <div className="flex items-center gap-2">
             <span className="rounded-full border border-destructive/40 bg-destructive/10 px-2.5 py-0.5 text-xs font-medium text-destructive">
               DRAFT
             </span>
-          ) : null}
-        </div>
-        <h3 className="text-lg font-semibold leading-snug text-foreground group-hover:underline">
+          </div>
+        ) : null}
+        <h3 className="text-lg font-semibold leading-snug tracking-tight text-foreground group-hover:underline">
           {post.title}
         </h3>
         <p className="text-sm text-muted-foreground">{post.excerpt}</p>
         <div className="mt-auto flex items-center gap-2 pt-2 text-xs text-muted-foreground">
+          <span className="font-mono uppercase tracking-[0.15em]">
+            {categoryLabel[post.category]}
+          </span>
+          <span aria-hidden>·</span>
           <span>{formatPostDate(post.publishedAt) || "Unscheduled"}</span>
           <span aria-hidden>·</span>
           <span>{post.readingMinutes} min read</span>

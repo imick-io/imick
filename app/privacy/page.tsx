@@ -28,10 +28,10 @@ export default function PrivacyPage() {
   return (
     <div className="flex flex-col gap-12 px-6 py-16 md:gap-16 md:py-24">
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
-        <p className="text-sm font-medium text-muted-foreground">
+        <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
           Last updated {lastUpdated}
         </p>
-        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
+        <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
           Privacy
         </h1>
         <p className="text-base text-muted-foreground md:text-lg">
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">Overview</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Overview</h2>
         <p className="text-base leading-relaxed text-foreground/90">
           {siteConfig.handle} is a personal site. The only data collected is what
           you voluntarily submit through one of three forms: the newsletter
@@ -52,7 +52,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-        <h2 className="text-sm font-medium text-muted-foreground">
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
           What is collected
         </h2>
 
@@ -119,7 +119,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
           Third-party processors
         </h2>
         <ul className="flex flex-col gap-2 text-sm leading-relaxed text-foreground/90">
@@ -153,7 +153,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
           Unsubscribe and opt out
         </h2>
         <p className="text-sm leading-relaxed text-foreground/90">
@@ -165,7 +165,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
           Data deletion requests
         </h2>
         <p className="text-sm leading-relaxed text-foreground/90">
@@ -190,7 +190,7 @@ export default function PrivacyPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">Contact</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Contact</h2>
         <p className="text-sm leading-relaxed text-foreground/90">
           Questions about this policy or how your data is handled? Email{" "}
           <a

@@ -1,5 +1,4 @@
-import Link from "next/link"
-import { cn } from "@/lib/utils"
+import { FilterChipLink } from "@/components/ui/filter-chip"
 
 const CATEGORIES = [
   { value: null, label: "All" },
@@ -30,18 +29,9 @@ export function CategoryPills({ active }: CategoryPillsProps) {
           : "/learn/articles"
         return (
           <li key={cat.label}>
-            <Link
-              href={href}
-              scroll={false}
-              className={cn(
-                "inline-flex h-8 items-center rounded-full border px-3.5 text-sm transition-colors",
-                isActive
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border bg-card text-muted-foreground hover:text-foreground"
-              )}
-            >
+            <FilterChipLink href={href} scroll={false} active={isActive}>
               {cat.label}
-            </Link>
+            </FilterChipLink>
           </li>
         )
       })}

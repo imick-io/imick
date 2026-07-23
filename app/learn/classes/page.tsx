@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { ClassCard } from "@/components/learn/class-card"
 import { siteConfig } from "@/lib/config"
 import { getAllClassesForRender } from "@/lib/classes"
@@ -29,8 +30,8 @@ export default function ClassesIndexPage() {
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
       <header className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-        <p className="text-sm font-medium text-muted-foreground">Learn</p>
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Classes</h1>
+        <Breadcrumb items={[{ label: "Learn", href: "/learn" }, { label: "Classes" }]} />
+        <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">Classes</h1>
         <p className="text-base text-muted-foreground md:text-lg">
           Structured courses on topics I write and ship.
         </p>

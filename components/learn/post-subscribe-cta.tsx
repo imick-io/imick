@@ -11,7 +11,7 @@ export function PostSubscribeCta({ source }: PostSubscribeCtaProps) {
     <section className="mx-auto w-full max-w-3xl">
       <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-8 md:p-10">
         <div className="flex flex-col gap-2">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+          <h2 className="font-heading text-2xl font-normal tracking-tight md:text-3xl">
             Liked this? Get the next one in your inbox.
           </h2>
           <p className="text-base text-muted-foreground">

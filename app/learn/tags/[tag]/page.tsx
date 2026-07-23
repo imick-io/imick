@@ -71,7 +71,7 @@ export default async function TagPage(
       </nav>
 
       <header className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+        <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
           #{tag}
         </h1>
         <p className="text-base text-muted-foreground md:text-lg">
@@ -86,14 +86,14 @@ export default async function TagPage(
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-16">
         {posts.length > 0 ? (
           <section className="flex flex-col gap-6">
-            <h2 className="text-xl font-semibold tracking-tight">Articles</h2>
+            <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Articles</h2>
             <ArticlesGrid posts={posts} />
           </section>
         ) : null}
 
         {snippets.length > 0 ? (
           <section className="flex flex-col gap-6">
-            <h2 className="text-xl font-semibold tracking-tight">Snippets</h2>
+            <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Snippets</h2>
             <SnippetsGrid snippets={snippets} />
           </section>
         ) : null}

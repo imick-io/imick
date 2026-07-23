@@ -7,10 +7,9 @@ import type { Bookmark } from "@/lib/bookmarks-meta"
 import { BookmarkCard } from "./bookmark-card"
 import { BookmarkSearchInput } from "./bookmark-search-input"
 import { CategoryChipRow } from "./category-chip-row"
-import { TagChipRow } from "./tag-chip-row"
-import { ReviewedSegmented } from "./reviewed-segmented"
-import { SortSegmented } from "./sort-segmented"
+import { FiltersPopover } from "./filters-popover"
 import { ClearFiltersButton } from "./clear-filters-button"
+import { FilterChipButton } from "@/components/ui/filter-chip"
 import { Button } from "@/components/ui/button"
 
 const PAGE_SIZE = 12
@@ -88,7 +87,10 @@ export function BookmarksFilteredView({
 
   return (
     <div className="flex flex-col gap-6">
-      <BookmarkSearchInput />
+      <div className="flex items-center gap-3">
+        <BookmarkSearchInput />
+        <FiltersPopover tagMap={tagMap} category={category} />
+      </div>
 
       {categoryMap && (
         <CategoryChipRow
@@ -98,17 +100,33 @@ export function BookmarksFilteredView({
         />
       )}
 
-      <TagChipRow tagMap={tagMap} category={category} />
-
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-        <ReviewedSegmented />
-        <SortSegmented />
-        {filtersActive && <ClearFiltersButton className={CLEAR_BUTTON_CLASS} />}
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="text-sm text-muted-foreground">
+          {filtered.length} {filtered.length === 1 ? "bookmark" : "bookmarks"}
+        </p>
+        {tags.length > 0 && (
+          <ul className="flex flex-wrap items-center gap-2">
+            {tags.map((tag) => (
+              <li key={tag}>
+                <FilterChipButton
+                  active
+                  className="h-7 px-3 text-xs"
+                  aria-label={`Remove tag filter ${tag}`}
+                  onClick={() =>
+                    setTags((prev) => {
+                      const next = prev.filter((t) => t !== tag)
+                      return next.length === 0 ? null : next
+                    })
+                  }
+                >
+                  {tag}
+                  <span aria-hidden>&times;</span>
+                </FilterChipButton>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-
-      <p className="text-sm text-muted-foreground">
-        {filtered.length} {filtered.length === 1 ? "bookmark" : "bookmarks"}
-      </p>
 
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border bg-card/30 p-10 text-center">

@@ -91,7 +91,7 @@ export default async function FolioPage(
             DRAFT
           </span>
         ) : null}
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
+        <h1 className="font-heading text-3xl font-normal tracking-tight md:text-4xl lg:text-5xl">
           {folio.title}
         </h1>
         <p className="text-lg text-muted-foreground">{folio.excerpt}</p>
@@ -105,7 +105,7 @@ export default async function FolioPage(
         aria-label="Folio items"
         className="mx-auto flex w-full max-w-3xl flex-col gap-3 border-t border-border pt-8"
       >
-        <h2 className="text-sm font-medium text-muted-foreground">In this folio</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">In this folio</h2>
         <ol className="flex flex-col gap-2">
           {resolvedItems.map(({ item, resolved }, index) => (
             <li key={`${item.type}:${item.slug}`}>

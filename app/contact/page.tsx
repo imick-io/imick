@@ -26,7 +26,7 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-24">
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
-        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
+        <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
           Get in touch
         </h1>
         <p className="text-base text-muted-foreground md:text-lg">

@@ -31,7 +31,6 @@ export const metadata: Metadata = {
   },
 }
 
-const headline = "Senior Product Engineer. I ship at startup speed, end-to-end."
 const subLine =
   "Business head, engineering hands. Structure and KPIs from CGI, then two fintech startups that went on to win: Flinks (acquired, $100M) and Zumrails ($100M+ raise). Two years senior full-stack at Takeup. I deliver across the stack: strategy, architecture, code, deploy. Powered by an AI-native workflow I built and run in production."
 
@@ -42,12 +41,13 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-20 px-6 py-16 md:gap-28 md:py-24 lg:gap-32">
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <p className="text-sm font-medium text-muted-foreground">
+      <section className="mx-auto flex w-full max-w-3xl flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
           {siteConfig.name}
         </p>
-        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl lg:text-6xl">
-          {headline}
+        <h1 className="font-heading text-5xl font-normal tracking-[-0.015em] leading-[1.05] text-balance md:text-6xl lg:text-7xl">
+          Senior Product Engineer. I ship at startup speed,{" "}
+          <em className="italic">end-to-end</em>.
         </h1>
         <p className="text-lg leading-relaxed text-muted-foreground md:text-xl">
           {subLine}
@@ -61,13 +61,13 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-8">
-        <h2 className="text-sm font-medium text-muted-foreground">Selected Work</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Selected Work</h2>
         <div className="grid gap-4 md:grid-cols-2">
           {selectedWork.map((card) => (
             <Link
               key={card.href}
               href={card.href}
-              className="flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/30"
+              className="flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground"
             >
               <h3 className="text-lg font-semibold tracking-tight text-foreground">
                 {card.title}
@@ -79,7 +79,7 @@ export default function HomePage() {
           ))}
         </div>
         <div className="flex flex-col gap-3">
-          <h3 className="text-sm font-medium text-muted-foreground">Previous Roles</h3>
+          <h3 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Previous Roles</h3>
           <ul className="flex flex-wrap gap-2">
             {previousRoles.map((chip) => (
               <li
@@ -96,7 +96,7 @@ export default function HomePage() {
         {/* /projects archive route is not live yet; link will resolve once that page ships. */}
         <Link
           href="/projects"
-          className="text-sm font-medium text-muted-foreground hover:text-foreground"
+          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
         >
           See all projects
           <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
@@ -105,10 +105,10 @@ export default function HomePage() {
 
       {howIWorkFolio ? (
         <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-          <h2 className="text-sm font-medium text-muted-foreground">How I Work</h2>
+          <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">How I Work</h2>
           <Link
             href={`/learn/folios/${howIWorkFolio.slug}`}
-            className="flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/30"
+            className="group flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground"
           >
             <h3 className="text-lg font-semibold tracking-tight text-foreground">
               {howIWorkFolio.title}
@@ -118,20 +118,24 @@ export default function HomePage() {
             </p>
             <span className="inline-flex items-center text-sm font-medium text-foreground">
               Read the folio
-              <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                data-icon="inline-end"
+                className="transition-transform group-hover:translate-x-0.5"
+              />
             </span>
           </Link>
         </section>
       ) : null}
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-        <h2 className="text-sm font-medium text-muted-foreground">Writing</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Writing</h2>
         <ul className="flex flex-col gap-3">
           {featuredPosts.map((post) => (
             <li key={post.slug}>
               <Link
                 href={`/learn/articles/${post.slug}`}
-                className="flex flex-col gap-1 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/30"
+                className="flex flex-col gap-1 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground"
               >
                 <h3 className="text-base font-semibold tracking-tight text-foreground">
                   {post.title}
@@ -145,7 +149,7 @@ export default function HomePage() {
         </ul>
         <Link
           href="/learn/articles"
-          className="text-sm font-medium text-muted-foreground hover:text-foreground"
+          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
         >
           All writing
           <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
@@ -153,14 +157,14 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">About</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">About</h2>
         <p className="text-base leading-relaxed text-foreground md:text-lg">
           {siteConfig.bio}
         </p>
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-        <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+        <h2 className="font-heading text-3xl font-normal tracking-tight md:text-4xl">
           Have a project in mind?
         </h2>
         <p className="text-base leading-relaxed text-muted-foreground md:text-lg">

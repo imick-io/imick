@@ -1,8 +1,6 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { notFound } from "next/navigation"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { BookmarksFilteredView } from "@/components/bookmarks/bookmarks-filtered-view"
 import { siteConfig } from "@/lib/config"
 import {
@@ -69,20 +67,18 @@ export default async function BookmarkCategoryPage({
 
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
-      <nav
-        aria-label="Breadcrumb"
-        className="mx-auto flex w-full max-w-5xl items-center gap-1.5 text-xs text-muted-foreground"
-      >
-        <Link href="/bookmarks" className="hover:text-foreground">
-          Bookmarks
-        </Link>
-        <HugeiconsIcon icon={ArrowRight01Icon} size={12} />
-        <span className="text-foreground">{label}</span>
-      </nav>
+      <Breadcrumb
+        className="mx-auto w-full max-w-5xl"
+        items={[{ label: "Bookmarks", href: "/bookmarks" }, { label }]}
+      />
 
       <header className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-        <p className="text-sm font-medium text-muted-foreground">Bookmarks</p>
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{label}</h1>
+        <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+          Bookmarks
+        </p>
+        <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
+          {label}
+        </h1>
       </header>
 
       <section className="mx-auto flex w-full max-w-5xl flex-col gap-8">

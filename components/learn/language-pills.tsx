@@ -1,5 +1,4 @@
-import Link from "next/link"
-import { cn } from "@/lib/utils"
+import { FilterChipLink } from "@/components/ui/filter-chip"
 
 type LanguagePillsProps = {
   languages: string[]
@@ -17,18 +16,14 @@ export function LanguagePills({ languages, active }: LanguagePillsProps) {
           : "/learn/snippets"
         return (
           <li key={item.label}>
-            <Link
+            <FilterChipLink
               href={href}
               scroll={false}
-              className={cn(
-                "inline-flex h-8 items-center rounded-full border px-3.5 text-sm capitalize transition-colors",
-                isActive
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border bg-card text-muted-foreground hover:text-foreground"
-              )}
+              active={isActive}
+              className="capitalize"
             >
               {item.label}
-            </Link>
+            </FilterChipLink>
           </li>
         )
       })}

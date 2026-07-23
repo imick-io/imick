@@ -15,7 +15,7 @@ export function SnippetCard({ snippet }: SnippetCardProps) {
         aria-label={snippet.title}
       />
       <div className="flex items-center gap-2">
-        <span className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground capitalize">
+        <span className="font-mono text-xs lowercase text-muted-foreground">
           {snippet.language}
         </span>
         {snippet.isDraft ? (

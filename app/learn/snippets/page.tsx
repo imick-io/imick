@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Breadcrumb } from "@/components/ui/breadcrumb"
 import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { RssIcon } from "@hugeicons/core-free-icons"
@@ -48,9 +49,11 @@ export default async function SnippetsIndexPage({
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
       <header className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-        <p className="text-sm font-medium text-muted-foreground">Learn</p>
+        <Breadcrumb items={[{ label: "Learn", href: "/learn" }, { label: "Snippets" }]} />
         <div className="flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Snippets</h1>
+          <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
+            Snippets
+          </h1>
           <Link
             href="/learn/snippets/feed.xml"
             aria-label="RSS feed for snippets"

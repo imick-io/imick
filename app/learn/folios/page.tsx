@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { FoliosGrid } from "@/components/learn/folios-grid"
 import { siteConfig } from "@/lib/config"
 import { getAllFoliosForRender } from "@/lib/folios"
@@ -29,8 +30,8 @@ export default function FoliosIndexPage() {
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
       <header className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-        <p className="text-sm font-medium text-muted-foreground">Learn</p>
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Folios</h1>
+        <Breadcrumb items={[{ label: "Learn", href: "/learn" }, { label: "Folios" }]} />
+        <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">Folios</h1>
         <p className="text-base text-muted-foreground md:text-lg">
           Curated reading paths through articles and snippets.
         </p>

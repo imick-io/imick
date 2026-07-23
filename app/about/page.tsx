@@ -93,8 +93,8 @@ export default function AboutPage() {
     <div className="flex flex-col gap-20 px-6 py-16 md:gap-24 md:py-24">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex flex-col gap-4">
-          <p className="text-sm font-medium text-muted-foreground">{siteConfig.role}</p>
-          <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
+          <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">{siteConfig.role}</p>
+          <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
             {siteConfig.name}
           </h1>
         </div>
@@ -112,14 +112,14 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">Bio</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Bio</h2>
         <p className="text-base leading-relaxed text-foreground md:text-lg">
           {siteConfig.bio}
         </p>
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h2 className="text-sm font-medium text-muted-foreground">Tech Stack</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Tech Stack</h2>
         <ol className="flex flex-col gap-4">
           {stackByCategory.map((group) => (
             <li
@@ -148,7 +148,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h2 className="text-sm font-medium text-muted-foreground">Experience</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Experience</h2>
         <ol className="flex flex-col gap-8">
           {sortedExperience.map((item) => (
             <li
@@ -245,7 +245,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h2 className="text-sm font-medium text-muted-foreground">Education</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Education</h2>
         <ol className="flex flex-col gap-6">
           {sortedEducation.map((item) => (
             <li
@@ -269,7 +269,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h2 className="text-sm font-medium text-muted-foreground">Open Source</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Open Source</h2>
         <ul className="flex flex-col gap-4">
           {sortedProjects.map((project) => (
             <li key={project.name}>
@@ -298,7 +298,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col items-start gap-3">
-        <h2 className="text-sm font-medium text-muted-foreground">Resume</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Resume</h2>
         <Link href="/resume" className={buttonVariants({ size: "lg" })}>
           View Resume
         </Link>

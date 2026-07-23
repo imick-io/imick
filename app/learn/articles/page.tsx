@@ -1,9 +1,11 @@
 import type { Metadata } from "next"
+import { Breadcrumb } from "@/components/ui/breadcrumb"
 import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { RssIcon } from "@hugeicons/core-free-icons"
 import { ArticlesGrid } from "@/components/learn/articles-grid"
 import { CategoryPills, isValidCategory } from "@/components/learn/category-pills"
+import { FeaturedArticle } from "@/components/learn/featured-article"
 import { siteConfig } from "@/lib/config"
 import { getAllPostsForRender } from "@/lib/posts"
 
@@ -41,13 +43,17 @@ export default async function ArticlesIndexPage({
   const active = isValidCategory(category) ? category : undefined
   const all = getAllPostsForRender()
   const filtered = active ? all.filter((p) => p.category === active) : all
+  const featured = !active ? filtered[0] : undefined
+  const gridPosts = featured ? filtered.slice(1) : filtered
 
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
       <header className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-        <p className="text-sm font-medium text-muted-foreground">Learn</p>
+        <Breadcrumb items={[{ label: "Learn", href: "/learn" }, { label: "Articles" }]} />
         <div className="flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Articles</h1>
+          <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
+            Articles
+          </h1>
           <Link
             href="/learn/articles/feed.xml"
             aria-label="RSS feed for articles"
@@ -72,7 +78,10 @@ export default async function ArticlesIndexPage({
         ) : (
           <>
             <CategoryPills active={active} />
-            <ArticlesGrid key={active ?? "all"} posts={filtered} />
+            {featured ? <FeaturedArticle post={featured} /> : null}
+            {gridPosts.length > 0 ? (
+              <ArticlesGrid key={active ?? "all"} posts={gridPosts} />
+            ) : null}
           </>
         )}
       </section>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { BookmarksFilteredView } from "@/components/bookmarks/bookmarks-filtered-view"
 import { siteConfig } from "@/lib/config"
 import { getAllPublishedBookmarks, getPublishedCategoryCounts } from "@/lib/bookmarks"
@@ -39,8 +40,8 @@ export default async function BookmarksHubPage() {
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
       <header className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-        <p className="text-sm font-medium text-muted-foreground">Bookmarks</p>
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+        <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Bookmarks</p>
+        <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
           Tools, libraries, and resources
         </h1>
         <p className="text-base text-muted-foreground md:text-lg">
@@ -57,6 +58,17 @@ export default async function BookmarksHubPage() {
           tagMap={tagMap}
         />
       </section>
+
+      <p className="mx-auto w-full max-w-5xl text-sm text-muted-foreground">
+        I write about some of these in{" "}
+        <Link
+          href="/learn"
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
+          Learn
+        </Link>
+        .
+      </p>
     </div>
   )
 }

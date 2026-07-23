@@ -38,7 +38,7 @@ const DesktopNav = ({ items }: NavProps) => {
     <motion.div
       onMouseLeave={() => setHovered(null)}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-5xl flex-row items-center justify-between rounded-full border border-border bg-background/80 px-4 py-2 backdrop-blur-md lg:flex",
+        "relative z-[60] mx-auto hidden w-full max-w-5xl flex-row items-center justify-between rounded-2xl border border-border bg-background/80 px-4 py-2 backdrop-blur-md lg:flex",
       )}
     >
       <Logo />
@@ -58,10 +58,17 @@ const DesktopNav = ({ items }: NavProps) => {
               {hovered === idx && (
                 <motion.div
                   layoutId="hovered"
-                  className="absolute inset-0 h-full w-full rounded-full bg-muted"
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="absolute inset-0 h-full w-full rounded-lg bg-muted"
                 />
               )}
               <span className="relative z-20">{item.name}</span>
+              {isActive && (
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 -bottom-0.5 z-20 mx-auto size-1 rounded-full bg-primary"
+                />
+              )}
             </Link>
           );
         })}
@@ -69,12 +76,7 @@ const DesktopNav = ({ items }: NavProps) => {
       <div className="flex items-center gap-2">
         <Link
           href={contactItem.href}
-          className={cn(
-            "hidden items-center justify-center rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted md:inline-flex",
-            pathname === contactItem.href
-              ? "text-foreground"
-              : "text-muted-foreground hover:text-foreground",
-          )}
+          className="hidden items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:inline-flex"
         >
           {contactItem.name}
         </Link>
@@ -90,8 +92,7 @@ const MobileNav = ({ items }: NavProps) => {
 
   return (
     <motion.div
-      animate={{ borderRadius: open ? "16px" : "9999px" }}
-      key={String(open)}
+      animate={{ borderRadius: open ? "12px" : "16px" }}
       className="relative mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between border border-border bg-background/80 px-4 py-2 backdrop-blur-md lg:hidden"
     >
       <div className="flex w-full flex-row items-center justify-between">
@@ -137,12 +138,7 @@ const MobileNav = ({ items }: NavProps) => {
             <Link
               href={contactItem.href}
               onClick={() => setOpen(false)}
-              className={cn(
-                "inline-flex items-center justify-center rounded-full border border-border px-4 py-2 text-base font-medium transition-colors hover:bg-muted",
-                pathname === contactItem.href
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
+              className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-base font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               {contactItem.name}
             </Link>

@@ -1,11 +1,6 @@
 "use client"
 
-import Link from "next/link"
-import { cn } from "@/lib/utils"
-
-const chipBase = "inline-flex h-8 items-center rounded-full border px-3.5 text-sm transition-colors"
-const chipActive = "border-foreground bg-foreground text-background"
-const chipInactive = "border-border bg-card text-muted-foreground hover:text-foreground"
+import { FilterChipLink } from "@/components/ui/filter-chip"
 
 type Props = {
   categoryMap: Record<string, string>
@@ -20,29 +15,27 @@ export function CategoryChipRow({ categoryMap, categoryCounts, activeCategory }:
   )
 
   return (
-    <ul className="flex flex-wrap gap-2" role="listbox" aria-label="Filter by category">
-      <li role="option" aria-selected={!activeCategory}>
-        <Link
-          href="/bookmarks"
-          scroll={false}
-          className={cn(chipBase, !activeCategory ? chipActive : chipInactive)}
-        >
-          All ({totalCount})
-        </Link>
+    <ul
+      className="-mx-6 flex flex-nowrap gap-2 overflow-x-auto px-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:flex-wrap md:overflow-visible md:px-0"
+      role="listbox"
+      aria-label="Filter by category"
+    >
+      <li role="option" aria-selected={!activeCategory} className="shrink-0">
+        <FilterChipLink href="/bookmarks" scroll={false} active={!activeCategory}>
+          All
+          <span className="text-xs opacity-60">{totalCount}</span>
+        </FilterChipLink>
       </li>
       {categories.map(([slug, label]) => {
         const count = categoryCounts[slug] ?? 0
         if (count === 0) return null
         const isActive = activeCategory === slug
         return (
-          <li key={slug} role="option" aria-selected={isActive}>
-            <Link
-              href={`/bookmarks/${slug}`}
-              scroll={false}
-              className={cn(chipBase, isActive ? chipActive : chipInactive)}
-            >
-              {label} ({count})
-            </Link>
+          <li key={slug} role="option" aria-selected={isActive} className="shrink-0">
+            <FilterChipLink href={`/bookmarks/${slug}`} scroll={false} active={isActive}>
+              {label}
+              <span className="text-xs opacity-60">{count}</span>
+            </FilterChipLink>
           </li>
         )
       })}
