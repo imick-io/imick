@@ -101,18 +101,13 @@ export default function LearnHubPage() {
           <div className="flex flex-col gap-6">
             <FeaturedArticle post={featuredPost} />
             {morePosts.length > 0 ? (
-              <div className="flex flex-col">
-                <h3 className="border-b border-border pb-3 font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                  More writing
-                </h3>
-                <ul className="divide-y divide-border">
-                  {morePosts.map((post) => (
-                    <li key={post.slug}>
-                      <ArticleListRow post={post} />
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ul className="divide-y divide-border border-t border-border">
+                {morePosts.map((post) => (
+                  <li key={post.slug}>
+                    <ArticleListRow post={post} />
+                  </li>
+                ))}
+              </ul>
             ) : null}
           </div>
         )}

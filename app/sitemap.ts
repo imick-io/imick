@@ -9,6 +9,7 @@ import {
   getAllPublishedBookmarks,
   getPublishedCategoryCounts,
 } from "@/lib/bookmarks"
+import { getAllRecipes } from "@/lib/recipes"
 
 function url(path: string) {
   return new URL(path, siteConfig.url).toString()
@@ -28,7 +29,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: url("/learn/folios"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: url("/learn/classes"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: url("/bookmarks"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: url("/cooking"), lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
   ]
+
+  for (const recipe of getAllRecipes()) {
+    entries.push({
+      url: url(`/cooking/${recipe.slug}`),
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    })
+  }
 
   const publishedPosts = allPosts.filter((p) => !isDraft(p))
   for (const post of publishedPosts) {

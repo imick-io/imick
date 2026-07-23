@@ -38,7 +38,7 @@ const DesktopNav = ({ items }: NavProps) => {
     <motion.div
       onMouseLeave={() => setHovered(null)}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-5xl flex-row items-center justify-between rounded-2xl border border-border bg-background/80 px-4 py-2 backdrop-blur-md lg:flex",
+        "relative z-[60] mx-auto hidden w-full max-w-5xl flex-row items-center justify-between rounded-2xl border border-border bg-card/85 px-4 py-2 shadow-lg shadow-black/5 backdrop-blur-md lg:flex",
       )}
     >
       <Logo />
@@ -93,7 +93,7 @@ const MobileNav = ({ items }: NavProps) => {
   return (
     <motion.div
       animate={{ borderRadius: open ? "12px" : "16px" }}
-      className="relative mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between border border-border bg-background/80 px-4 py-2 backdrop-blur-md lg:hidden"
+      className="relative mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between border border-border bg-card/85 px-4 py-2 shadow-lg shadow-black/5 backdrop-blur-md lg:hidden"
     >
       <div className="flex w-full flex-row items-center justify-between">
         <Logo />
@@ -117,7 +117,7 @@ const MobileNav = ({ items }: NavProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-x-0 top-16 z-20 flex w-full flex-col items-start justify-start gap-4 rounded-2xl border border-border bg-background px-4 py-6 shadow-lg"
+            className="absolute inset-x-0 top-16 z-20 flex w-full flex-col items-start justify-start gap-4 rounded-2xl border border-border bg-card px-4 py-6 shadow-lg"
           >
             {items.map((item) => {
               const isActive = pathname === item.href;
