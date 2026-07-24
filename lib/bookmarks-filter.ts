@@ -40,7 +40,6 @@ export type BookmarkFilters = {
 
 export function countActivePopoverFilters(filters: BookmarkFilters): number {
   let count = filters.tags?.length ?? 0
-  if (filters.reviewed && filters.reviewed !== "all") count += 1
   if (filters.sort && filters.sort !== "newest") count += 1
   return count
 }

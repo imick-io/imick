@@ -5,9 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { FilterHorizontalIcon } from "@hugeicons/core-free-icons"
 import {
   countActivePopoverFilters,
-  reviewedValues,
   sortValues,
-  type ReviewedFilter,
   type TagMap,
 } from "@/lib/bookmarks-filter"
 import type { BookmarkSort } from "@/lib/bookmarks-meta"
@@ -20,12 +18,6 @@ const sortOptions: Array<{ value: BookmarkSort; label: string }> = [
   { value: "top-rated", label: "Top rated (reviewed only)" },
 ]
 
-const reviewedOptions: Array<{ value: ReviewedFilter; label: string }> = [
-  { value: "all", label: "All" },
-  { value: "yes", label: "Reviewed" },
-  { value: "no", label: "Unreviewed" },
-]
-
 type Props = {
   tagMap: TagMap
   category?: string
@@ -36,10 +28,6 @@ export function FiltersPopover({ tagMap, category }: Props) {
     "tag",
     parseAsArrayOf(parseAsString, ",").withDefault([])
   )
-  const [reviewed, setReviewed] = useQueryState(
-    "reviewed",
-    parseAsStringLiteral(reviewedValues).withDefault("all")
-  )
   const [sort, setSort] = useQueryState(
     "sort",
     parseAsStringLiteral(sortValues).withDefault("newest")
@@ -48,7 +36,6 @@ export function FiltersPopover({ tagMap, category }: Props) {
   const availableTags = tagMap[category ?? ""] ?? []
   const activeCount = countActivePopoverFilters({
     tags: tags.length > 0 ? tags : undefined,
-    reviewed,
     sort,
   })
 
@@ -93,26 +80,6 @@ export function FiltersPopover({ tagMap, category }: Props) {
           </div>
         </fieldset>
 
-        <fieldset className="flex flex-col gap-2">
-          <legend className="pb-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
-            Reviewed
-          </legend>
-          <div className="flex flex-wrap gap-2">
-            {reviewedOptions.map((option) => (
-              <FilterChipButton
-                key={option.value}
-                active={reviewed === option.value}
-                aria-pressed={reviewed === option.value}
-                onClick={() =>
-                  setReviewed(option.value === "all" ? null : option.value)
-                }
-              >
-                {option.label}
-              </FilterChipButton>
-            ))}
-          </div>
-        </fieldset>
-
         {availableTags.length > 0 && (
           <fieldset className="flex flex-col gap-2">
             <legend className="pb-2 font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
@@ -137,6 +104,7 @@ export function FiltersPopover({ tagMap, category }: Props) {
           <div className="border-t border-border pt-3">
             <ClearFiltersButton
               keepSearch
+              keepReviewed
               className="text-sm font-medium text-primary underline-offset-4 hover:underline"
             />
           </div>

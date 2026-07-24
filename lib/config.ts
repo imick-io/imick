@@ -14,8 +14,8 @@ export const siteConfig = {
   newsletterArchiveUrl: "https://imick.beehiiv.com",
   newsletterSubscriberMilestone: 0,
   featuredPostSlugs: [
+    "build-products-become-unstoppable",
+    "shadcn-components-are-yours",
     "hello-imick-io",
-    "dont-modify-shadcn-components",
-    "what-is-homebrew",
   ],
 } as const

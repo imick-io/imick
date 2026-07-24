@@ -6,9 +6,14 @@ import { reviewedValues, sortValues } from "@/lib/bookmarks-filter"
 type Props = {
   className?: string
   keepSearch?: boolean
+  keepReviewed?: boolean
 }
 
-export function ClearFiltersButton({ className, keepSearch = false }: Props) {
+export function ClearFiltersButton({
+  className,
+  keepSearch = false,
+  keepReviewed = false,
+}: Props) {
   const [, setQ] = useQueryState("q", parseAsString.withDefault(""))
   const [, setTags] = useQueryState(
     "tag",
@@ -25,8 +30,8 @@ export function ClearFiltersButton({ className, keepSearch = false }: Props) {
 
   function handleClear() {
     if (!keepSearch) setQ(null)
+    if (!keepReviewed) setReviewed(null)
     setTags(null)
-    setReviewed(null)
     setSort(null)
   }
 

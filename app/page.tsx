@@ -1,15 +1,16 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { allFolios } from "content-collections"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { ArticleCoverTile } from "@/components/home/article-cover-tile"
+import { BookmarksTile } from "@/components/home/bookmarks-tile"
+import { CookingTile } from "@/components/home/cooking-tile"
+import { SubscribeForm } from "@/components/subscribe-form"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/lib/config"
-import { selectedWork } from "@/lib/data/selected-work"
 import { getFeaturedPosts } from "@/lib/featured-posts"
-import { getPreviousRolesStrip } from "@/lib/previous-roles"
-
-const HOW_I_WORK_FOLIO_SLUG = "how-i-work"
+import { getFeaturedRecipes } from "@/lib/home-content"
+import { getAllRecipes } from "@/lib/recipes"
 
 const description = `Personal site of ${siteConfig.name}. ${siteConfig.tagline}`
 
@@ -31,152 +32,82 @@ export const metadata: Metadata = {
   },
 }
 
-const subLine =
-  "Business head, engineering hands. Structure and KPIs from CGI, then two fintech startups that went on to win: Flinks (acquired, $100M) and Zumrails ($100M+ raise). Two years senior full-stack at Takeup. I deliver across the stack: strategy, architecture, code, deploy. Powered by an AI-native workflow I built and run in production."
+const heroHeadline = (
+  <>
+    I build products fast. Then I optimize{" "}
+    <em className="italic">everything else</em>.
+  </>
+)
+
+const heroSubline =
+  "Senior Product Engineer. Startup speed, end-to-end. The same obsession runs the rest of my life: my workflow, my tools, even my kitchen. Everything I learn lands here."
 
 export default function HomePage() {
-  const previousRoles = getPreviousRolesStrip()
-  const howIWorkFolio = allFolios.find((folio) => folio.slug === HOW_I_WORK_FOLIO_SLUG)
-  const featuredPosts = getFeaturedPosts()
+  const [leadPost, ...morePosts] = getFeaturedPosts(3)
+  const recipes = getFeaturedRecipes()
+  const recipeCount = getAllRecipes().length
 
   return (
-    <div className="flex flex-col gap-20 px-6 py-16 md:gap-28 md:py-24 lg:gap-32">
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
-          {siteConfig.name}
-        </p>
-        <h1 className="font-heading text-5xl font-normal tracking-[-0.015em] leading-[1.05] text-balance md:text-6xl lg:text-7xl">
-          Senior Product Engineer. I ship at startup speed,{" "}
-          <em className="italic">end-to-end</em>.
-        </h1>
-        <p className="text-lg leading-relaxed text-muted-foreground md:text-xl">
-          {subLine}
-        </p>
-        <div className="flex flex-wrap gap-3 pt-2">
+    <div className="mx-auto w-full max-w-6xl px-6 py-12 md:py-16 lg:grid lg:grid-cols-[minmax(300px,380px)_1fr] lg:gap-12">
+      <aside className="flex flex-col gap-8 lg:sticky lg:top-24 lg:h-fit lg:self-start motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500">
+        <div className="flex flex-col gap-4">
+          <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+            {siteConfig.name} · {siteConfig.role}
+          </p>
+          <h1 className="font-heading text-4xl font-normal leading-[1.05] tracking-[-0.015em] text-balance md:text-5xl">
+            {heroHeadline}
+          </h1>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {heroSubline}
+          </p>
+        </div>
+        <div>
           <Link href="/contact" className={buttonVariants({ size: "lg" })}>
             Get in touch
             <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
           </Link>
         </div>
-      </section>
-
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-8">
-        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Selected Work</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          {selectedWork.map((card) => (
-            <Link
-              key={card.href}
-              href={card.href}
-              className="flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground"
-            >
-              <h3 className="text-lg font-semibold tracking-tight text-foreground">
-                {card.title}
-              </h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {card.summary}
-              </p>
-            </Link>
-          ))}
-        </div>
-        <div className="flex flex-col gap-3">
-          <h3 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Previous Roles</h3>
-          <ul className="flex flex-wrap gap-2">
-            {previousRoles.map((chip) => (
-              <li
-                key={chip.company}
-                className="flex flex-col rounded-md border border-border bg-card px-3 py-2 text-sm"
-              >
-                <span className="font-medium text-foreground">{chip.company}</span>
-                <span className="text-xs text-muted-foreground">{chip.role}</span>
-                <span className="text-xs text-muted-foreground">{chip.outcome}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        {/* /projects archive route is not live yet; link will resolve once that page ships. */}
         <Link
-          href="/projects"
-          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+          href="/about"
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
         >
-          See all projects
-          <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
+          More about me
+          <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
         </Link>
-      </section>
-
-      {howIWorkFolio ? (
-        <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-          <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">How I Work</h2>
-          <Link
-            href={`/learn/folios/${howIWorkFolio.slug}`}
-            className="group flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground"
-          >
-            <h3 className="text-lg font-semibold tracking-tight text-foreground">
-              {howIWorkFolio.title}
-            </h3>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              {howIWorkFolio.excerpt}
-            </p>
-            <span className="inline-flex items-center text-sm font-medium text-foreground">
-              Read the folio
-              <HugeiconsIcon
-                icon={ArrowRight01Icon}
-                data-icon="inline-end"
-                className="transition-transform group-hover:translate-x-0.5"
-              />
-            </span>
-          </Link>
-        </section>
-      ) : null}
-
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Writing</h2>
-        <ul className="flex flex-col gap-3">
-          {featuredPosts.map((post) => (
-            <li key={post.slug}>
-              <Link
-                href={`/learn/articles/${post.slug}`}
-                className="flex flex-col gap-1 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground"
-              >
-                <h3 className="text-base font-semibold tracking-tight text-foreground">
-                  {post.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {post.excerpt}
-                </p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <Link
-          href="/learn/articles"
-          className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-        >
-          All writing
-          <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
-        </Link>
-      </section>
-
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-3">
-        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">About</h2>
-        <p className="text-base leading-relaxed text-foreground md:text-lg">
-          {siteConfig.bio}
-        </p>
-      </section>
-
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-        <h2 className="font-heading text-3xl font-normal tracking-tight md:text-4xl">
-          Have a project in mind?
-        </h2>
-        <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
-          Tell me about it. I read every message.
-        </p>
-        <div className="flex flex-wrap gap-3 pt-2">
-          <Link href="/contact" className={buttonVariants({ size: "lg" })}>
-            Get in touch
-            <HugeiconsIcon icon={ArrowRight01Icon} data-icon="inline-end" />
-          </Link>
+        <div className="flex flex-col gap-2 border-t border-border pt-6">
+          <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+            Newsletter
+          </h2>
+          <SubscribeForm source="home" variant="compact" />
         </div>
-      </section>
+      </aside>
+
+      <main className="grid gap-4 pt-12 sm:grid-cols-2 lg:pt-0">
+        {leadPost ? (
+          <ArticleCoverTile
+            post={leadPost}
+            size="large"
+            delay={75}
+            className="sm:col-span-2"
+          />
+        ) : null}
+        {morePosts.map((post, i) => (
+          <ArticleCoverTile
+            key={post.slug}
+            post={post}
+            size="small"
+            delay={i === 0 ? 150 : 200}
+            withAllArticlesLink={i === morePosts.length - 1}
+          />
+        ))}
+        <CookingTile
+          recipes={recipes}
+          recipeCount={recipeCount}
+          delay={300}
+          className="sm:col-span-2"
+        />
+        <BookmarksTile delay={500} className="sm:col-span-2" />
+      </main>
     </div>
   )
 }

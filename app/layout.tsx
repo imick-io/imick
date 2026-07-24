@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
+import { SiteBackdrop } from "@/components/site-backdrop"
 import { SiteFooter } from "@/components/site-footer"
 import SimpleNavbarWithHoverEffects from "@/block/simple-navbar-with-hover-effects"
 import { siteConfig } from "@/lib/config"
@@ -51,6 +52,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <ThemeProvider>
+          <SiteBackdrop />
           <SimpleNavbarWithHoverEffects />
           <main className="flex flex-col flex-1">
             {children}

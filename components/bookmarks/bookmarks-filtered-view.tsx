@@ -3,10 +3,11 @@
 import { useState, useRef, useMemo, useEffect } from "react"
 import { useQueryState, parseAsArrayOf, parseAsString, parseAsStringLiteral } from "nuqs"
 import { filterBookmarks, hasActiveNarrowingFilters, reviewedValues, sortValues, type TagMap } from "@/lib/bookmarks-filter"
-import type { Bookmark } from "@/lib/bookmarks-meta"
+import { isReviewed, type Bookmark } from "@/lib/bookmarks-meta"
 import { BookmarkCard } from "./bookmark-card"
 import { BookmarkSearchInput } from "./bookmark-search-input"
 import { CategoryChipRow } from "./category-chip-row"
+import { ReviewedTabs } from "./reviewed-tabs"
 import { FiltersPopover } from "./filters-popover"
 import { ClearFiltersButton } from "./clear-filters-button"
 import { FilterChipButton } from "@/components/ui/filter-chip"
@@ -72,6 +73,16 @@ export function BookmarksFilteredView({
     [bookmarks, filters]
   )
 
+  const reviewedCounts = useMemo(() => {
+    const base = filterBookmarks(bookmarks, {
+      category,
+      tags: tags.length > 0 ? tags : undefined,
+      q: q || undefined,
+    })
+    const yes = base.filter((b) => isReviewed(b)).length
+    return { all: base.length, yes, no: base.length - yes }
+  }, [bookmarks, category, tags, q])
+
   const filtersActive = hasActiveNarrowingFilters(filters)
 
   const filterSig = `${category ?? ""}-${tags.join(",")}-${reviewed}-${sort}-${q}`
@@ -99,6 +110,8 @@ export function BookmarksFilteredView({
           activeCategory={category}
         />
       )}
+
+      <ReviewedTabs counts={reviewedCounts} />
 
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-sm text-muted-foreground">
