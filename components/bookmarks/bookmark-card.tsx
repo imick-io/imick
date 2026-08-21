@@ -4,21 +4,13 @@ import { ArrowUpRight01Icon, StarIcon } from "@hugeicons/core-free-icons"
 import { getHostname, isReviewed, type Bookmark } from "@/lib/bookmarks-meta"
 import { getCategoryLabel } from "@/lib/categories-meta"
 import { CardFeature } from "@/components/ui/brand/card-feature"
+import { BookmarkPill } from "./bookmark-pill"
 import { BookmarkLogo } from "./bookmark-logo"
 
 type BookmarkCardProps = {
   bookmark: Bookmark
   categoryMap?: Record<string, string>
 }
-
-// Category and Tag pills are informational on a card (not selectable), so both
-// stay neutral -- Brand Accent is reserved for the active/selected pill state on
-// the filter row (see filter-chip.tsx). Category reads as the louder neutral,
-// Tags as the quieter one.
-const CATEGORY_PILL_CLASS =
-  "inline-flex items-center rounded-pill border border-border bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
-const TAG_PILL_CLASS =
-  "inline-flex items-center rounded-pill bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
 
 export function BookmarkCard({ bookmark, categoryMap }: BookmarkCardProps) {
   const reviewed = isReviewed(bookmark)
@@ -79,14 +71,14 @@ export function BookmarkCard({ bookmark, categoryMap }: BookmarkCardProps) {
         <ul className="flex flex-wrap items-center gap-1.5">
           {bookmark.category ? (
             <li>
-              <span className={CATEGORY_PILL_CLASS}>
+              <BookmarkPill variant="category">
                 {getCategoryLabel(bookmark.category, categoryMap)}
-              </span>
+              </BookmarkPill>
             </li>
           ) : null}
           {tags.map((tag) => (
             <li key={tag}>
-              <span className={TAG_PILL_CLASS}>{tag}</span>
+              <BookmarkPill variant="tag">{tag}</BookmarkPill>
             </li>
           ))}
         </ul>

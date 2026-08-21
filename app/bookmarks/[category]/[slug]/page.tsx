@@ -5,6 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
 import { BookmarkLogo } from "@/components/bookmarks/bookmark-logo"
+import { BookmarkPill } from "@/components/bookmarks/bookmark-pill"
 import { getPublishedBookmark, isReviewed } from "@/lib/bookmarks"
 import { getHostname } from "@/lib/bookmarks-meta"
 import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
@@ -83,22 +84,13 @@ export default async function BookmarkDetailPage({ params }: Props) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center rounded-pill border border-border bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
-            {categoryLabel}
-          </span>
+          <BookmarkPill variant="category">{categoryLabel}</BookmarkPill>
           {bookmark.tags.map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center rounded-pill bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
-            >
+            <BookmarkPill key={tag} variant="tag">
               {tag}
-            </span>
+            </BookmarkPill>
           ))}
-          {reviewed && (
-            <span className="inline-flex items-center rounded-pill bg-primary px-2.5 py-0.5 text-xs font-medium text-primary-foreground">
-              Reviewed
-            </span>
-          )}
+          {reviewed && <BookmarkPill variant="reviewed">Reviewed</BookmarkPill>}
         </div>
 
         <a
