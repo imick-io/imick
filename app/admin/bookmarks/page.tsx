@@ -11,6 +11,8 @@ import {
 } from "@/lib/bookmarks"
 import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
 import { decodeBatchReport } from "@/lib/bookmark-batch"
+import { enrichmentBadgeLabel, type EnrichmentStatus } from "@/lib/ai-bookmark"
+import { retryEnrichment } from "./actions"
 
 export const metadata: Metadata = { title: "Bookmarks" }
 
@@ -172,6 +174,18 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
                 </div>
               </div>
               <div className="shrink-0 flex items-center gap-3">
+                <EnrichmentBadgePill status={b.aiStatus} attempts={b.aiAttempts} />
+                {b.aiStatus === "failed" && (
+                  <form action={retryEnrichment}>
+                    <input type="hidden" name="id" value={b.id} />
+                    <button
+                      type="submit"
+                      className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+                    >
+                      Retry
+                    </button>
+                  </form>
+                )}
                 <span className="text-xs text-muted-foreground">
                   {new Date(b.createdAt).toLocaleDateString()}
                 </span>
@@ -187,6 +201,32 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
         </div>
       )}
     </div>
+  )
+}
+
+// Enrichment status is orthogonal to the Draft/Scheduled/Published lifecycle
+// (ADR 0005): its badge lives in the right-side cluster with its own colors so
+// "still enriching" never reads as "still unpublished".
+const enrichmentBadgeClasses: Record<EnrichmentStatus, string> = {
+  pending: "bg-muted text-muted-foreground",
+  running: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
+  done: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  failed: "bg-destructive/10 text-destructive",
+}
+
+function EnrichmentBadgePill({
+  status,
+  attempts,
+}: {
+  status: EnrichmentStatus
+  attempts: number
+}) {
+  return (
+    <span
+      className={`text-xs px-1.5 py-0.5 rounded shrink-0 ${enrichmentBadgeClasses[status]}`}
+    >
+      {enrichmentBadgeLabel({ status, attempts })}
+    </span>
   )
 }
 

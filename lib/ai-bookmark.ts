@@ -149,6 +149,24 @@ export function nextEnrichmentState(
   }
 }
 
+// Display label for an EnrichmentState in the admin list (issue #52). Styling
+// keys off EnrichmentStatus directly in the UI; only the label needs logic.
+export function enrichmentBadgeLabel(
+  state: EnrichmentState,
+  maxAttempts: number = MAX_ENRICHMENT_ATTEMPTS
+): string {
+  switch (state.status) {
+    case "pending":
+      return "pending"
+    case "running":
+      return "enriching"
+    case "done":
+      return "enriched"
+    case "failed":
+      return `failed ${state.attempts}/${maxAttempts}`
+  }
+}
+
 interface ExistingAiFields {
   category: string | null
   tags: string[]

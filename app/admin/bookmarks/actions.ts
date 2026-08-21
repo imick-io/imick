@@ -3,11 +3,12 @@
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { bookmarks } from "@/lib/db/schema"
 import { fetchMicrolink } from "@/lib/microlink"
 import { enrichBookmark } from "@/lib/bookmark-enrichment"
+import { nextEnrichmentState, MAX_ENRICHMENT_ATTEMPTS } from "@/lib/ai-bookmark"
 import { slugifyCategory } from "@/lib/bookmarks-meta"
 import {
   parseBookmarkUrls,
@@ -295,6 +296,31 @@ export async function refetchMetadata(
   revalidateBookmarksPublic()
 
   return { ok: true, message: "Metadata refreshed successfully." }
+}
+
+// ─── retry enrichment ───────────────────────────────────────────────────────
+
+export async function retryEnrichment(formData: FormData): Promise<void> {
+  await requireAdmin()
+
+  const id = formData.get("id") as string
+  if (!id) return
+
+  // The retry transition is state-independent (always pending/0), so no read is
+  // needed: the failed-only guard lives in the WHERE clause, making the retry
+  // atomic against a concurrent drainer tick. Missing rows and stale form
+  // submits no-op naturally.
+  const retried = nextEnrichmentState(
+    { status: "failed", attempts: 0 },
+    "retry",
+    MAX_ENRICHMENT_ATTEMPTS
+  )
+  await db
+    .update(bookmarks)
+    .set({ aiStatus: retried.status, aiAttempts: retried.attempts, updatedAt: new Date() })
+    .where(and(eq(bookmarks.id, id), eq(bookmarks.aiStatus, "failed")))
+
+  revalidatePath("/admin/bookmarks")
 }
 
 // ─── generate with AI ──────────────────────────────────────────────────────

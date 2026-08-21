@@ -14,6 +14,7 @@ import {
   generateBookmarkAi,
   mergeAiFields,
   nextEnrichmentState,
+  enrichmentBadgeLabel,
   MAX_ENRICHMENT_ATTEMPTS,
   type AiBookmarkOutput,
 } from "./ai-bookmark"
@@ -246,5 +247,19 @@ describe("nextEnrichmentState", () => {
 
   it("exposes a default attempt cap constant", () => {
     expect(MAX_ENRICHMENT_ATTEMPTS).toBe(3)
+  })
+})
+
+describe("enrichmentBadgeLabel", () => {
+  it("maps the non-failed statuses to their labels", () => {
+    expect(enrichmentBadgeLabel({ status: "pending", attempts: 0 })).toBe("pending")
+    expect(enrichmentBadgeLabel({ status: "running", attempts: 1 })).toBe("enriching")
+    expect(enrichmentBadgeLabel({ status: "done", attempts: 0 })).toBe("enriched")
+  })
+
+  it("shows the attempt count against the cap on failure", () => {
+    expect(enrichmentBadgeLabel({ status: "failed", attempts: 2 })).toBe("failed 2/3")
+    expect(enrichmentBadgeLabel({ status: "failed", attempts: 3 }, 3)).toBe("failed 3/3")
+    expect(enrichmentBadgeLabel({ status: "failed", attempts: 1 }, 5)).toBe("failed 1/5")
   })
 })
