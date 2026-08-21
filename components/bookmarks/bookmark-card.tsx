@@ -3,6 +3,8 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon, StarIcon } from "@hugeicons/core-free-icons"
 import { getHostname, isReviewed, type Bookmark } from "@/lib/bookmarks-meta"
 import { getCategoryLabel } from "@/lib/categories-meta"
+import { CardFeature } from "@/components/ui/brand/card-feature"
+import { BookmarkPill } from "./bookmark-pill"
 import { BookmarkLogo } from "./bookmark-logo"
 
 type BookmarkCardProps = {
@@ -16,10 +18,15 @@ export function BookmarkCard({ bookmark, categoryMap }: BookmarkCardProps) {
     ? `/bookmarks/${bookmark.category}/${bookmark.slug}`
     : bookmark.url
   const hostname = getHostname(bookmark.url)
-  const showFooter = Boolean(bookmark.category) || reviewed
+  const tags = bookmark.tags.slice(0, 3)
+  const showPills = Boolean(bookmark.category) || tags.length > 0
+  const showFooter = reviewed
 
   return (
-    <div className="group flex h-full flex-col gap-3 rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground">
+    <CardFeature
+      variant="default"
+      className="group h-full gap-3 p-5 hover:border-foreground"
+    >
       <div className="flex items-start gap-3">
         <BookmarkLogo
           logoUrl={bookmark.logoUrl}
@@ -60,32 +67,44 @@ export function BookmarkCard({ bookmark, categoryMap }: BookmarkCardProps) {
         </a>
       </div>
 
+      {showPills ? (
+        <ul className="flex flex-wrap items-center gap-1.5">
+          {bookmark.category ? (
+            <li>
+              <BookmarkPill variant="category">
+                {getCategoryLabel(bookmark.category, categoryMap)}
+              </BookmarkPill>
+            </li>
+          ) : null}
+          {tags.map((tag) => (
+            <li key={tag}>
+              <BookmarkPill variant="tag">{tag}</BookmarkPill>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
       {showFooter ? (
         <div className="mt-auto flex items-center justify-between gap-3 pt-1">
-          <span className="flex items-center gap-3 text-xs text-muted-foreground">
-            {bookmark.category ? (
-              <span>{getCategoryLabel(bookmark.category, categoryMap)}</span>
-            ) : null}
-            {reviewed && bookmark.rating != null ? (
-              <span
-                className="inline-flex items-center gap-1"
-                aria-label={`Rating: ${bookmark.rating} out of 5`}
-              >
-                <HugeiconsIcon icon={StarIcon} size={12} aria-hidden />
-                {bookmark.rating}/5
-              </span>
-            ) : null}
-          </span>
-          {reviewed ? (
-            <Link
-              href={detailHref}
-              className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+          {bookmark.rating != null ? (
+            <span
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground"
+              aria-label={`Rating: ${bookmark.rating} out of 5`}
             >
-              Read review
-            </Link>
-          ) : null}
+              <HugeiconsIcon icon={StarIcon} size={12} aria-hidden />
+              {bookmark.rating}/5
+            </span>
+          ) : (
+            <span />
+          )}
+          <Link
+            href={detailHref}
+            className="text-xs font-medium text-primary underline-offset-4 hover:underline"
+          >
+            Read review
+          </Link>
         </div>
       ) : null}
-    </div>
+    </CardFeature>
   )
 }

@@ -8,9 +8,15 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-serif: var(--font-serif);
+  --font-display: var(--font-display);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-serif);
+  /*
+   * Two-face system (DESIGN.md): Display Sans for headings, Body Sans for text.
+   * `font-heading` and `font-serif` are kept as aliases of the display face so
+   * existing call sites keep rendering the display type after the swap.
+   */
+  --font-heading: var(--font-display);
+  --font-serif: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -40,90 +46,104 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  /*
+   * Radius scale (DESIGN.md): sm 8 / md 12 / lg 16 / xl 24 / pill / full.
+   * `--radius` base is 1.5rem (24 px) so the canonical pill geometry is the
+   * default: `rounded-xl` == var(--radius) == 24 px. Form inputs deliberately
+   * keep `rounded-md` (12 px) so they do not read as overly-rounded pills.
+   */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: var(--radius);
+  --radius-2xl: 2rem;
+  --radius-3xl: 2.5rem;
+  --radius-4xl: 3rem;
+  /*
+   * Pill geometry: stadium-shaped ends for chips and Category/Tag pills.
+   * Kept as its own role in the radius scale so `rounded-pill` reads
+   * intentionally at call sites rather than reusing `rounded-full`, which
+   * also rounds square avatars/logos.
+   */
+  --radius-pill: 999px;
 }
 
 /*
- * High-contrast mono palette with a single vivid green accent.
- * The green lives ONLY in --primary and --ring. --accent stays a NEUTRAL
- * hover surface (ghost buttons, menus); putting green here turns every
- * ghost hover green.
- * --primary is dual-valued: deep green in light mode (AA as text on white),
- * electric green in dark mode where --primary-foreground flips to black.
+ * Brand instantiation (DESIGN.md + ADR 0006): single electric-cobalt accent
+ * on a warm-bone canvas, warm-ink text. The cobalt lives ONLY in --primary and
+ * --ring; --accent stays a NEUTRAL warm hover surface (ghost buttons, menus) so
+ * a ghost hover does not turn cobalt.
+ * --primary is dual-valued: cobalt #3d5afe in light mode (AA as text/CTA on
+ * white and bone) and a lifted cobalt #6b85ff in warm-dark mode (AA against the
+ * warm-dark ink canvas) where --primary-foreground flips to warm ink.
  */
 :root {
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.13 0 0);
+  --card-foreground: oklch(0.21 0.012 75);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.13 0 0);
-  --primary: oklch(0.52 0.17 148);
+  --popover-foreground: oklch(0.21 0.012 75);
+  --primary: oklch(0.555 0.243 268.8);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.94 0 0);
-  --secondary-foreground: oklch(0.13 0 0);
-  --muted: oklch(0.94 0 0);
-  --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.94 0 0);
-  --accent-foreground: oklch(0.13 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.87 0 0);
-  --input: oklch(0.87 0 0);
-  --ring: oklch(0.52 0.17 148);
-  --chart-1: oklch(0.897 0.196 126.665);
-  --chart-2: oklch(0.768 0.233 130.85);
-  --chart-3: oklch(0.648 0.2 131.684);
-  --chart-4: oklch(0.532 0.157 131.589);
-  --chart-5: oklch(0.453 0.124 130.933);
-  --radius: 0.375rem;
+  --secondary: oklch(0.925 0.013 88.7);
+  --secondary-foreground: oklch(0.21 0.012 75);
+  --muted: oklch(0.925 0.013 88.7);
+  --muted-foreground: oklch(0.5 0.012 75);
+  --accent: oklch(0.915 0.013 88.7);
+  --accent-foreground: oklch(0.21 0.012 75);
+  --destructive: oklch(0.577 0.245 32);
+  --border: oklch(0.885 0.013 88.7);
+  --input: oklch(0.885 0.013 88.7);
+  --ring: oklch(0.555 0.243 268.8);
+  --chart-1: oklch(0.555 0.243 268.8);
+  --chart-2: oklch(0.657 0.182 271.5);
+  --chart-3: oklch(0.72 0.12 268.8);
+  --chart-4: oklch(0.6 0.09 75);
+  --chart-5: oklch(0.45 0.05 75);
+  --radius: 1.5rem;
   --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.13 0 0);
-  --sidebar-primary: oklch(0.52 0.17 148);
+  --sidebar-foreground: oklch(0.21 0.012 75);
+  --sidebar-primary: oklch(0.555 0.243 268.8);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.94 0 0);
-  --sidebar-accent-foreground: oklch(0.13 0 0);
-  --sidebar-border: oklch(0.87 0 0);
-  --sidebar-ring: oklch(0.52 0.17 148);
-  --background: oklch(0.97 0 0);
-  --foreground: oklch(0.13 0 0);
+  --sidebar-accent: oklch(0.915 0.013 88.7);
+  --sidebar-accent-foreground: oklch(0.21 0.012 75);
+  --sidebar-border: oklch(0.885 0.013 88.7);
+  --sidebar-ring: oklch(0.555 0.243 268.8);
+  --background: oklch(0.946 0.014 88.7);
+  --foreground: oklch(0.21 0.012 75);
 }
 
 .dark {
-  --background: oklch(0 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.2 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.2 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.84 0.23 148);
-  --primary-foreground: oklch(0.13 0 0);
-  --secondary: oklch(0.27 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.26 0 0);
-  --muted-foreground: oklch(0.72 0 0);
-  --accent: oklch(0.27 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 20%);
-  --input: oklch(1 0 0 / 24%);
-  --ring: oklch(0.84 0.23 148);
-  --chart-1: oklch(0.897 0.196 126.665);
-  --chart-2: oklch(0.768 0.233 130.85);
-  --chart-3: oklch(0.648 0.2 131.684);
-  --chart-4: oklch(0.532 0.157 131.589);
-  --chart-5: oklch(0.453 0.124 130.933);
-  --sidebar: oklch(0.2 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.84 0.23 148);
-  --sidebar-primary-foreground: oklch(0.13 0 0);
-  --sidebar-accent: oklch(0.27 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 20%);
-  --sidebar-ring: oklch(0.84 0.23 148);
+  --background: oklch(0.18 0.009 75);
+  --foreground: oklch(0.95 0.008 88.7);
+  --card: oklch(0.21 0.008 84.6);
+  --card-foreground: oklch(0.95 0.008 88.7);
+  --popover: oklch(0.21 0.008 84.6);
+  --popover-foreground: oklch(0.95 0.008 88.7);
+  --primary: oklch(0.657 0.182 271.5);
+  --primary-foreground: oklch(0.18 0.009 75);
+  --secondary: oklch(0.27 0.008 84.6);
+  --secondary-foreground: oklch(0.95 0.008 88.7);
+  --muted: oklch(0.26 0.008 84.6);
+  --muted-foreground: oklch(0.72 0.01 88.7);
+  --accent: oklch(0.27 0.008 84.6);
+  --accent-foreground: oklch(0.95 0.008 88.7);
+  --destructive: oklch(0.704 0.191 32);
+  --border: oklch(0.95 0.01 88.7 / 14%);
+  --input: oklch(0.95 0.01 88.7 / 16%);
+  --ring: oklch(0.657 0.182 271.5);
+  --chart-1: oklch(0.657 0.182 271.5);
+  --chart-2: oklch(0.555 0.243 268.8);
+  --chart-3: oklch(0.72 0.12 268.8);
+  --chart-4: oklch(0.7 0.06 88.7);
+  --chart-5: oklch(0.55 0.04 88.7);
+  --sidebar: oklch(0.21 0.008 84.6);
+  --sidebar-foreground: oklch(0.95 0.008 88.7);
+  --sidebar-primary: oklch(0.657 0.182 271.5);
+  --sidebar-primary-foreground: oklch(0.18 0.009 75);
+  --sidebar-accent: oklch(0.27 0.008 84.6);
+  --sidebar-accent-foreground: oklch(0.95 0.008 88.7);
+  --sidebar-border: oklch(0.95 0.01 88.7 / 14%);
+  --sidebar-ring: oklch(0.657 0.182 271.5);
 }
 
 @layer base {
@@ -141,11 +161,51 @@
 }
 
 /*
- * Site-wide backdrop: graph-paper grid fading below the fold plus two
- * slow-drifting green orbs. Grid and aurora are separate layers because the
- * grid's fade-out mask would otherwise clip the orbs. Soft edges come from
- * gradient falloff (no filter blur), animation is transform-only so it stays
- * on the compositor, and motion is disabled under prefers-reduced-motion.
+ * Display scale (DESIGN.md). Two-face system: the display utilities render in
+ * the Display Sans (Manrope) at editorial weights; body text stays in the Body
+ * Sans (Inter) via `font-sans`. Sizes/leading are the locked spec values.
+ * Pages adopt these in the page-level PRs; they are defined here so the scale
+ * exists site-wide from the Foundation swap.
+ */
+@utility display-mega {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 7.875rem;
+  line-height: 6.6875rem;
+  letter-spacing: -0.04em;
+}
+@utility display-xl {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 4rem;
+  line-height: 3.375rem;
+  letter-spacing: -0.03em;
+}
+@utility display-md {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2.5rem;
+  line-height: 2.125rem;
+  letter-spacing: -0.02em;
+}
+@utility display-sm {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 2.375rem;
+  letter-spacing: -0.02em;
+}
+@utility display-xs {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 1.9375rem;
+  letter-spacing: -0.01em;
+}
+
+/*
+ * Site-wide backdrop: a graph-paper grid that fades out below the fold via a
+ * radial mask. Hidden when printing.
  */
 .site-backdrop {
   position: fixed;
@@ -192,65 +252,6 @@
     black 25%,
     transparent 78%
   );
-}
-
-.site-backdrop-aurora::before,
-.site-backdrop-aurora::after {
-  content: "";
-  position: absolute;
-  width: 65vmax;
-  height: 65vmax;
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    color-mix(in oklab, var(--primary) 10%, transparent),
-    transparent
-  );
-}
-
-.site-backdrop-aurora::before {
-  top: -25vmax;
-  left: -18vmax;
-}
-
-.site-backdrop-aurora::after {
-  bottom: -30vmax;
-  right: -20vmax;
-  background: radial-gradient(
-    closest-side,
-    color-mix(in oklab, var(--primary) 5%, transparent),
-    transparent
-  );
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .site-backdrop-aurora::before {
-    animation: site-backdrop-drift-a 52s ease-in-out infinite;
-  }
-
-  .site-backdrop-aurora::after {
-    animation: site-backdrop-drift-b 64s ease-in-out infinite;
-  }
-}
-
-@keyframes site-backdrop-drift-a {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(18vmax, 10vmax, 0) scale(1.18);
-  }
-}
-
-@keyframes site-backdrop-drift-b {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1.1);
-  }
-  50% {
-    transform: translate3d(-14vmax, -12vmax, 0) scale(0.95);
-  }
 }
 
 @media print {

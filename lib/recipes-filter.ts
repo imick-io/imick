@@ -1,4 +1,5 @@
-import { COURSES, type Course, type Recipe } from "./recipes"
+import { COURSES, type Course } from "./recipes-taxonomy"
+import type { Recipe } from "./recipes"
 
 export type RecipeFilters = {
   course?: Course
@@ -7,20 +8,36 @@ export type RecipeFilters = {
   q?: string
 }
 
+function matchesQuery(r: Recipe, q: string): boolean {
+  return (
+    r.name.toLowerCase().includes(q) ||
+    r.primary.toLowerCase().includes(q) ||
+    r.ingredients.some((ing) => ing.item.toLowerCase().includes(q))
+  )
+}
+
 export function filterRecipes(recipes: Recipe[], filters: RecipeFilters): Recipe[] {
   const q = filters.q?.trim().toLowerCase()
+  const bySlug = new Map(recipes.map((r) => [r.slug, r]))
+  // Ingredient and search filters match transitively through component
+  // recipes: a pot pie matches "Chicken" because its filling does. Course
+  // stays direct — the pot pie is Mains even though its crust is Basics.
+  const withComponents = (r: Recipe): Recipe[] => [
+    r,
+    ...(r.components ?? [])
+      .map((slug) => bySlug.get(slug))
+      .filter((c): c is Recipe => c !== undefined),
+  ]
   return recipes.filter((r) => {
     if (filters.course && r.course !== filters.course) return false
-    if (filters.ingredient && r.primary !== filters.ingredient) return false
-    if (filters.tags && !filters.tags.every((t) => r.tags.includes(t as Recipe["tags"][number])))
-      return false
     if (
-      q &&
-      !r.name.toLowerCase().includes(q) &&
-      !r.primary.toLowerCase().includes(q) &&
-      !r.ingredients.some((ing) => ing.item.toLowerCase().includes(q))
+      filters.ingredient &&
+      !withComponents(r).some((c) => c.primary === filters.ingredient)
     )
       return false
+    if (filters.tags && !filters.tags.every((t) => r.tags.includes(t as Recipe["tags"][number])))
+      return false
+    if (q && !withComponents(r).some((c) => matchesQuery(c, q))) return false
     return true
   })
 }

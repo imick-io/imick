@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button"
 
 const PAGE_SIZE = 12
 const CLEAR_BUTTON_CLASS =
-  "inline-flex h-8 items-center rounded-full border border-border bg-card px-3.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+  "inline-flex h-8 items-center rounded-pill border border-border bg-card px-3.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
 
 type Props = {
   bookmarks: Bookmark[]

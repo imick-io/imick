@@ -1,5 +1,6 @@
 import {
   pgTable,
+  pgEnum,
   text,
   timestamp,
   boolean,
@@ -80,6 +81,16 @@ export type NewFormSubmission = typeof formSubmissions.$inferInsert
 
 // --- Bookmarks ---
 
+// Enrichment status: the per-Bookmark state of its last Enrichment attempt.
+// Orthogonal to the Draft / Scheduled / Published lifecycle (see CONTEXT.md,
+// ADR 0005). Backfilled to `done` for pre-existing rows by migration 0007.
+export const aiStatusEnum = pgEnum("ai_status", [
+  "pending",
+  "running",
+  "done",
+  "failed",
+])
+
 export const categories = pgTable("categories", {
   slug: text("slug").primaryKey(),
   label: text("label").notNull(),
@@ -105,6 +116,8 @@ export const bookmarks = pgTable("bookmarks", {
   pros: text("pros").array().notNull().default(sql`ARRAY[]::text[]`),
   cons: text("cons").array().notNull().default(sql`ARRAY[]::text[]`),
   aiSummary: text("ai_summary"),
+  aiStatus: aiStatusEnum("ai_status").notNull().default("done"),
+  aiAttempts: integer("ai_attempts").notNull().default(0),
   rating: integer("rating"),
   reviewText: text("review_text"),
   publishedAt: timestamp("published_at"),

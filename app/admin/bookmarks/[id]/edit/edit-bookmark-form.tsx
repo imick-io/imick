@@ -7,7 +7,7 @@ import {
   type UpdateBookmarkState,
   type CreateCategoryState,
 } from "../../actions"
-import { type Bookmark, humanizeSlug, slugifyCategory } from "@/lib/bookmarks-meta"
+import { type Bookmark, slugifyCategory } from "@/lib/bookmarks-meta"
 import type { Category } from "@/lib/categories"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -113,7 +113,6 @@ function CategoryField({
   onCategoryCreated,
   disabled,
   invalid,
-  suggestedCategory,
 }: {
   value: string
   onChange: (next: string) => void
@@ -121,7 +120,6 @@ function CategoryField({
   onCategoryCreated: (category: Category) => void
   disabled: boolean
   invalid: boolean
-  suggestedCategory: string | null
 }) {
   const [open, setOpen] = useState<boolean>(false)
   const [draftSlug, setDraftSlug] = useState<string>("")
@@ -151,9 +149,6 @@ function CategoryField({
 
   const errors = createState?.ok === false ? createState.errors : {}
   const sorted = [...categories].sort((a, b) => a.label.localeCompare(b.label))
-
-  const showSuggestion =
-    !!suggestedCategory && !categories.some((c) => c.slug === suggestedCategory)
 
   function openDialog(prefill?: { label: string; slug: string }) {
     setDraftLabel(prefill?.label ?? "")
@@ -214,29 +209,6 @@ function CategoryField({
           </Button>
         )}
       </div>
-      {showSuggestion && (
-        <p className="text-xs text-amber-600 dark:text-amber-400">
-          AI suggests{" "}
-          <code className="rounded bg-muted px-1 py-0.5 font-mono">
-            {suggestedCategory}
-          </code>
-          . Not in your categories yet,{" "}
-          <button
-            type="button"
-            className="underline underline-offset-2 hover:no-underline"
-            onClick={() =>
-              openDialog({
-                slug: suggestedCategory!,
-                label: humanizeSlug(suggestedCategory!),
-              })
-            }
-            disabled={disabled}
-          >
-            create it
-          </button>
-          .
-        </p>
-      )}
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-md">
@@ -370,15 +342,11 @@ function ListEditor({
 type Props = {
   bookmark: Bookmark
   allCategories: Category[]
-  suggestedCategory?: string | null
-  onDismissSuggestion?: () => void
 }
 
 export function EditBookmarkForm({
   bookmark,
   allCategories,
-  suggestedCategory = null,
-  onDismissSuggestion,
 }: Props) {
   const [state, action, pending] = useActionState<UpdateBookmarkState | null, FormData>(
     updateBookmark,
@@ -391,9 +359,6 @@ export function EditBookmarkForm({
 
   const handleCategoryCreated = (created: Category) => {
     setCategories((cs) => [...cs, created])
-    if (suggestedCategory && created.slug === suggestedCategory) {
-      onDismissSuggestion?.()
-    }
   }
 
   return (
@@ -459,7 +424,6 @@ export function EditBookmarkForm({
               onCategoryCreated={handleCategoryCreated}
               disabled={pending}
               invalid={!!errors.category}
-              suggestedCategory={suggestedCategory}
             />
             <p className="text-xs text-muted-foreground">
               Required to publish this bookmark on the public site.
@@ -551,7 +515,7 @@ export function EditBookmarkForm({
             name="rating"
             defaultValue={bookmark.rating?.toString() ?? ""}
             disabled={pending}
-            className="h-9 w-40 rounded-4xl border border-input bg-input/30 px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            className="h-9 w-40 rounded-md border border-input bg-input/30 px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             <option value="">No rating</option>
             <option value="1">★ 1</option>

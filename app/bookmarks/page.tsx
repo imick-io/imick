@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { BookmarksFilteredView } from "@/components/bookmarks/bookmarks-filtered-view"
@@ -51,12 +52,16 @@ export default async function BookmarksHubPage() {
       </header>
 
       <section className="mx-auto flex w-full max-w-5xl flex-col gap-8">
-        <BookmarksFilteredView
-          bookmarks={bookmarks}
-          categoryMap={categoryMap}
-          categoryCounts={categoryCounts}
-          tagMap={tagMap}
-        />
+        {/* nuqs reads search params, which bails out of static rendering up to
+            the nearest Suspense boundary. */}
+        <Suspense>
+          <BookmarksFilteredView
+            bookmarks={bookmarks}
+            categoryMap={categoryMap}
+            categoryCounts={categoryCounts}
+            tagMap={tagMap}
+          />
+        </Suspense>
       </section>
 
       <p className="mx-auto w-full max-w-5xl text-sm text-muted-foreground">

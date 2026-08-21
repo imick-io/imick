@@ -4,10 +4,10 @@ import type { Bookmark } from "./db/schema"
 // Curated for the home page cooking tile: varied courses, each with a
 // brand emoji glyph in components/home/brand-emoji.tsx.
 export const FEATURED_RECIPE_SLUGS = [
-  "smash-burgers",
-  "slow-beef-ragu",
-  "basque-cheesecake",
-  "shakshuka",
+  "greek-smash-burger",
+  "spaghetti-with-meat-sauce",
+  "chocolate-fondant",
+  "classic-waffles",
 ] as const
 
 export function getFeaturedRecipes(): Recipe[] {

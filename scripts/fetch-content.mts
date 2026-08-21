@@ -1,4 +1,4 @@
-// Hydrates `content/{posts,snippets,folios,classes}` and `public/assets/content/`
+// Hydrates `content/{posts,snippets,folios,classes,recipes}` and `public/assets/content/`
 // from the private `imick-io/imick-io-content` repo. Runs on `pnpm install`
 // (postinstall) and before any production build.
 //
@@ -29,7 +29,7 @@ const PUBLIC_ASSETS_DIR = join(ROOT, "public", "assets", "content")
 const CACHE_DIR = join(ROOT, ".content-cache")
 const REPO = "imick-io/imick-io-content"
 const BRANCH = "main"
-const SUBDIRS = ["posts", "snippets", "folios", "classes"] as const
+const SUBDIRS = ["posts", "snippets", "folios", "classes", "recipes"] as const
 
 function hasMdx(dir: string): boolean {
   if (!existsSync(dir)) return false

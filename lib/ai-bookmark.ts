@@ -104,6 +104,69 @@ export async function generateBookmarkAi(
   }
 }
 
+// ─── enrichment state machine ────────────────────────────────────────────────
+
+export type EnrichmentStatus = "pending" | "running" | "done" | "failed"
+
+export interface EnrichmentState {
+  status: EnrichmentStatus
+  attempts: number
+}
+
+// A `start` marks an attempt in flight; `success`/`failure` are its outcome; a
+// `retry` is the manual Retry that clears a terminal failure so it drains again.
+export type EnrichmentOutcome = "start" | "success" | "failure" | "retry"
+
+// Default attempt cap for Enrichment (ADR 0005): after this many failures a
+// Bookmark is left terminally `failed` until a human hits Retry.
+export const MAX_ENRICHMENT_ATTEMPTS = 3
+
+// Pure transition for a Bookmark's Enrichment status. Both the single "Generate
+// with AI" flow and the background cron drainer route their status writes
+// through here so every Bookmark carries the outcome of its last attempt
+// regardless of trigger (ADR 0005, CONTEXT.md).
+export function nextEnrichmentState(
+  state: EnrichmentState,
+  outcome: EnrichmentOutcome,
+  maxAttempts: number
+): EnrichmentState {
+  switch (outcome) {
+    case "start":
+      // pending/failed -> running; the attempt counter carries over untouched.
+      return { status: "running", attempts: state.attempts }
+    case "success":
+      return { status: "done", attempts: state.attempts }
+    case "failure":
+      // Count the failed attempt, clamped at the cap so a terminal failure
+      // stays terminal rather than counting past it.
+      return {
+        status: "failed",
+        attempts: Math.min(state.attempts + 1, maxAttempts),
+      }
+    case "retry":
+      // Manual Retry resets the counter so a capped-out row drains again.
+      return { status: "pending", attempts: 0 }
+  }
+}
+
+// Display label for an EnrichmentState in the admin list (issue #52). Styling
+// keys off EnrichmentStatus directly in the UI; only the label needs logic.
+export function enrichmentBadgeLabel(
+  state: EnrichmentState,
+  maxAttempts: number = MAX_ENRICHMENT_ATTEMPTS
+): string {
+  switch (state.status) {
+    case "pending":
+      return "pending"
+    case "running":
+      return "enriching"
+    case "done":
+      return "enriched"
+    case "failed":
+      return `failed ${state.attempts}/${maxAttempts}`
+  }
+}
+
 interface ExistingAiFields {
   category: string | null
   tags: string[]

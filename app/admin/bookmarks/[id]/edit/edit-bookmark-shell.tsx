@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import type { Bookmark } from "@/lib/bookmarks-meta"
 import type { Category } from "@/lib/categories"
 import { EditBookmarkForm } from "./edit-bookmark-form"
@@ -14,16 +13,11 @@ interface Props {
 }
 
 export function EditBookmarkShell({ bookmark, allCategories }: Props) {
-  const [suggestedCategory, setSuggestedCategory] = useState<string | null>(null)
-
   return (
     <>
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <GenerateAiButton
-            bookmarkId={bookmark.id}
-            onSuggestedCategory={setSuggestedCategory}
-          />
+          <GenerateAiButton bookmarkId={bookmark.id} />
           <RefetchButton bookmarkId={bookmark.id} />
           <DeleteButton bookmarkId={bookmark.id} title={bookmark.title} />
         </div>
@@ -44,8 +38,6 @@ export function EditBookmarkShell({ bookmark, allCategories }: Props) {
         key={bookmark.updatedAt.getTime()}
         bookmark={bookmark}
         allCategories={allCategories}
-        suggestedCategory={suggestedCategory}
-        onDismissSuggestion={() => setSuggestedCategory(null)}
       />
     </>
   )

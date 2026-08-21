@@ -10,11 +10,14 @@ import {
   type AdminStatus,
 } from "@/lib/bookmarks"
 import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
+import { decodeBatchReport } from "@/lib/bookmark-batch"
+import { enrichmentBadgeLabel, type EnrichmentStatus } from "@/lib/ai-bookmark"
+import { retryEnrichment } from "./actions"
 
 export const metadata: Metadata = { title: "Bookmarks" }
 
 type Props = {
-  searchParams: Promise<{ category?: string; status?: string }>
+  searchParams: Promise<{ category?: string; status?: string; report?: string }>
 }
 
 export default async function AdminBookmarksPage({ searchParams }: Props) {
@@ -23,7 +26,8 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
     redirect("/admin/login")
   }
 
-  const { category, status } = await searchParams
+  const { category, status, report } = await searchParams
+  const batchReport = decodeBatchReport(report)
   const validStatus: AdminStatus =
     status === "published" || status === "draft" || status === "scheduled" ? status : "all"
   const allCategories = await getDistinctCategories()
@@ -36,6 +40,40 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* batch report */}
+      {batchReport && (
+        <div className="rounded-lg border bg-muted/40 px-4 py-3 text-sm space-y-2">
+          <p className="font-medium">
+            Created {batchReport.created}, skipped {batchReport.skipped.length},
+            invalid {batchReport.invalid.length}.
+          </p>
+          {batchReport.skipped.length > 0 && (
+            <div className="text-muted-foreground">
+              <p className="text-xs uppercase tracking-wide">Skipped (already added)</p>
+              <ul className="mt-1 space-y-0.5">
+                {batchReport.skipped.map((url) => (
+                  <li key={url} className="truncate">
+                    {url}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {batchReport.invalid.length > 0 && (
+            <div className="text-muted-foreground">
+              <p className="text-xs uppercase tracking-wide">Invalid (not a URL)</p>
+              <ul className="mt-1 space-y-0.5">
+                {batchReport.invalid.map((line) => (
+                  <li key={line} className="truncate">
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Bookmarks ({rows.length})</h1>
@@ -136,6 +174,18 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
                 </div>
               </div>
               <div className="shrink-0 flex items-center gap-3">
+                <EnrichmentBadgePill status={b.aiStatus} attempts={b.aiAttempts} />
+                {b.aiStatus === "failed" && (
+                  <form action={retryEnrichment}>
+                    <input type="hidden" name="id" value={b.id} />
+                    <button
+                      type="submit"
+                      className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+                    >
+                      Retry
+                    </button>
+                  </form>
+                )}
                 <span className="text-xs text-muted-foreground">
                   {new Date(b.createdAt).toLocaleDateString()}
                 </span>
@@ -151,6 +201,32 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
         </div>
       )}
     </div>
+  )
+}
+
+// Enrichment status is orthogonal to the Draft/Scheduled/Published lifecycle
+// (ADR 0005): its badge lives in the right-side cluster with its own colors so
+// "still enriching" never reads as "still unpublished".
+const enrichmentBadgeClasses: Record<EnrichmentStatus, string> = {
+  pending: "bg-muted text-muted-foreground",
+  running: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
+  done: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  failed: "bg-destructive/10 text-destructive",
+}
+
+function EnrichmentBadgePill({
+  status,
+  attempts,
+}: {
+  status: EnrichmentStatus
+  attempts: number
+}) {
+  return (
+    <span
+      className={`text-xs px-1.5 py-0.5 rounded shrink-0 ${enrichmentBadgeClasses[status]}`}
+    >
+      {enrichmentBadgeLabel({ status, attempts })}
+    </span>
   )
 }
 

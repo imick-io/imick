@@ -11,6 +11,7 @@ import {
 } from "nuqs"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Search01Icon } from "@hugeicons/core-free-icons"
+import { DraftBadge } from "@/components/ui/draft-badge"
 import { FilterChipButton } from "@/components/ui/filter-chip"
 import { cn } from "@/lib/utils"
 import {
@@ -224,8 +225,11 @@ export function CookingFilteredView({ recipes }: Props) {
                         />
                       </span>
                       <span className="flex min-w-0 flex-col gap-0.5">
-                        <span className="truncate text-sm font-medium underline-offset-4 group-hover:underline">
-                          {recipe.name}
+                        <span className="flex items-center gap-2">
+                          <span className="truncate text-sm font-medium underline-offset-4 group-hover:underline">
+                            {recipe.name}
+                          </span>
+                          {recipe.isDraft ? <DraftBadge /> : null}
                         </span>
                         <span className="font-mono text-xs text-muted-foreground">
                           {recipe.primary}
