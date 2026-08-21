@@ -5,6 +5,7 @@ import { allFolios, allPosts, allSnippets } from "content-collections"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { MDXContent } from "@/components/mdx/mdx-content"
+import { ContentBand } from "@/components/ui/brand/content-band"
 import { siteConfig } from "@/lib/config"
 import { isFolioDraft, type FolioItem } from "@/lib/folios"
 
@@ -72,8 +73,8 @@ export default async function FolioPage(
   const resolvedItems = folio.items.map((item) => ({ item, resolved: resolveItem(item) }))
 
   return (
-    <article className="flex flex-col gap-12 px-6 py-12 md:py-16">
-      <nav aria-label="Breadcrumb" className="mx-auto flex w-full max-w-3xl items-center gap-1.5 text-xs text-muted-foreground">
+    <article className="flex flex-col gap-12 py-12 md:py-16">
+      <nav aria-label="Breadcrumb" className="mx-auto flex w-full max-w-3xl items-center gap-1.5 px-6 text-xs text-muted-foreground">
         <Link href="/learn" className="hover:text-foreground">
           Learn
         </Link>
@@ -85,7 +86,7 @@ export default async function FolioPage(
         <span className="truncate text-foreground">{folio.title}</span>
       </nav>
 
-      <header className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+      <header className="mx-auto flex w-full max-w-3xl flex-col gap-4 px-6">
         {folio.isDraft ? (
           <span className="self-start rounded-full border border-destructive/40 bg-destructive/10 px-2.5 py-0.5 text-xs font-medium text-destructive">
             DRAFT
@@ -97,13 +98,13 @@ export default async function FolioPage(
         <p className="text-lg text-muted-foreground">{folio.excerpt}</p>
       </header>
 
-      <div className="mx-auto w-full max-w-3xl text-base leading-relaxed text-foreground [&_h2]:mt-10 [&_h2]:scroll-mt-24 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-8 [&_h3]:scroll-mt-24 [&_h3]:text-xl [&_h3]:font-semibold [&_p]:my-4 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-muted-foreground hover:[&_a]:decoration-foreground [&_:not(pre)>code]:rounded [&_:not(pre)>code]:bg-muted [&_:not(pre)>code]:px-1 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:text-sm [&_:not(pre)>code]:font-mono">
+      <ContentBand contentClassName="text-base leading-relaxed text-foreground [&_h2]:mt-10 [&_h2]:scroll-mt-24 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-8 [&_h3]:scroll-mt-24 [&_h3]:text-xl [&_h3]:font-semibold [&_p]:my-4 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-muted-foreground hover:[&_a]:decoration-foreground [&_:not(pre)>code]:rounded [&_:not(pre)>code]:bg-muted [&_:not(pre)>code]:px-1 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:text-sm [&_:not(pre)>code]:font-mono">
         <MDXContent code={folio.code} />
-      </div>
+      </ContentBand>
 
       <section
         aria-label="Folio items"
-        className="mx-auto flex w-full max-w-3xl flex-col gap-3 border-t border-border pt-8"
+        className="mx-auto flex w-full max-w-3xl flex-col gap-3 border-t border-border px-6 pt-8"
       >
         <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">In this folio</h2>
         <ol className="flex flex-col gap-2">
