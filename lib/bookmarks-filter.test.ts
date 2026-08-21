@@ -16,6 +16,8 @@ function makeBookmark(overrides: Partial<Bookmark> & { id: string }): Bookmark {
     pros: [],
     cons: [],
     aiSummary: null,
+    aiStatus: "done",
+    aiAttempts: 0,
     rating: null,
     reviewText: null,
     publishedAt: new Date("2025-01-01"),
