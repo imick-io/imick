@@ -39,11 +39,7 @@ export function ContentBand({
       {...props}
     >
       <div className={cn("mx-auto flex w-full max-w-3xl flex-col gap-8", contentClassName)}>
-        {heading ? (
-          <h2 className="font-heading text-[2.5rem] leading-[2.125rem] font-normal tracking-tight">
-            {heading}
-          </h2>
-        ) : null}
+        {heading ? <h2 className="display-md">{heading}</h2> : null}
         {children}
       </div>
     </section>
