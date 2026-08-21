@@ -32,16 +32,40 @@ import { docker } from "@ai-hero/sandcastle/sandboxes/docker";
 // Raise this if your backlog is large; lower it for a quick smoke-test run.
 const MAX_ITERATIONS = 10;
 
-// Hooks run inside the sandbox before the agent starts each iteration.
-// npm install ensures the sandbox always has fresh dependencies.
-const hooks = {
-  sandbox: { onSandboxReady: [{ command: "pnpm install" }] },
+// Install hook for ISOLATED sandboxes only (Phase 2 implementer/reviewer and
+// the Phase 3 merger). These run in their own git worktrees, so pnpm install
+// builds a fresh, correct node_modules there without touching anything else.
+//
+// This is a pnpm workspace, so npm install would choke on the pnpm layout.
+// corepack is enabled in the sandbox image and picks up the pnpm version from
+// package.json's "packageManager" field.
+//
+// COREPACK_ENABLE_DOWNLOAD_PROMPT=0: corepack must download pnpm on first use;
+// without this it hits an interactive [Y/n] prompt in the non-TTY exec and
+// aborts. The wrapper redirects all output to a log and only echoes it (to
+// stderr, which is what Sandcastle surfaces on failure) if the install fails,
+// so a broken install is never silent. timeoutMs is raised from the 60s
+// default because a cold install (download pnpm, fetch deps, clone content)
+// can take longer.
+const installHooks = {
+  sandbox: {
+    onSandboxReady: [
+      {
+        command:
+          "COREPACK_ENABLE_DOWNLOAD_PROMPT=0 pnpm install > /tmp/pnpm-install.log 2>&1 || { cat /tmp/pnpm-install.log 1>&2; exit 1; }",
+        timeoutMs: 300_000,
+      },
+    ],
+  },
 };
 
-// Copy node_modules from the host into the worktree before each sandbox
-// starts. Avoids a full npm install from scratch; the hook above handles
-// platform-specific binaries and any packages added since the last copy.
-const copyToWorktree = ["node_modules"];
+// Nothing is copied from the host into the worktree. Copying the host
+// node_modules does not work here: this is a pnpm workspace and the host is
+// macOS, so its node_modules/.pnpm store holds darwin-arch binaries that break
+// pnpm install inside the linux sandbox. The install hook does a clean pnpm
+// install instead (fully cached by pnpm's content-addressable store across
+// iterations).
+const copyToWorktree: string[] = [];
 
 // ---------------------------------------------------------------------------
 // Main loop
@@ -60,14 +84,17 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
   // It outputs a <plan> JSON block — we parse that to drive Phase 2.
   // -------------------------------------------------------------------------
   const plan = await sandcastle.run({
-    hooks,
+    // No install hook: the planner only runs `gh issue list` and reasons, so
+    // it needs no node_modules. It runs in head mode (bind-mounting the host
+    // repo), so running pnpm install here would touch the host's macOS
+    // node_modules, which is exactly what we must avoid.
     sandbox: docker(),
     name: "planner",
     // One iteration is enough: the planner just needs to read and reason,
     // not write code.
     maxIterations: 1,
     // Opus for planning: dependency analysis benefits from deeper reasoning.
-    agent: sandcastle.claudeCode("claude-opus-4-6"),
+    agent: sandcastle.claudeCode("claude-opus-4-8"),
     promptFile: "./.sandcastle/plan-prompt.md",
   });
 
@@ -112,7 +139,7 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
       const sandbox = await sandcastle.createSandbox({
         branch: issue.branch,
         sandbox: docker(),
-        hooks,
+        hooks: installHooks,
         copyToWorktree,
       });
 
@@ -121,7 +148,7 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
         const implement = await sandbox.run({
           name: "implementer",
           maxIterations: 100,
-          agent: sandcastle.claudeCode("claude-opus-4-6"),
+          agent: sandcastle.claudeCode("claude-opus-4-8"),
           promptFile: "./.sandcastle/implement-prompt.md",
           promptArgs: {
             TASK_ID: issue.id,
@@ -135,7 +162,7 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
           const review = await sandbox.run({
             name: "reviewer",
             maxIterations: 1,
-            agent: sandcastle.claudeCode("claude-opus-4-6"),
+            agent: sandcastle.claudeCode("claude-opus-4-8"),
             promptFile: "./.sandcastle/review-prompt.md",
             promptArgs: {
               BRANCH: issue.branch,
@@ -195,18 +222,25 @@ for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration++) {
   // -------------------------------------------------------------------------
   // Phase 3: Merge
   //
-  // One agent merges all completed branches into the current branch,
-  // resolving any conflicts and running tests to confirm everything works.
+  // One agent merges all completed branches, resolving any conflicts and
+  // running typecheck/tests to confirm everything works.
+  //
+  // branchStrategy "merge-to-head": run in an isolated worktree on a temp
+  // branch, then merge the result back into the host's current branch. This
+  // keeps the install hook off the host node_modules while still landing the
+  // merge on the real branch, and gives the merger a correct linux
+  // node_modules to run the test gate against.
   //
   // The {{BRANCHES}} and {{ISSUES}} prompt arguments are lists that the agent
   // uses to know which branches to merge and which issues to close.
   // -------------------------------------------------------------------------
   await sandcastle.run({
-    hooks,
+    hooks: installHooks,
+    branchStrategy: { type: "merge-to-head" },
     sandbox: docker(),
     name: "merger",
     maxIterations: 1,
-    agent: sandcastle.claudeCode("claude-opus-4-6"),
+    agent: sandcastle.claudeCode("claude-opus-4-8"),
     promptFile: "./.sandcastle/merge-prompt.md",
     promptArgs: {
       // A markdown list of branch names, one per line.
