@@ -10,7 +10,13 @@ vi.mock("@ai-sdk/anthropic", () => ({
   anthropic: vi.fn(() => "mocked-model"),
 }))
 
-import { generateBookmarkAi, mergeAiFields, type AiBookmarkOutput } from "./ai-bookmark"
+import {
+  generateBookmarkAi,
+  mergeAiFields,
+  nextEnrichmentState,
+  MAX_ENRICHMENT_ATTEMPTS,
+  type AiBookmarkOutput,
+} from "./ai-bookmark"
 
 const validInput = {
   url: "https://example.com/tool",
@@ -185,5 +191,60 @@ describe("mergeAiFields", () => {
     expect(forceResult).not.toHaveProperty("reviewText")
     expect(nonForceResult).not.toHaveProperty("rating")
     expect(nonForceResult).not.toHaveProperty("reviewText")
+  })
+})
+
+describe("nextEnrichmentState", () => {
+  it("moves pending -> running on start, preserving attempts", () => {
+    expect(nextEnrichmentState({ status: "pending", attempts: 0 }, "start", 3)).toEqual({
+      status: "running",
+      attempts: 0,
+    })
+  })
+
+  it("moves a retryable failed -> running on start, preserving attempts", () => {
+    expect(nextEnrichmentState({ status: "failed", attempts: 1 }, "start", 3)).toEqual({
+      status: "running",
+      attempts: 1,
+    })
+  })
+
+  it("moves running -> done on success, preserving attempts", () => {
+    expect(nextEnrichmentState({ status: "running", attempts: 0 }, "success", 3)).toEqual({
+      status: "done",
+      attempts: 0,
+    })
+  })
+
+  it("moves running -> failed on failure, incrementing attempts", () => {
+    expect(nextEnrichmentState({ status: "running", attempts: 0 }, "failure", 3)).toEqual({
+      status: "failed",
+      attempts: 1,
+    })
+  })
+
+  it("stays terminally failed at the cap when attempts reach maxAttempts", () => {
+    expect(nextEnrichmentState({ status: "running", attempts: 2 }, "failure", 3)).toEqual({
+      status: "failed",
+      attempts: 3,
+    })
+  })
+
+  it("never increments attempts past the cap on a further failure", () => {
+    expect(nextEnrichmentState({ status: "failed", attempts: 3 }, "failure", 3)).toEqual({
+      status: "failed",
+      attempts: 3,
+    })
+  })
+
+  it("resets to pending with zero attempts on retry (manual Retry path)", () => {
+    expect(nextEnrichmentState({ status: "failed", attempts: 3 }, "retry", 3)).toEqual({
+      status: "pending",
+      attempts: 0,
+    })
+  })
+
+  it("exposes a default attempt cap constant", () => {
+    expect(MAX_ENRICHMENT_ATTEMPTS).toBe(3)
   })
 })

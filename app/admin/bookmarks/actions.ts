@@ -8,8 +8,13 @@ import { db } from "@/lib/db"
 import { bookmarks } from "@/lib/db/schema"
 import { fetchMicrolink } from "@/lib/microlink"
 import { extractPageText } from "@/lib/page-text"
-import { generateBookmarkAi, mergeAiFields } from "@/lib/ai-bookmark"
-import { slugifyCategory } from "@/lib/bookmarks-meta"
+import {
+  generateBookmarkAi,
+  mergeAiFields,
+  nextEnrichmentState,
+  MAX_ENRICHMENT_ATTEMPTS,
+} from "@/lib/ai-bookmark"
+import { slugifyCategory, humanizeSlug } from "@/lib/bookmarks-meta"
 import { getDistinctCategories } from "@/lib/bookmarks"
 import { createCategory as dbCreateCategory, categoryExists } from "@/lib/categories"
 import { auth } from "@/lib/auth"
@@ -281,7 +286,7 @@ export async function refetchMetadata(
 // ─── generate with AI ──────────────────────────────────────────────────────
 
 export type GenerateAiState =
-  | { ok: true; message: string; suggestedCategory: string | null }
+  | { ok: true; message: string }
   | { ok: false; error: string }
 
 export async function generateWithAi(
@@ -320,6 +325,15 @@ export async function generateWithAi(
     force,
   })
 
+  // Every attempt (single flow or drainer) moves through nextEnrichmentState so
+  // each Bookmark records the outcome of its last Enrichment regardless of
+  // trigger (ADR 0005). This flow is synchronous, so `running` -> done/failed.
+  const running = nextEnrichmentState(
+    { status: existing.aiStatus, attempts: existing.aiAttempts },
+    "start",
+    MAX_ENRICHMENT_ATTEMPTS
+  )
+
   let aiOutput
   try {
     aiOutput = await generateBookmarkAi({
@@ -332,6 +346,17 @@ export async function generateWithAi(
   } catch (err) {
     console.error("generateBookmarkAi failed", err)
     const message = err instanceof Error ? err.message : String(err)
+
+    const failed = nextEnrichmentState(running, "failure", MAX_ENRICHMENT_ATTEMPTS)
+    await db
+      .update(bookmarks)
+      .set({
+        aiStatus: failed.status,
+        aiAttempts: failed.attempts,
+        updatedAt: new Date(),
+      })
+      .where(eq(bookmarks.id, id))
+
     return { ok: false, error: `AI generation failed: ${message}` }
   }
 
@@ -359,24 +384,30 @@ export async function generateWithAi(
     force
   )
 
+  // Resolve the Category to assign. When AI is filling the slot (no human
+  // category yet, or a forced regenerate) prefer its out-of-list suggestion
+  // over the constrained best-fit; a human-set category is left untouched.
+  const aiOwnsCategory = force || existing.category === null
   let categoryToSave: string | null = merged.category
-  let suggestedCategory: string | null =
-    aiSuggested &&
-    aiSuggested !== merged.category &&
-    !(await categoryExists(aiSuggested))
-      ? aiSuggested
-      : null
-
-  if (categoryToSave && !(await categoryExists(categoryToSave))) {
-    suggestedCategory = suggestedCategory ?? categoryToSave
-    categoryToSave = existing.category
+  if (aiOwnsCategory && aiSuggested && aiSuggested !== merged.category) {
+    categoryToSave = aiSuggested
   }
+
+  // Auto-create an AI-suggested Category that does not exist yet, then assign
+  // it (ADR 0005) instead of surfacing it for manual acceptance.
+  if (categoryToSave && !(await categoryExists(categoryToSave))) {
+    await dbCreateCategory({
+      slug: categoryToSave,
+      label: humanizeSlug(categoryToSave),
+    })
+  }
+
+  const done = nextEnrichmentState(running, "success", MAX_ENRICHMENT_ATTEMPTS)
 
   console.log("[generateWithAi] populating fields", {
     bookmarkId: id,
     force,
     category: categoryToSave,
-    suggestedCategory,
     tags: merged.tags,
     prosCount: merged.pros.length,
     consCount: merged.cons.length,
@@ -388,6 +419,8 @@ export async function generateWithAi(
     .set({
       ...merged,
       category: categoryToSave,
+      aiStatus: done.status,
+      aiAttempts: done.attempts,
       updatedAt: new Date(),
     })
     .where(eq(bookmarks.id, id))
@@ -398,6 +431,5 @@ export async function generateWithAi(
   return {
     ok: true,
     message: "AI generation complete.",
-    suggestedCategory,
   }
 }
