@@ -17,7 +17,10 @@ const heroBandVariants = cva("w-full px-8 py-12", {
   variants: {
     tone: {
       light: "bg-background text-foreground",
-      dark: "bg-foreground text-background",
+      // In dark polarity the ink band resolves to the warm-dark card token
+      // (ADR 0006) instead of bg-foreground, which would flip it to a light
+      // band.
+      dark: "bg-foreground text-background dark:bg-card dark:text-card-foreground",
     },
   },
   defaultVariants: {

@@ -22,7 +22,10 @@ const cardFeatureVariants = cva(
         default: "border-border bg-card text-card-foreground",
         sage: "border-border bg-secondary text-secondary-foreground",
         "accent-pale": "border-primary/20 bg-primary/5 text-card-foreground",
-        dark: "border-transparent bg-foreground text-background",
+        // In dark polarity the Ink card resolves to the warm-dark card token
+        // (ADR 0006) instead of bg-foreground, which would flip it to a light
+        // card; the border keeps it separated from the warm-dark canvas.
+        dark: "border-transparent bg-foreground text-background dark:border-border dark:bg-card dark:text-card-foreground",
       },
     },
     defaultVariants: {
