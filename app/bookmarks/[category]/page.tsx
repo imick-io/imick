@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
@@ -82,13 +83,17 @@ export default async function BookmarkCategoryPage({
       </header>
 
       <section className="mx-auto flex w-full max-w-5xl flex-col gap-8">
-        <BookmarksFilteredView
-          bookmarks={bookmarks}
-          categoryMap={categoryMap}
-          categoryCounts={categoryCounts}
-          tagMap={tagMap}
-          category={category}
-        />
+        {/* nuqs reads search params, which bails out of static rendering up to
+            the nearest Suspense boundary. */}
+        <Suspense>
+          <BookmarksFilteredView
+            bookmarks={bookmarks}
+            categoryMap={categoryMap}
+            categoryCounts={categoryCounts}
+            tagMap={tagMap}
+            category={category}
+          />
+        </Suspense>
       </section>
     </div>
   )
