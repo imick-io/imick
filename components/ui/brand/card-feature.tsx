@@ -11,8 +11,8 @@ import { cn } from "@/lib/utils"
  *   sage        -- bone tint
  *   accent-pale -- pale Brand Accent tint
  *   dark        -- ink card with accent text (polarity-flip moments only)
- * Full brand tokens (cobalt accent, bone canvas) arrive with the Foundation
- * PR; until then these resolve against the current token set.
+ * Variants resolve against the brand tokens (cobalt accent, bone canvas) set in
+ * app/globals.css per ADR 0006.
  */
 const cardFeatureVariants = cva(
   "flex flex-col rounded-xl border p-6 transition-colors",
