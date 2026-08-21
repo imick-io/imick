@@ -5,6 +5,13 @@ import { codeToHtml, type BundledLanguage } from "shiki"
 import { z } from "zod"
 import { extractHeadings, readingTimeMinutes } from "./lib/mdx-helpers"
 import { validateFolioItems } from "./lib/folios-validation"
+import {
+  COURSES,
+  RECIPE_TAGS,
+  type Ingredient,
+  type Step,
+} from "./lib/recipes-taxonomy"
+import { validateRecipeSteps } from "./lib/recipes-validation"
 
 const prettyCodeOptions: RehypePrettyCodeOptions = {
   theme: { light: "github-light", dark: "github-dark" },
@@ -160,6 +167,52 @@ const folios = defineCollection({
   },
 })
 
+// Typed against the taxonomy's Ingredient/Step so the zod shape and the shared
+// TS contract cannot drift. (The schemas live here, not in recipes-taxonomy,
+// to keep zod out of the client bundles that import the taxonomy constants.)
+const ingredientSchema: z.ZodType<Ingredient> = z.object({
+  item: z.string(),
+  grams: z.number().optional(),
+  note: z.string().optional(),
+})
+
+const stepSchema: z.ZodType<Step> = z.object({
+  text: z.string(),
+  uses: z.array(z.string()).optional(),
+})
+
+// The MDX body is the recipe's one-line intro, so no compile step is needed.
+const recipes = defineCollection({
+  name: "recipes",
+  directory: "content/recipes",
+  include: "*.mdx",
+  schema: z.object({
+    name: z.string(),
+    course: z.enum(COURSES),
+    primary: z.string(),
+    tags: z.array(z.enum(RECIPE_TAGS)),
+    minutes: z.number(),
+    servings: z.number(),
+    publishedAt: z.string().optional(),
+    image: z.string(),
+    imageAlt: z.string(),
+    // Slugs of component recipes this complete recipe is assembled from.
+    components: z.array(z.string()).optional(),
+    ingredients: z.array(ingredientSchema),
+    steps: z.array(stepSchema),
+    content: z.string(),
+  }),
+  transform: (document) => {
+    const slug = document._meta.fileName.replace(/\.mdx$/, "")
+    validateRecipeSteps(slug, document.ingredients, document.steps)
+    return {
+      ...document,
+      slug,
+      intro: document.content.trim(),
+    }
+  },
+})
+
 export default defineConfig({
-  content: [classes, posts, snippets, folios],
+  content: [classes, posts, snippets, folios, recipes],
 })

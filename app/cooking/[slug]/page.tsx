@@ -1,17 +1,23 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon, Clock01Icon, Dish01Icon } from "@hugeicons/core-free-icons"
+import { RecipeLinkSection } from "@/components/cooking/recipe-link-section"
+import { DraftBadge } from "@/components/ui/draft-badge"
 import { RecipeView } from "@/components/cooking/recipe-view"
 import { siteConfig } from "@/lib/config"
 import {
   formatMinutes,
   formatMinutesISO,
   getAllRecipes,
+  getComponentRecipes,
   getRecipeBySlug,
+  getRecipesUsing,
   getRelatedRecipes,
+  type Recipe,
 } from "@/lib/recipes"
 
 type Params = { slug: string }
@@ -56,6 +62,9 @@ export default async function RecipePage(
   if (!recipe) notFound()
 
   const related = getRelatedRecipes(recipe)
+  const toLink = (r: Recipe) => ({ slug: r.slug, name: r.name, course: r.course })
+  const components = getComponentRecipes(recipe).map(toLink)
+  const usedIn = getRecipesUsing(recipe.slug).map(toLink)
   const url = `/cooking/${recipe.slug}`
   const jsonLd = {
     "@context": "https://schema.org",
@@ -108,9 +117,12 @@ export default async function RecipePage(
         <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
           {recipe.course} · {recipe.primary}
         </p>
-        <h1 className="font-heading text-3xl font-normal tracking-tight md:text-5xl">
-          {recipe.name}
-        </h1>
+        <span className="flex flex-wrap items-center gap-3">
+          <h1 className="font-heading text-3xl font-normal tracking-tight md:text-5xl">
+            {recipe.name}
+          </h1>
+          {recipe.isDraft ? <DraftBadge /> : null}
+        </span>
         <p className="max-w-2xl text-lg text-muted-foreground">{recipe.intro}</p>
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
@@ -135,11 +147,19 @@ export default async function RecipePage(
         />
       </figure>
 
-      <RecipeView
-        ingredients={recipe.ingredients}
-        steps={recipe.steps}
-        servings={recipe.servings}
-      />
+      <RecipeLinkSection title="Components" recipes={components} />
+
+      {/* nuqs reads search params, which bails out of static rendering up to
+          the nearest Suspense boundary. */}
+      <Suspense>
+        <RecipeView
+          ingredients={recipe.ingredients}
+          steps={recipe.steps}
+          servings={recipe.servings}
+        />
+      </Suspense>
+
+      <RecipeLinkSection title="Used in" recipes={usedIn} />
 
       <footer className="flex flex-col gap-8 border-t border-border pt-6">
         <ul className="flex flex-wrap gap-1.5">

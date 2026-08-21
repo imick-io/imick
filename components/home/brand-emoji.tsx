@@ -14,16 +14,16 @@ export function BrandEmoji({
   className?: string
 }) {
   switch (slug) {
-    case "smash-burgers":
+    case "greek-smash-burger":
       return <BurgerEmoji className={className} />
-    case "slow-beef-ragu":
-      return <RaguEmoji className={className} />
-    case "basque-cheesecake":
-      return <CheesecakeEmoji className={className} />
-    case "shakshuka":
-      return <ShakshukaEmoji className={className} />
+    case "spaghetti-with-meat-sauce":
+      return <PastaEmoji className={className} />
+    case "chocolate-fondant":
+      return <CakeEmoji className={className} />
+    case "classic-waffles":
+      return <WaffleEmoji className={className} />
     default:
-      return <RaguEmoji className={className} />
+      return <PastaEmoji className={className} />
   }
 }
 
@@ -54,7 +54,7 @@ function BurgerEmoji({ className }: GlyphProps) {
   )
 }
 
-function RaguEmoji({ className }: GlyphProps) {
+function PastaEmoji({ className }: GlyphProps) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden>
       {/* steam, the green accent */}
@@ -79,12 +79,12 @@ function RaguEmoji({ className }: GlyphProps) {
   )
 }
 
-function CheesecakeEmoji({ className }: GlyphProps) {
+function CakeEmoji({ className }: GlyphProps) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden>
       {/* mint on top, the green accent */}
       <circle cx="32" cy="9" r="4" className="fill-primary" />
-      {/* burnt basque top */}
+      {/* molten top */}
       <path
         d="M10 26c0-5 10-9 22-9s22 4 22 9v5H10z"
         className="fill-foreground"
@@ -98,19 +98,18 @@ function CheesecakeEmoji({ className }: GlyphProps) {
   )
 }
 
-function ShakshukaEmoji({ className }: GlyphProps) {
+function WaffleEmoji({ className }: GlyphProps) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden>
-      {/* handle */}
-      <rect x="48" y="31" width="14" height="6" rx="3" className="fill-foreground" />
-      {/* pan */}
-      <circle cx="29" cy="34" r="22" className="fill-foreground" />
-      <circle cx="29" cy="34" r="17" className="fill-muted-foreground" />
-      {/* eggs, yolks carry the green accent */}
-      <circle cx="23" cy="28" r="6.5" className="fill-background" />
-      <circle cx="23" cy="28" r="2.8" className="fill-primary" />
-      <circle cx="36" cy="41" r="6.5" className="fill-background" />
-      <circle cx="36" cy="41" r="2.8" className="fill-primary" />
+      {/* waffle round */}
+      <circle cx="32" cy="34" r="24" className="fill-foreground" />
+      {/* pocket grid punched out of the waffle */}
+      <rect x="19" y="21" width="10" height="10" rx="2.5" className="fill-muted-foreground" />
+      <rect x="35" y="21" width="10" height="10" rx="2.5" className="fill-muted-foreground" />
+      <rect x="19" y="37" width="10" height="10" rx="2.5" className="fill-muted-foreground" />
+      <rect x="35" y="37" width="10" height="10" rx="2.5" className="fill-muted-foreground" />
+      {/* mint leaf garnish, the green accent */}
+      <circle cx="49" cy="15" r="5" className="fill-primary" />
     </svg>
   )
 }

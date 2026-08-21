@@ -87,7 +87,43 @@ _Avoid_: Import (that's the input step), Scrape, Processing, Sync.
 The per-Bookmark state of its last **Enrichment** attempt: `pending` (queued, not yet started), `running` (a drainer tick is working it), `done` (completed), `failed` (errored). After a capped number of failed attempts the Bookmark is left terminally `failed` and the drainer skips it until a human hits Retry (which resets the counter). Surfaced as a badge in the admin list. Not the same as the publish lifecycle.
 _Avoid_: State (overloaded), Phase.
 
+### Recipes
+
+**Recipe**:
+A single cookable unit authored by the site owner: name, Course, Primary, Recipe Tags, time, servings, gram-based ingredients, and ordered steps. Every Recipe is browsable and filterable in one grid, whether it is served on its own or used inside another Recipe.
+_Avoid_: Dish, meal.
+
+**Component Recipe**:
+A **Recipe** whose role is to be used inside other Recipes (sauces, marinades, doughs, staples: Pesto, Tzatziki, Pie Crust, Pot Pie Filling, Spaghetti Sauce). This is a role, not a separate type: a Component Recipe is still a Recipe with its own page, and can be made and served alone. Most live under the **Basics** Course.
+_Avoid_: Sub-recipe, base recipe, building block.
+
+**Complete Recipe**:
+A **Recipe** you would serve as-is (Chicken Pot Pie, Fish Tacos, Greek Smash Burger). May use zero or more **Component Recipes** via its components list.
+_Avoid_: Full recipe, main recipe.
+
+**Course**:
+The single browse bucket a **Recipe** belongs to: Breakfast, Mains, Sides, Dessert, Snacks, or Basics. Drives the primary filter row.
+_Avoid_: Category (reserved for Bookmarks), meal type, section.
+
+**Basics**:
+The **Course** for Recipes that exist mainly to build other meals: sauces, marinades, condiments, doughs, and staples.
+_Avoid_: Pantry, staples, components (that names the relationship, not the Course).
+
+**Primary**:
+The headline ingredient of a **Recipe** (Chicken, Salmon, Chickpeas), used for filtering and related-recipe scoring. When filtering, a Complete Recipe also matches on the Primary of any Component Recipe it uses.
+_Avoid_: Main ingredient, protein.
+
+**Recipe Tag** (Recipes context):
+A value from the fixed recipe tag vocabulary (Meal Prep, Freezer-Friendly, Quick, ...). Distinct from the free-form **Tag** on Bookmarks.
+
 ## Relationships
+
+### Recipes
+
+- A **Complete Recipe** uses zero or more **Component Recipes**, referenced by slug in its components list.
+- A **Component Recipe** is used in zero or more Recipes; its "Used in" view is a computed reverse lookup, not stored state.
+- Filtering matches transitively: a Recipe matches an ingredient or Primary filter if the Recipe itself or any of its **Component Recipes** matches.
+- A **Recipe** has exactly one **Course** and one **Primary**, and zero or more **Recipe Tags**.
 
 ### Folios
 

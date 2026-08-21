@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import { CookingFilteredView } from "@/components/cooking/cooking-filtered-view"
 import { siteConfig } from "@/lib/config"
@@ -43,7 +44,11 @@ export default function CookingPage() {
         </p>
       </header>
 
-      <CookingFilteredView recipes={recipes} />
+      {/* nuqs reads search params, which bails out of static rendering up to
+          the nearest Suspense boundary. */}
+      <Suspense>
+        <CookingFilteredView recipes={recipes} />
+      </Suspense>
     </div>
   )
 }

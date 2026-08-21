@@ -1,47 +1,143 @@
-import { describe, it, expect } from "vitest"
-import { getAllRecipes } from "./recipes"
+import { describe, it, expect, vi, afterEach } from "vitest"
 
-const recipes = getAllRecipes()
+vi.mock("content-collections", () => {
+  const doc = (overrides: Record<string, unknown> & { slug: string }) => ({
+    name: overrides.slug,
+    course: "Mains",
+    primary: "Chicken",
+    tags: [],
+    minutes: 30,
+    servings: 2,
+    publishedAt: "2020-01-01",
+    image: `/assets/content/recipes/${overrides.slug}.jpg`,
+    imageAlt: "",
+    ingredients: [],
+    steps: [],
+    intro: "One-line intro.",
+    ...overrides,
+  })
+  return {
+    allRecipes: [
+      doc({ slug: "pie-crust", course: "Basics", primary: "Flour" }),
+      doc({ slug: "pot-pie-filling", course: "Basics", primary: "Chicken" }),
+      doc({
+        slug: "chicken-pot-pie",
+        tags: ["Comfort Food"],
+        components: ["pie-crust", "pot-pie-filling"],
+      }),
+      doc({ slug: "chicken-shawarma", tags: ["Comfort Food"] }),
+      doc({ slug: "future-recipe", publishedAt: "2999-01-01" }),
+      doc({ slug: "unscheduled", publishedAt: undefined }),
+    ],
+  }
+})
 
-describe("recipe data integrity", () => {
-  it("has unique slugs", () => {
-    const slugs = recipes.map((r) => r.slug)
-    expect(new Set(slugs).size).toBe(slugs.length)
+const {
+  getAllRecipes,
+  getComponentRecipes,
+  getRecipeBySlug,
+  getRecipesUsing,
+  getRelatedRecipes,
+} = await import("./recipes")
+const { validateRecipeSteps } = await import("./recipes-validation")
+
+afterEach(() => {
+  vi.unstubAllEnvs()
+})
+
+describe("recipe loader", () => {
+  it("maps frontmatter and the MDX body onto Recipe", () => {
+    const recipe = getRecipeBySlug("chicken-pot-pie")
+    expect(recipe).toMatchObject({
+      slug: "chicken-pot-pie",
+      course: "Mains",
+      intro: "One-line intro.",
+      components: ["pie-crust", "pot-pie-filling"],
+      isDraft: false,
+    })
   })
 
-  it("only references existing ingredients from step uses", () => {
-    for (const recipe of recipes) {
-      const items = new Set(recipe.ingredients.map((ing) => ing.item))
-      for (const step of recipe.steps) {
-        for (const used of step.uses ?? []) {
-          expect(
-            items.has(used),
-            `${recipe.slug}: step references unknown ingredient "${used}"`
-          ).toBe(true)
-        }
-      }
-    }
+  it("keeps drafts visible outside production, flagged as drafts", () => {
+    const bySlug = new Map(getAllRecipes().map((r) => [r.slug, r]))
+    expect(bySlug.get("future-recipe")?.isDraft).toBe(true)
+    expect(bySlug.get("unscheduled")?.isDraft).toBe(true)
+    expect(bySlug.get("pie-crust")?.isDraft).toBe(false)
   })
 
-  it("uses every ingredient in at least one step", () => {
-    for (const recipe of recipes) {
-      const used = new Set(recipe.steps.flatMap((s) => s.uses ?? []))
-      for (const ing of recipe.ingredients) {
-        expect(
-          used.has(ing.item),
-          `${recipe.slug}: ingredient "${ing.item}" never appears in a step`
-        ).toBe(true)
-      }
-    }
+  it("hides missing and future publishedAt in production", () => {
+    vi.stubEnv("NODE_ENV", "production")
+    const slugs = getAllRecipes().map((r) => r.slug)
+    expect(slugs).not.toContain("future-recipe")
+    expect(slugs).not.toContain("unscheduled")
+    expect(getRecipeBySlug("future-recipe")).toBeUndefined()
+    expect(getRecipeBySlug("chicken-pot-pie")).toBeDefined()
+  })
+})
+
+describe("component lookups", () => {
+  it("resolves component recipes in declared order", () => {
+    const potPie = getRecipeBySlug("chicken-pot-pie")!
+    expect(getComponentRecipes(potPie).map((r) => r.slug)).toEqual([
+      "pie-crust",
+      "pot-pie-filling",
+    ])
   })
 
-  it("does not use an ingredient in more than one step", () => {
-    for (const recipe of recipes) {
-      const all = recipe.steps.flatMap((s) => s.uses ?? [])
-      expect(
-        new Set(all).size,
-        `${recipe.slug}: an ingredient is added in two different steps`
-      ).toBe(all.length)
-    }
+  it("finds the recipes using a component via the reverse lookup", () => {
+    expect(getRecipesUsing("pie-crust").map((r) => r.slug)).toEqual([
+      "chicken-pot-pie",
+    ])
+    expect(getRecipesUsing("chicken-shawarma")).toEqual([])
+  })
+})
+
+describe("getRelatedRecipes", () => {
+  it("excludes component and used-in recipes, which get their own sections", () => {
+    const potPie = getRecipeBySlug("chicken-pot-pie")!
+    const related = getRelatedRecipes(potPie).map((r) => r.slug)
+    expect(related).toContain("chicken-shawarma")
+    expect(related).not.toContain("pie-crust")
+    expect(related).not.toContain("pot-pie-filling")
+
+    const crust = getRecipeBySlug("pie-crust")!
+    expect(getRelatedRecipes(crust).map((r) => r.slug)).not.toContain(
+      "chicken-pot-pie"
+    )
+  })
+})
+
+describe("validateRecipeSteps", () => {
+  const ingredients = [{ item: "Butter" }, { item: "Flour" }]
+
+  it("accepts each ingredient used exactly once", () => {
+    expect(() =>
+      validateRecipeSteps("ok", ingredients, [
+        { text: "Cube.", uses: ["Butter"] },
+        { text: "Mix.", uses: ["Flour"] },
+      ])
+    ).not.toThrow()
+  })
+
+  it("rejects a step using an unknown ingredient", () => {
+    expect(() =>
+      validateRecipeSteps("bad", ingredients, [
+        { text: "Mix.", uses: ["Butter", "Flour", "Sugar"] },
+      ])
+    ).toThrow(/unknown ingredient "Sugar"/)
+  })
+
+  it("rejects an ingredient that never appears in a step", () => {
+    expect(() =>
+      validateRecipeSteps("bad", ingredients, [{ text: "Cube.", uses: ["Butter"] }])
+    ).toThrow(/"Flour" never appears/)
+  })
+
+  it("rejects an ingredient added in two different steps", () => {
+    expect(() =>
+      validateRecipeSteps("bad", ingredients, [
+        { text: "Cube.", uses: ["Butter", "Flour"] },
+        { text: "Again.", uses: ["Butter"] },
+      ])
+    ).toThrow(/two different steps/)
   })
 })
