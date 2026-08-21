@@ -3,6 +3,7 @@ import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { GithubIcon, ArrowUpRight01Icon, ArrowDown01Icon } from "@hugeicons/core-free-icons"
 import { buttonVariants } from "@/components/ui/button"
+import { CardFeature } from "@/components/ui/brand/card-feature"
 import {
   Collapsible,
   CollapsibleContent,
@@ -94,9 +95,7 @@ export default function AboutPage() {
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex flex-col gap-4">
           <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">{siteConfig.role}</p>
-          <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
-            {siteConfig.name}
-          </h1>
+          <h1 className="display-md">{siteConfig.name}</h1>
         </div>
         <Link
           href="/resume"
@@ -133,7 +132,7 @@ export default function AboutPage() {
                 {group.items.map((item) => (
                   <li
                     key={item.name}
-                    className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted/30 px-2 py-1 text-xs text-foreground"
+                    className="inline-flex items-center gap-1.5 rounded-pill border border-border bg-muted/30 px-2.5 py-1 text-xs text-foreground"
                   >
                     {item.iconSlug ? (
                       <StackChipIcon slug={item.iconSlug} mono={item.mono} />
@@ -297,11 +296,16 @@ export default function AboutPage() {
         </ul>
       </section>
 
-      <section className="mx-auto flex w-full max-w-3xl flex-col items-start gap-3">
-        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Resume</h2>
-        <Link href="/resume" className={buttonVariants({ size: "lg" })}>
-          View Resume
-        </Link>
+      <section className="mx-auto w-full max-w-3xl">
+        <CardFeature variant="dark" className="items-start gap-4 p-8">
+          <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-primary">Resume</h2>
+          <Link
+            href="/resume"
+            className={buttonVariants({ size: "lg" })}
+          >
+            View Resume
+          </Link>
+        </CardFeature>
       </section>
     </div>
   )

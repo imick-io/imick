@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google"
+import { Manrope, Inter, Geist_Mono } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SiteBackdrop } from "@/components/site-backdrop"
 import { SiteFooter } from "@/components/site-footer"
@@ -8,20 +8,23 @@ import { siteConfig } from "@/lib/config"
 import { cn } from "@/lib/utils"
 import "./globals.css"
 
-const geistSans = Geist({
+// Body Sans: Inter at 400/600 (DESIGN.md body scale).
+const inter = Inter({
+  weight: ["400", "600"],
   variable: "--font-sans",
   subsets: ["latin"],
 })
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Display Sans: Manrope. 400/600 for utility headings, 800/900 for display moments.
+const manrope = Manrope({
+  weight: ["400", "600", "800"],
+  variable: "--font-display",
   subsets: ["latin"],
 })
 
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
-  style: ["normal", "italic"],
-  variable: "--font-serif",
+// Geist Mono retained for code surfaces.
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
 })
 
@@ -45,9 +48,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn(
         "h-full font-sans antialiased",
-        geistSans.variable,
-        geistMono.variable,
-        instrumentSerif.variable
+        inter.variable,
+        manrope.variable,
+        geistMono.variable
       )}
     >
       <body className="min-h-full flex flex-col font-sans">

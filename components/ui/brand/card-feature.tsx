@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentPropsWithoutRef } from "react"
+import type { ComponentPropsWithRef } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -11,8 +11,8 @@ import { cn } from "@/lib/utils"
  *   sage        -- bone tint
  *   accent-pale -- pale Brand Accent tint
  *   dark        -- ink card with accent text (polarity-flip moments only)
- * Full brand tokens (cobalt accent, bone canvas) arrive with the Foundation
- * PR; until then these resolve against the current token set.
+ * Variants resolve against the brand tokens (cobalt accent, bone canvas) set in
+ * app/globals.css per ADR 0006.
  */
 const cardFeatureVariants = cva(
   "flex flex-col rounded-xl border p-6 transition-colors",
@@ -31,18 +31,17 @@ const cardFeatureVariants = cva(
   }
 )
 
-type CardFeatureProps = ComponentPropsWithoutRef<"div"> &
+type CardFeatureProps = ComponentPropsWithRef<"div"> &
   VariantProps<typeof cardFeatureVariants>
 
-const CardFeature = forwardRef<HTMLDivElement, CardFeatureProps>(
-  ({ className, variant, ...props }, ref) => (
+function CardFeature({ className, variant, ref, ...props }: CardFeatureProps) {
+  return (
     <div
       ref={ref}
       className={cn(cardFeatureVariants({ variant }), className)}
       {...props}
     />
   )
-)
-CardFeature.displayName = "CardFeature"
+}
 
 export { CardFeature, cardFeatureVariants }
