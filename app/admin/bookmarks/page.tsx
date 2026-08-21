@@ -10,11 +10,12 @@ import {
   type AdminStatus,
 } from "@/lib/bookmarks"
 import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
+import { decodeBatchReport } from "@/lib/bookmark-batch"
 
 export const metadata: Metadata = { title: "Bookmarks" }
 
 type Props = {
-  searchParams: Promise<{ category?: string; status?: string }>
+  searchParams: Promise<{ category?: string; status?: string; report?: string }>
 }
 
 export default async function AdminBookmarksPage({ searchParams }: Props) {
@@ -23,7 +24,8 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
     redirect("/admin/login")
   }
 
-  const { category, status } = await searchParams
+  const { category, status, report } = await searchParams
+  const batchReport = decodeBatchReport(report)
   const validStatus: AdminStatus =
     status === "published" || status === "draft" || status === "scheduled" ? status : "all"
   const allCategories = await getDistinctCategories()
@@ -36,6 +38,40 @@ export default async function AdminBookmarksPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* batch report */}
+      {batchReport && (
+        <div className="rounded-lg border bg-muted/40 px-4 py-3 text-sm space-y-2">
+          <p className="font-medium">
+            Created {batchReport.created}, skipped {batchReport.skipped.length},
+            invalid {batchReport.invalid.length}.
+          </p>
+          {batchReport.skipped.length > 0 && (
+            <div className="text-muted-foreground">
+              <p className="text-xs uppercase tracking-wide">Skipped (already added)</p>
+              <ul className="mt-1 space-y-0.5">
+                {batchReport.skipped.map((url) => (
+                  <li key={url} className="truncate">
+                    {url}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {batchReport.invalid.length > 0 && (
+            <div className="text-muted-foreground">
+              <p className="text-xs uppercase tracking-wide">Invalid (not a URL)</p>
+              <ul className="mt-1 space-y-0.5">
+                {batchReport.invalid.map((line) => (
+                  <li key={line} className="truncate">
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Bookmarks ({rows.length})</h1>

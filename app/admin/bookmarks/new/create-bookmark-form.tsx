@@ -1,42 +1,43 @@
 "use client"
 
 import { useActionState } from "react"
-import { createBookmark, type CreateBookmarkState } from "../actions"
+import { batchCreateBookmarks, type BatchCreateState } from "../actions"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 
 export function CreateBookmarkForm() {
-  const [state, action, pending] = useActionState<CreateBookmarkState | null, FormData>(
-    createBookmark,
+  const [state, action, pending] = useActionState<BatchCreateState | null, FormData>(
+    batchCreateBookmarks,
     null
   )
 
-  const errors = state?.ok === false ? state.errors : {}
+  const error = state?.ok === false ? state.error : null
 
   return (
     <form action={action} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="url">URL</Label>
-        <Input
-          id="url"
-          name="url"
-          type="url"
-          placeholder="https://example.com"
+        <Label htmlFor="urls">URLs</Label>
+        <Textarea
+          id="urls"
+          name="urls"
+          rows={10}
+          placeholder={"https://example.com\nhttps://another.com"}
           required
           disabled={pending}
-          aria-invalid={!!errors.url}
+          aria-invalid={!!error}
         />
-        {errors.url && <p className="text-sm text-destructive">{errors.url[0]}</p>}
+        {error && <p className="text-sm text-destructive">{error}</p>}
         <p className="text-xs text-muted-foreground">
-          Metadata (title, description, logo) will be fetched automatically. Run
-          &quot;Generate with AI&quot; on the edit page to fill in the category, tags,
-          and review fields.
+          One URL per line (commas and spaces also work). Each becomes a Draft;
+          duplicates and URLs you already have are skipped. Metadata and AI
+          fields are filled in later in the background.
         </p>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="tags">Tags</Label>
+        <Label htmlFor="tags">Shared tags</Label>
         <Input
           id="tags"
           name="tags"
@@ -44,11 +45,13 @@ export function CreateBookmarkForm() {
           placeholder="react, typescript, tooling"
           disabled={pending}
         />
-        <p className="text-xs text-muted-foreground">Comma-separated. Optional.</p>
+        <p className="text-xs text-muted-foreground">
+          Comma-separated. Applied to every URL in this paste. Optional.
+        </p>
       </div>
 
       <Button type="submit" disabled={pending} className="w-full">
-        {pending ? "Fetching metadata…" : "Create Bookmark"}
+        {pending ? "Creating drafts…" : "Create Drafts"}
       </Button>
     </form>
   )

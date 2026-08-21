@@ -7,16 +7,15 @@ import { eq } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { bookmarks } from "@/lib/db/schema"
 import { fetchMicrolink } from "@/lib/microlink"
-import { extractPageText } from "@/lib/page-text"
+import { enrichBookmark } from "@/lib/bookmark-enrichment"
+import { slugifyCategory } from "@/lib/bookmarks-meta"
 import {
-  generateBookmarkAi,
-  mergeAiFields,
-  nextEnrichmentState,
-  MAX_ENRICHMENT_ATTEMPTS,
-} from "@/lib/ai-bookmark"
-import { slugifyCategory, humanizeSlug } from "@/lib/bookmarks-meta"
-import { getDistinctCategories } from "@/lib/bookmarks"
-import { createCategory as dbCreateCategory, categoryExists } from "@/lib/categories"
+  parseBookmarkUrls,
+  normalizeBookmarkUrl,
+  partitionNewUrls,
+  encodeBatchReport,
+} from "@/lib/bookmark-batch"
+import { createCategory as dbCreateCategory } from "@/lib/categories"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
@@ -80,53 +79,68 @@ export async function createCategory(
   return { ok: true, slug, label }
 }
 
-// ─── create ─────────────────────────────────────────────────────────────────
+// ─── batch create (Paste-to-Drafts) ─────────────────────────────────────────
 
-const createSchema = z.object({
-  url: z.string().url("Must be a valid URL"),
-  tags: z.string().optional(),
-})
+export type BatchCreateState = { ok: false; error: string }
 
-export type CreateBookmarkState =
-  | { ok: true; bookmarkId: string }
-  | { ok: false; errors: Record<string, string[]> }
+/** Bare hostname (www. stripped), used for the placeholder title and slug. */
+function hostnameOf(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "")
+  } catch {
+    return url
+  }
+}
 
-export async function createBookmark(
-  _prev: CreateBookmarkState | null,
+export async function batchCreateBookmarks(
+  _prev: BatchCreateState | null,
   formData: FormData
-): Promise<CreateBookmarkState> {
+): Promise<BatchCreateState> {
   await requireAdmin()
 
-  const parsed = createSchema.safeParse({
-    url: formData.get("url"),
-    tags: formData.get("tags"),
-  })
-  if (!parsed.success) {
-    return { ok: false, errors: parsed.error.flatten().fieldErrors }
+  const raw = String(formData.get("urls") ?? "")
+  const tagList = parseTags(formData.get("tags") as string | null)
+
+  const { valid, invalid } = parseBookmarkUrls(raw)
+
+  if (valid.length === 0 && invalid.length === 0) {
+    return { ok: false, error: "Paste at least one URL." }
   }
 
-  const { url, tags } = parsed.data
-  const meta = await fetchMicrolink(url)
-  const tagList = parseTags(tags)
-  const slug = `${slugify(meta.title || new URL(url).hostname)}-${Date.now().toString(36)}`
+  const existingRows = await db.select({ url: bookmarks.url }).from(bookmarks)
+  const existingKeys = new Set(
+    existingRows
+      .map((r) => normalizeBookmarkUrl(r.url))
+      .filter((k): k is string => k !== null)
+  )
 
-  const [row] = await db
-    .insert(bookmarks)
-    .values({
-      url,
-      slug,
-      title: meta.title,
-      description: meta.description,
-      logoUrl: meta.logoUrl,
-      imageUrl: meta.imageUrl,
-      colorHex: meta.colorHex,
-      category: null,
-      tags: tagList,
-      publishedAt: null,
-    })
-    .returning({ id: bookmarks.id })
+  const { toCreate, skipped } = partitionNewUrls(valid, existingKeys)
 
-  redirect(`/admin/bookmarks/${row.id}/edit`)
+  // Draft rows are inserted bare: no metadata fetch here. Enrichment (metadata +
+  // AI) runs later in the background (PRD #47 Phase 2). A placeholder hostname
+  // title keeps the NOT NULL column satisfied until enrichment overwrites it.
+  if (toCreate.length > 0) {
+    const stamp = Date.now().toString(36)
+    await db.insert(bookmarks).values(
+      toCreate.map((entry, i) => ({
+        url: entry.url,
+        slug: `${slugify(hostnameOf(entry.url)) || "bookmark"}-${stamp}-${i}`,
+        title: hostnameOf(entry.url),
+        tags: tagList,
+        aiStatus: "pending" as const,
+        publishedAt: null,
+      }))
+    )
+    revalidatePath("/admin/bookmarks")
+  }
+
+  const report = encodeBatchReport({
+    created: toCreate.length,
+    skipped: skipped.map((s) => s.url),
+    invalid,
+  })
+
+  redirect(`/admin/bookmarks?report=${report}`)
 }
 
 // ─── update ─────────────────────────────────────────────────────────────────
@@ -308,122 +322,13 @@ export async function generateWithAi(
 
   if (!existing) return { ok: false, error: "Bookmark not found." }
 
-  const pageText = (await extractPageText(existing.url)) ?? ""
+  // Shared Enrichment path (ADR 0005): the cron drainer runs the same core.
+  // Metadata stays out of the single flow; it has its own Refetch action.
+  const result = await enrichBookmark(existing, { force, fetchMetadata: false })
 
-  const allTagRows = await db.select({ tags: bookmarks.tags }).from(bookmarks)
-  const existingTags = [...new Set(allTagRows.flatMap((r) => r.tags))]
-  const existingCategories = await getDistinctCategories()
-
-  console.log("[generateWithAi] calling AI", {
-    bookmarkId: id,
-    url: existing.url,
-    pageTextLength: pageText.length,
-    pageTextExtracted: pageText.length > 0,
-    microlinkDescriptionLength: (existing.description ?? "").length,
-    existingTagsCount: existingTags.length,
-    existingCategoriesCount: existingCategories.length,
-    force,
-  })
-
-  // Every attempt (single flow or drainer) moves through nextEnrichmentState so
-  // each Bookmark records the outcome of its last Enrichment regardless of
-  // trigger (ADR 0005). This flow is synchronous, so `running` -> done/failed.
-  const running = nextEnrichmentState(
-    { status: existing.aiStatus, attempts: existing.aiAttempts },
-    "start",
-    MAX_ENRICHMENT_ATTEMPTS
-  )
-
-  let aiOutput
-  try {
-    aiOutput = await generateBookmarkAi({
-      url: existing.url,
-      pageText,
-      microlinkDescription: existing.description ?? "",
-      existingTags,
-      existingCategories,
-    })
-  } catch (err) {
-    console.error("generateBookmarkAi failed", err)
-    const message = err instanceof Error ? err.message : String(err)
-
-    const failed = nextEnrichmentState(running, "failure", MAX_ENRICHMENT_ATTEMPTS)
-    await db
-      .update(bookmarks)
-      .set({
-        aiStatus: failed.status,
-        aiAttempts: failed.attempts,
-        updatedAt: new Date(),
-      })
-      .where(eq(bookmarks.id, id))
-
-    return { ok: false, error: `AI generation failed: ${message}` }
+  if (!result.ok) {
+    return { ok: false, error: `AI generation failed: ${result.error}` }
   }
-
-  console.log("[generateWithAi] AI returned", {
-    bookmarkId: id,
-    category: aiOutput.category,
-    suggestedCategory: aiOutput.suggestedCategory,
-    tagsCount: aiOutput.tags.length,
-    prosCount: aiOutput.pros.length,
-    consCount: aiOutput.cons.length,
-    aiSummaryLength: aiOutput.aiSummary.length,
-  })
-
-  const { suggestedCategory: aiSuggested, ...mergeable } = aiOutput
-
-  const merged = mergeAiFields(
-    {
-      category: existing.category,
-      tags: existing.tags,
-      pros: existing.pros,
-      cons: existing.cons,
-      aiSummary: existing.aiSummary,
-    },
-    mergeable,
-    force
-  )
-
-  // Resolve the Category to assign. When AI is filling the slot (no human
-  // category yet, or a forced regenerate) prefer its out-of-list suggestion
-  // over the constrained best-fit; a human-set category is left untouched.
-  const aiOwnsCategory = force || existing.category === null
-  let categoryToSave: string | null = merged.category
-  if (aiOwnsCategory && aiSuggested && aiSuggested !== merged.category) {
-    categoryToSave = aiSuggested
-  }
-
-  // Auto-create an AI-suggested Category that does not exist yet, then assign
-  // it (ADR 0005) instead of surfacing it for manual acceptance.
-  if (categoryToSave && !(await categoryExists(categoryToSave))) {
-    await dbCreateCategory({
-      slug: categoryToSave,
-      label: humanizeSlug(categoryToSave),
-    })
-  }
-
-  const done = nextEnrichmentState(running, "success", MAX_ENRICHMENT_ATTEMPTS)
-
-  console.log("[generateWithAi] populating fields", {
-    bookmarkId: id,
-    force,
-    category: categoryToSave,
-    tags: merged.tags,
-    prosCount: merged.pros.length,
-    consCount: merged.cons.length,
-    aiSummaryLength: merged.aiSummary.length,
-  })
-
-  await db
-    .update(bookmarks)
-    .set({
-      ...merged,
-      category: categoryToSave,
-      aiStatus: done.status,
-      aiAttempts: done.attempts,
-      updatedAt: new Date(),
-    })
-    .where(eq(bookmarks.id, id))
 
   revalidatePath(`/admin/bookmarks/${id}/edit`)
   revalidateBookmarksPublic()
