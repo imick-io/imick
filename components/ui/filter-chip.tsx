@@ -5,9 +5,9 @@ import { cn } from "@/lib/utils"
 
 const chipClass = (active: boolean | undefined, className?: string) =>
   cn(
-    "inline-flex h-8 items-center gap-1.5 rounded-full border px-3.5 text-sm transition-colors",
+    "inline-flex h-8 items-center gap-1.5 rounded-pill border px-3.5 text-sm transition-colors",
     active
-      ? "border-foreground bg-foreground text-background"
+      ? "border-primary bg-primary text-primary-foreground"
       : "border-border bg-card text-muted-foreground hover:text-foreground",
     className
   )

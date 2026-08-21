@@ -47,6 +47,13 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  /*
+   * Pill geometry: stadium-shaped ends for chips and Category/Tag pills.
+   * Kept as its own role in the radius scale (DESIGN.md: sm/md/lg/xl/pill/full)
+   * so `rounded-pill` reads intentionally at call sites rather than reusing
+   * `rounded-full`, which also rounds square avatars/logos.
+   */
+  --radius-pill: 999px;
 }
 
 /*

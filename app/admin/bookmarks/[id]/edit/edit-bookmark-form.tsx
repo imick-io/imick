@@ -551,7 +551,7 @@ export function EditBookmarkForm({
             name="rating"
             defaultValue={bookmark.rating?.toString() ?? ""}
             disabled={pending}
-            className="h-9 w-40 rounded-4xl border border-input bg-input/30 px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            className="h-9 w-40 rounded-md border border-input bg-input/30 px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             <option value="">No rating</option>
             <option value="1">★ 1</option>

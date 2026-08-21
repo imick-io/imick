@@ -82,17 +82,20 @@ export default async function BookmarkDetailPage({ params }: Props) {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="text-xs font-medium px-2 py-0.5 rounded-full border bg-muted">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center rounded-pill border border-border bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
             {categoryLabel}
           </span>
           {bookmark.tags.map((tag) => (
-            <span key={tag} className="text-xs text-muted-foreground">
-              #{tag}
+            <span
+              key={tag}
+              className="inline-flex items-center rounded-pill bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
+            >
+              {tag}
             </span>
           ))}
           {reviewed && (
-            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
+            <span className="inline-flex items-center rounded-pill bg-primary px-2.5 py-0.5 text-xs font-medium text-primary-foreground">
               Reviewed
             </span>
           )}
