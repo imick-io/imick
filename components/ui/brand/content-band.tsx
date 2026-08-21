@@ -9,7 +9,10 @@ type ContentBandProps = {
    * page needs richer markup.
    */
   heading?: ReactNode
-  /** Constrains the inner content column. Defaults to a comfortable reading width. */
+  /**
+   * Extra classes for the inner reading-width column, e.g. prose styling.
+   * The column is always centred and capped at a comfortable reading width.
+   */
   contentClassName?: string
   children: ReactNode
 } & Omit<ComponentPropsWithRef<"section">, "children">
