@@ -204,11 +204,8 @@
 }
 
 /*
- * Site-wide backdrop: graph-paper grid fading below the fold plus two
- * slow-drifting green orbs. Grid and aurora are separate layers because the
- * grid's fade-out mask would otherwise clip the orbs. Soft edges come from
- * gradient falloff (no filter blur), animation is transform-only so it stays
- * on the compositor, and motion is disabled under prefers-reduced-motion.
+ * Site-wide backdrop: a graph-paper grid that fades out below the fold via a
+ * radial mask. Hidden when printing.
  */
 .site-backdrop {
   position: fixed;
@@ -255,65 +252,6 @@
     black 25%,
     transparent 78%
   );
-}
-
-.site-backdrop-aurora::before,
-.site-backdrop-aurora::after {
-  content: "";
-  position: absolute;
-  width: 65vmax;
-  height: 65vmax;
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    color-mix(in oklab, var(--primary) 10%, transparent),
-    transparent
-  );
-}
-
-.site-backdrop-aurora::before {
-  top: -25vmax;
-  left: -18vmax;
-}
-
-.site-backdrop-aurora::after {
-  bottom: -30vmax;
-  right: -20vmax;
-  background: radial-gradient(
-    closest-side,
-    color-mix(in oklab, var(--primary) 5%, transparent),
-    transparent
-  );
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .site-backdrop-aurora::before {
-    animation: site-backdrop-drift-a 52s ease-in-out infinite;
-  }
-
-  .site-backdrop-aurora::after {
-    animation: site-backdrop-drift-b 64s ease-in-out infinite;
-  }
-}
-
-@keyframes site-backdrop-drift-a {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(18vmax, 10vmax, 0) scale(1.18);
-  }
-}
-
-@keyframes site-backdrop-drift-b {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1.1);
-  }
-  50% {
-    transform: translate3d(-14vmax, -12vmax, 0) scale(0.95);
-  }
 }
 
 @media print {

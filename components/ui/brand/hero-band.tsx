@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentPropsWithoutRef } from "react"
+import type { ComponentPropsWithRef } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -25,11 +25,11 @@ const heroBandVariants = cva("w-full px-8 py-12", {
   },
 })
 
-type HeroBandProps = ComponentPropsWithoutRef<"section"> &
+type HeroBandProps = ComponentPropsWithRef<"section"> &
   VariantProps<typeof heroBandVariants>
 
-const HeroBand = forwardRef<HTMLElement, HeroBandProps>(
-  ({ className, tone, children, ...props }, ref) => (
+function HeroBand({ className, tone, children, ref, ...props }: HeroBandProps) {
+  return (
     <section
       ref={ref}
       className={cn(heroBandVariants({ tone }), className)}
@@ -40,7 +40,6 @@ const HeroBand = forwardRef<HTMLElement, HeroBandProps>(
       </div>
     </section>
   )
-)
-HeroBand.displayName = "HeroBand"
+}
 
 export { HeroBand, heroBandVariants }

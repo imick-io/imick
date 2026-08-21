@@ -1,4 +1,4 @@
-import { forwardRef, type ComponentPropsWithoutRef } from "react"
+import type { ComponentPropsWithRef } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -31,18 +31,17 @@ const cardFeatureVariants = cva(
   }
 )
 
-type CardFeatureProps = ComponentPropsWithoutRef<"div"> &
+type CardFeatureProps = ComponentPropsWithRef<"div"> &
   VariantProps<typeof cardFeatureVariants>
 
-const CardFeature = forwardRef<HTMLDivElement, CardFeatureProps>(
-  ({ className, variant, ...props }, ref) => (
+function CardFeature({ className, variant, ref, ...props }: CardFeatureProps) {
+  return (
     <div
       ref={ref}
       className={cn(cardFeatureVariants({ variant }), className)}
       {...props}
     />
   )
-)
-CardFeature.displayName = "CardFeature"
+}
 
 export { CardFeature, cardFeatureVariants }
