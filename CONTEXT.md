@@ -58,7 +58,7 @@ Lifecycle is gated by `publishedAt` (same field as Articles, Snippets, Classes, 
 _Avoid_: Link, entry, item.
 
 **Category**:
-The single bucket a **Bookmark** belongs to. Categories live in their own DB table (`categories(slug, label)`); a bookmark's `category` column is a foreign key to `categories.slug` with `ON DELETE SET NULL`. The seed list (`dev-tools`, `libraries-frameworks`, `design`, `learning`, `ai-productivity`, `infrastructure`, `inspiration`, `community`) is a starting vocabulary, not a closed list — admins can add new ones inline from the bookmark editor.
+The single bucket a **Bookmark** belongs to. Categories live in their own DB table (`categories(slug, label)`); a bookmark's `category` column is a foreign key to `categories.slug` with `ON DELETE SET NULL`. The seed list (`dev-tools`, `libraries-frameworks`, `design`, `learning`, `ai-productivity`, `infrastructure`, `inspiration`, `community`) is a starting vocabulary, not a closed list. New categories enter the vocabulary two ways: an admin adds one inline from the bookmark editor, or **Enrichment** auto-creates one when the AI picks a category name that does not yet exist. Both the single "Generate with AI" flow and background batch Enrichment auto-create; the taxonomy is curated after the fact (the admin periodically merges near-duplicate buckets) rather than gated before creation.
 _Avoid_: Section, group.
 
 **Tag**:
@@ -78,6 +78,15 @@ _Avoid_: Description, summary, blurb.
 A neutral, model-generated description of what a tool *is* and *does*, sourced from the tool's own page. Stored in a separate field from **Review** and visibly labeled as machine-generated when displayed publicly.
 _Avoid_: Review, opinion, take.
 
+**Enrichment**:
+The automated pass that populates a **Bookmark**'s machine-derived fields: fetching link metadata (title, description, logo, image, color) and running the AI generation that fills **Category**, **Tags**, **Pros / Cons**, and **AI Summary**. Enrichment never touches **Rating** or **Review** (always human-authored). It runs from two triggers: the single "Generate with AI" button on the editor (synchronous), and background batch Enrichment after a bulk paste (a cron drainer, see ADR `0005`).
+Enrichment carries its own **status** — `pending`, `running`, `done`, `failed` — tracked per Bookmark alongside an attempt counter. This status is **orthogonal to the publish lifecycle** (Draft / Scheduled / Published): a Bookmark can be a Draft that is still `pending` Enrichment, a Draft whose Enrichment is `done`, or a Draft whose Enrichment `failed`. A Bookmark is never auto-published by Enrichment; a human finishes the Draft (Rating, Review, final Category) and sets `publishedAt`.
+_Avoid_: Import (that's the input step), Scrape, Processing, Sync.
+
+**Enrichment status**:
+The per-Bookmark state of its last **Enrichment** attempt: `pending` (queued, not yet started), `running` (a drainer tick is working it), `done` (completed), `failed` (errored). After a capped number of failed attempts the Bookmark is left terminally `failed` and the drainer skips it until a human hits Retry (which resets the counter). Surfaced as a badge in the admin list. Not the same as the publish lifecycle.
+_Avoid_: State (overloaded), Phase.
+
 ## Relationships
 
 ### Folios
@@ -93,6 +102,7 @@ _Avoid_: Review, opinion, take.
 - A **Bookmark** has zero-or-one **Rating** and zero-or-one **Review** — both human-authored.
 - A **Bookmark** has zero-or-one **AI Summary** — machine-authored, distinct from **Review**.
 - **Pros** and **Cons** describe the tool neutrally; **Review** + **Rating** carry the human verdict.
+- A **Bookmark** has exactly one **Enrichment status**, orthogonal to its Draft / Scheduled / Published lifecycle. **Enrichment** populates the machine-derived fields (metadata, **Category**, **Tags**, **Pros / Cons**, **AI Summary**) but never **Rating** or **Review**.
 
 ### Classes
 
@@ -104,6 +114,8 @@ _Avoid_: Review, opinion, take.
 ## Flagged ambiguities
 
 - "Review" was used informally to mean any descriptive text about a bookmark — resolved: **Review** is strictly the human prose opinion (`reviewText`); machine-generated text lives in **AI Summary**.
+- Category creation was framed as human-only ("admins add inline") — resolved: **Enrichment** may auto-create a **Category** the AI picks when it doesn't exist, in both the single and batch flows. The vocabulary is curated *after* the fact (merge near-duplicates), not gated before creation.
+- Enrichment "status" vs the publish lifecycle were both loosely called a bookmark's "state" — resolved: **Enrichment status** (`pending`/`running`/`done`/`failed`) is orthogonal to Draft / Scheduled / Published. A Draft can be in any Enrichment status; Enrichment never sets `publishedAt`.
 - "Read me" was used at both Class and Lesson levels — resolved: Class-level prose is **Overview** (pre-enrolment orientation), Lesson-level prose is **Notes** (companion to the Video). The two are not interchangeable.
 - "Section" was a tempting name for grouping Lessons — rejected: already on the Bookmarks avoid-list and triple-overloaded with HTML, routing ("the Learn section"), and Bookmarks taxonomy. Resolved to **Module**.
 - **Completed** persistence model is unresolved: browser-local (no auth) vs. authenticated user account. Decision deferred — needed before any progress-tracking UI ships.
