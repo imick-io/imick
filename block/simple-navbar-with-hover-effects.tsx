@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { SignatureInitials } from "@/registry/signature-initials";
 import { navItems, contactItem, type NavItem } from "./nav-items";
 
 export default function SimpleNavbarWithHoverEffects() {
@@ -164,7 +165,10 @@ const Logo = () => {
         priority
         className="size-8 rounded-full"
       />
-      <span className="font-medium text-foreground">{siteConfig.handle}</span>
+      <SignatureInitials
+        aria-hidden
+        className="h-6 w-auto fill-current text-foreground"
+      />
     </Link>
   );
 };
