@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import type { Metadata } from "next"
+import { UnderDevelopmentNotice } from "@/components/ui/under-development-notice"
 import { CookingFilteredView } from "@/components/cooking/cooking-filtered-view"
 import { siteConfig } from "@/lib/config"
 import { getAllRecipes } from "@/lib/recipes"
@@ -43,6 +44,11 @@ export default function CookingPage() {
           situation.
         </p>
       </header>
+
+      <UnderDevelopmentNotice>
+        This section is under active development. Expect rough edges while
+        recipes and filters keep landing.
+      </UnderDevelopmentNotice>
 
       {/* nuqs reads search params, which bails out of static rendering up to
           the nearest Suspense boundary. */}

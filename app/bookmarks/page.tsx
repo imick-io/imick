@@ -6,6 +6,7 @@ import { siteConfig } from "@/lib/config"
 import { getAllPublishedBookmarks, getPublishedCategoryCounts } from "@/lib/bookmarks"
 import { getCategoryMap } from "@/lib/categories"
 import { buildTagMap } from "@/lib/bookmarks-filter"
+import { UnderDevelopmentNotice } from "@/components/ui/under-development-notice"
 
 export const revalidate = 3600
 
@@ -50,6 +51,13 @@ export default async function BookmarksHubPage() {
           counts.
         </p>
       </header>
+
+      <div className="mx-auto w-full max-w-5xl">
+        <UnderDevelopmentNotice>
+          This section is under active development. Expect rough edges while
+          bookmarks and reviews keep landing.
+        </UnderDevelopmentNotice>
+      </div>
 
       <section className="mx-auto flex w-full max-w-5xl flex-col gap-8">
         {/* nuqs reads search params, which bails out of static rendering up to
