@@ -152,6 +152,21 @@ export const experience: Experience[] = [
     order: 1,
   },
   {
+    company: "ComfyUI",
+    role: "Front-End Developer",
+    startDate: "2026-05",
+    current: true,
+    location: "San Francisco Bay Area · Remote",
+    description:
+      "Generative AI infrastructure company building node-based UI tools and community-driven AI workflows.",
+    highlights: [
+      "Improve and maintain the marketing site, keeping the public face of the product fast, polished, and current.",
+      "Build and maintain features in ComfyUI's complex, high-performance web application for node-based AI workflows.",
+    ],
+    via: { name: "Concreo" },
+    order: 2,
+  },
+  {
     company: "Takeup",
     role: "Senior Full-Stack Engineer",
     startDate: "2024-12",
@@ -166,7 +181,7 @@ export const experience: Experience[] = [
       "Owned UI features end-to-end inside a high-autonomy senior-eng team, from product spec to production.",
     ],
     via: { name: "Concreo" },
-    order: 2,
+    order: 3,
   },
   {
     company: "Zumrails",
@@ -183,7 +198,7 @@ export const experience: Experience[] = [
       "Built the application's front-end interfaces myself, working as both PO and IC.",
     ],
     outcome: "Raised Series A at $100M+ valuation (February 2024)",
-    order: 3,
+    order: 4,
   },
   {
     company: "Flinks",
@@ -200,7 +215,7 @@ export const experience: Experience[] = [
       "Managed a team of 1 to 5, unblocking delivery and writing user stories alongside the engineers.",
     ],
     outcome: "Acquired by National Bank of Canada, $100M (2021)",
-    order: 4,
+    order: 5,
   },
   {
     company: "CGI",
@@ -216,6 +231,6 @@ export const experience: Experience[] = [
       "Built management dashboards that became the source of truth for executive KPI monitoring.",
       "Translated ambiguous business questions into rigorous analytic frameworks under tight timelines.",
     ],
-    order: 5,
+    order: 6,
   },
 ]

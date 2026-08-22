@@ -131,9 +131,32 @@ export const resumeContent: ResumeContent = {
     "Senior product engineer with 9+ years building high-performance web products for Canadian and American enterprises and startups. Verified Toptal expert since 2021, specializing in Next.js, React, TypeScript, and Node.js. Combines an AI-augmented development workflow with rigorous engineering discipline, consistently shipping products built for speed, scalability, and accessibility.",
   workExperience: [
     {
+      role: "Front-End Developer",
+      company: "ComfyUI",
+      companySuffix: "Contract via Concreo",
+      dates: "2026 – Present",
+      bullets: [
+        "Improve and maintain the marketing site for a generative AI infrastructure company focused on node-based UI tools and community-driven AI workflows.",
+        "Build and maintain features in ComfyUI's complex, high-performance web application for node-based AI workflows.",
+        "Ship responsive, accessible front-end experiences across the marketing and product surfaces.",
+      ],
+      tech: [
+        "Vue 3",
+        "Astro",
+        "PayloadCMS",
+        "TypeScript",
+        "CodeRabbit",
+        "Tailwind CSS",
+        "CustomerIO",
+        "Supabase",
+        "PostgreSQL",
+        "GCP",
+      ],
+    },
+    {
       role: "Senior Frontend Developer",
       company: "TakeUp LLC",
-      dates: "2024 – Present",
+      dates: "2024 – 2026",
       bullets: [
         "Built product UI for an AI-powered pricing platform used to manage room rates for hotels, boutique hotels, and B&Bs.",
         "Developed front-end features with React, Next.js, shadcn/ui, and Server Actions to support complex pricing workflows.",
