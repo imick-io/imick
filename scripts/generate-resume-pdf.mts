@@ -9,7 +9,7 @@
 import { writeFileSync, mkdirSync } from "node:fs"
 import { execSync } from "node:child_process"
 import { join } from "node:path"
-import { resumeContent } from "../lib/resume-content"
+import { resumeContent } from "../lib/resume-content.ts"
 
 const projectRoot = process.cwd()
 const tmpDir = join(projectRoot, ".tmp-resume-pdf")
