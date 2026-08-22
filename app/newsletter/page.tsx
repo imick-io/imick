@@ -1,5 +1,7 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 import Link from "next/link"
+import { NewsletterConfirmedToast } from "@/components/newsletter-confirmed-toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { SubscribeForm } from "@/components/subscribe-form"
@@ -40,6 +42,11 @@ export default function NewsletterPage() {
 
   return (
     <div className="flex flex-col gap-12 px-6 py-16 md:gap-16 md:py-24">
+      {/* useSearchParams bails out of static rendering up to the nearest
+          Suspense boundary. */}
+      <Suspense>
+        <NewsletterConfirmedToast />
+      </Suspense>
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
         <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Newsletter</p>
         <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">

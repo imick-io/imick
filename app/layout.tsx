@@ -3,6 +3,7 @@ import { Manrope, Inter, Geist_Mono } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SiteBackdrop } from "@/components/site-backdrop"
 import { SiteFooter } from "@/components/site-footer"
+import { Toaster } from "@/components/ui/sonner"
 import SimpleNavbarWithHoverEffects from "@/block/simple-navbar-with-hover-effects"
 import { siteConfig } from "@/lib/config"
 import { cn } from "@/lib/utils"
@@ -61,6 +62,7 @@ export default function RootLayout({
             {children}
           </main>
           <SiteFooter />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
