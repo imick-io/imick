@@ -7,7 +7,7 @@
     "postinstall": "npx tsx scripts/fetch-content.mts",
     "fetch-content": "npx tsx scripts/fetch-content.mts",
     "dev": "next dev",
-    "build": "next build",
+    "build": "npx tsx scripts/fetch-content.mts && next build",
     "start": "next start",
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",

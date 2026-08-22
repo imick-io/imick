@@ -1,6 +1,7 @@
 // Hydrates `content/{posts,snippets,folios,classes,recipes}` and `public/assets/content/`
 // from the private `imick-io/imick-io-content` repo. Runs on `pnpm install`
-// (postinstall) and before any production build.
+// (postinstall) and as the first step of `pnpm build` -- postinstall alone is
+// not enough on Vercel, where a restored build cache skips install entirely.
 //
 // Auth: reads `CONTENT_REPO_TOKEN` (fine-grained PAT, Contents:read on the
 // content repo) from the environment. On Vercel, set it as a project env var.
