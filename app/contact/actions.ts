@@ -27,6 +27,8 @@ export async function submitContactMessage(input: unknown): Promise<Result> {
   if (!apiKey || !fromEmail) {
     return { ok: false, error: "Email is not configured. Please try again later." }
   }
+  // Where contact messages land. From stays on the verified Resend domain.
+  const toEmail = process.env.CONTACT_EMAIL || fromEmail
 
   const data = parsed.data
   const subject = `Contact form — ${data.subject}`
@@ -49,7 +51,7 @@ export async function submitContactMessage(input: unknown): Promise<Result> {
     const resend = new Resend(apiKey)
     const { error } = await resend.emails.send({
       from: fromEmail,
-      to: fromEmail,
+      to: toEmail,
       replyTo: data.email,
       subject,
       text,
