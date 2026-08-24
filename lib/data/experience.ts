@@ -71,6 +71,24 @@ export const experience: Experience[] = [
     ],
     engagements: [
       {
+        name: "Afi Expertise",
+        role: "Full-Stack Developer",
+        startDate: "2026",
+        endDate: "2026",
+        summary:
+          "Architected and rebuilt afiexpertise.com from scratch as a bilingual (FR/EN) training platform with a 360+ course catalog and in-app checkout.",
+        highlights: [
+          "Rebuilt the site end to end in Next.js, Sanity, and Tailwind CSS, replacing the legacy platform.",
+          "Integrated the Administrate training management system to power the 360+ course catalog with faceted filtering by faculty, subject, and certification.",
+          "Built in-app course checkout with Stripe, turning the site from a brochure into a transactional platform.",
+          "Migrated content into Sanity so the content team self-serves in both languages.",
+          "Preserved and improved SEO through the migration while leaving a markedly more maintainable codebase.",
+        ],
+        tech: ["Next.js", "Sanity", "Tailwind CSS", "Stripe", "Administrate", "HubSpot"],
+        url: "https://www.afiexpertise.com/en",
+        order: 1,
+      },
+      {
         name: "Humanly",
         role: "Full-Stack Developer",
         startDate: "2024-06",
@@ -83,7 +101,7 @@ export const experience: Experience[] = [
           "Shipped animated, responsive experiences with WCAG accessibility on desktop, tablet, and mobile.",
         ],
         tech: ["Next.js", "Sanity", "Tailwind CSS", "shadcn/ui", "GitHub"],
-        order: 1,
+        order: 2,
       },
       {
         name: "Teamable",
@@ -99,7 +117,7 @@ export const experience: Experience[] = [
         ],
         tech: ["Next.js", "React", "Vercel", "Tailwind CSS", "GitHub"],
         outcome: "Acquired by Humanly (2024)",
-        order: 2,
+        order: 3,
       },
       {
         name: "Wearesky",
@@ -114,7 +132,7 @@ export const experience: Experience[] = [
         ],
         tech: ["Nuxt.js", "Vue", "Tailwind CSS", "Vercel", "Three.js", "GitHub"],
         compact: true,
-        order: 3,
+        order: 4,
       },
       {
         name: "Grics",
@@ -129,7 +147,7 @@ export const experience: Experience[] = [
         ],
         tech: ["React", "Storybook", "Jest", "Microsoft Azure DevOps"],
         compact: true,
-        order: 4,
+        order: 5,
       },
       {
         name: "Takein",
@@ -146,7 +164,7 @@ export const experience: Experience[] = [
         ],
         tech: ["Next.js", "Firebase", "Docker", "GitHub"],
         compact: true,
-        order: 5,
+        order: 6,
       },
     ],
     order: 1,

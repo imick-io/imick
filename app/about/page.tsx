@@ -68,6 +68,7 @@ function StackChipIcon({ slug, mono }: { slug: string; mono?: boolean }) {
 function formatRange(startDate: string, endDate?: string, current?: boolean) {
   const start = formatMonth(startDate)
   const end = current ? "Present" : endDate ? formatMonth(endDate) : "Present"
+  if (start === end) return start
   return `${start} — ${end}`
 }
 
