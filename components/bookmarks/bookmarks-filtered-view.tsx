@@ -155,7 +155,7 @@ export function BookmarksFilteredView({
         </div>
       ) : (
         <div className="flex flex-col gap-10">
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {visible.map((bookmark) => (
               <li key={bookmark.id}>
                 <BookmarkCard bookmark={bookmark} categoryMap={categoryMap} />

@@ -111,7 +111,7 @@ export function RecipeView({ ingredients, steps, servings }: Props) {
       </div>
 
       {view === "classic" ? (
-        <div className="grid gap-10 md:grid-cols-[300px_minmax(0,1fr)]">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-[300px_minmax(0,1fr)]">
           <aside>
             <div className="flex flex-col gap-3 md:sticky md:top-24">
               <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
@@ -124,7 +124,7 @@ export function RecipeView({ ingredients, steps, servings }: Props) {
                     className="flex items-baseline justify-between gap-4 py-2 text-sm"
                   >
                     <span>{ing.item}</span>
-                    <span className="shrink-0 font-mono text-xs text-muted-foreground">
+                    <span className="min-w-0 text-right font-mono text-xs text-muted-foreground">
                       {formatAmount(ing, scale)}
                     </span>
                   </li>
@@ -176,7 +176,7 @@ export function RecipeView({ ingredients, steps, servings }: Props) {
                             className="flex items-baseline justify-between gap-4 text-sm"
                           >
                             <span>{ing.item}</span>
-                            <span className="shrink-0 font-mono text-xs text-muted-foreground">
+                            <span className="min-w-0 text-right font-mono text-xs text-muted-foreground">
                               {formatAmount(ing, scale)}
                             </span>
                           </li>

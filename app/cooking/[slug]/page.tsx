@@ -180,7 +180,7 @@ export default async function RecipePage(
             <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
               More like this
             </h2>
-            <ul className="grid gap-4 sm:grid-cols-3">
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {related.map((r) => (
                 <li key={r.slug}>
                   <Link

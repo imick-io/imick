@@ -30,7 +30,7 @@ export function SnippetsGrid({ snippets }: Props) {
 
   return (
     <div className="flex flex-col gap-10">
-      <ul className="grid gap-6 sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         {visible.map((snippet) => (
           <li key={snippet.slug}>
             <SnippetCard snippet={snippet} />

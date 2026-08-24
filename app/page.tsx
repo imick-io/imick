@@ -82,7 +82,7 @@ export default function HomePage() {
         </div>
       </aside>
 
-      <main className="grid gap-4 pt-12 sm:grid-cols-2 lg:pt-0">
+      <main className="grid grid-cols-1 gap-4 pt-12 sm:grid-cols-2 lg:pt-0">
         {leadPost ? (
           <ArticleCoverTile
             post={leadPost}

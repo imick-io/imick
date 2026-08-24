@@ -12,7 +12,7 @@ export function ClassBanner({ cls }: ClassBannerProps) {
   return (
     <Link
       href={`/learn/classes/${cls.slug}`}
-      className="group grid overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-foreground md:grid-cols-[2fr_3fr]"
+      className="group grid grid-cols-1 overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-foreground md:grid-cols-[2fr_3fr]"
     >
       {cls.coverImage ? (
         <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted md:aspect-auto md:min-h-full">

@@ -14,7 +14,7 @@ export function FeaturedArticle({ post }: FeaturedArticleProps) {
   return (
     <Link
       href={`/learn/articles/${post.slug}`}
-      className="group grid overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-foreground md:grid-cols-[3fr_2fr]"
+      className="group grid grid-cols-1 overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-foreground md:grid-cols-[3fr_2fr]"
     >
       <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted md:aspect-auto md:min-h-full">
         <Image

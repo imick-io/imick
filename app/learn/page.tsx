@@ -151,7 +151,7 @@ export default function LearnHubPage() {
           <div className="flex flex-col gap-6">
             <ClassBanner cls={firstClass} />
             {restClasses.length > 0 ? (
-              <ul className="grid gap-6 sm:grid-cols-2">
+              <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 {restClasses.map((cls) => (
                   <li key={cls.slug}>
                     <ClassCard cls={cls} />

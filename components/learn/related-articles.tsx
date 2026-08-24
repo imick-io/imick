@@ -15,7 +15,7 @@ export function RelatedArticles({ posts }: Props) {
       <h2 id="related-articles-heading" className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
         Related articles
       </h2>
-      <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
           <li key={post.slug}>
             <ArticleCard post={post} />
