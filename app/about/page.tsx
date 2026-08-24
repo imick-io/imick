@@ -196,7 +196,7 @@ export default function AboutPage() {
                 </ul>
               ) : null}
               {item.engagements && item.engagements.length > 0 ? (
-                <Collapsible className="mt-2 flex flex-col gap-2">
+                <Collapsible defaultOpen className="mt-2 flex flex-col gap-2">
                   <CollapsibleTrigger className="group inline-flex w-fit items-center gap-1.5 rounded-pill border border-border bg-muted/30 px-3 py-1.5 text-xs font-medium uppercase tracking-wide text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-[3px] focus-visible:ring-ring/50">
                     <span className="group-data-[panel-open]:hidden">
                       {item.engagements.length} client engagements - show
