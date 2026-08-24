@@ -9,6 +9,9 @@ const THIRTY_DAYS_IN_SECONDS = 60 * 60 * 24 * 30
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  // Vercel 308s the apex to www; accept sign-in POSTs from both hosts so an
+  // apex-valued BETTER_AUTH_URL cannot fail the CSRF origin check.
+  trustedOrigins: ["https://www.imick.io", "https://imick.io"],
   secret: process.env.BETTER_AUTH_SECRET!,
   database: drizzleAdapter(db, {
     provider: "pg",
