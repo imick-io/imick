@@ -193,7 +193,7 @@ export default function AboutPage() {
                     />
                   </CollapsibleTrigger>
                   <CollapsibleContent>
-                    <ol className="flex flex-col gap-6 border-l border-border/60 pl-5">
+                    <ol className="flex flex-col gap-6 rounded-xl border border-border bg-secondary/50 p-5">
                       {[...item.engagements]
                         .sort((a, b) => a.order - b.order)
                         .map((eng) => (
