@@ -1,21 +1,25 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { GithubIcon, ArrowUpRight01Icon, ArrowDown01Icon } from "@hugeicons/core-free-icons"
-import { buttonVariants } from "@/components/ui/button"
-import { CardFeature } from "@/components/ui/brand/card-feature"
+import type { Metadata } from "next";
+import Link from "next/link";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  GithubIcon,
+  ArrowUpRight01Icon,
+  ArrowDown01Icon,
+} from "@hugeicons/core-free-icons";
+import { buttonVariants } from "@/components/ui/button";
+import { CardFeature } from "@/components/ui/brand/card-feature";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { siteConfig } from "@/lib/config"
-import { experience } from "@/lib/data/experience"
-import { education } from "@/lib/data/education"
-import { projects } from "@/lib/data/projects"
-import { getStackByCategory } from "@/lib/stack-grouped"
+} from "@/components/ui/collapsible";
+import { siteConfig } from "@/lib/config";
+import { experience } from "@/lib/data/experience";
+import { education } from "@/lib/data/education";
+import { projects } from "@/lib/data/projects";
+import { getStackByCategory } from "@/lib/stack-grouped";
 
-const aboutDescription = `${siteConfig.name} is a senior full-stack engineer designing and shipping AI-native products end-to-end.`
+const aboutDescription = `${siteConfig.name} is a senior full-stack engineer designing and shipping AI-native products end-to-end.`;
 
 export const metadata: Metadata = {
   title: "About",
@@ -33,19 +37,21 @@ export const metadata: Metadata = {
     title: `About ${siteConfig.name}`,
     description: aboutDescription,
   },
-}
+};
 
 function formatMonth(value: string) {
-  const [year, month] = value.split("-")
-  if (!year || !month) return value
-  const date = new Date(Number(year), Number(month) - 1)
-  return date.toLocaleString("en-US", { month: "short", year: "numeric" })
+  const [year, month] = value.split("-");
+  if (!year || !month) return value;
+  const date = new Date(Number(year), Number(month) - 1);
+  return date.toLocaleString("en-US", { month: "short", year: "numeric" });
 }
 
 function StackChipIcon({ slug, mono }: { slug: string; mono?: boolean }) {
-  const base = "h-3.5 w-3.5 object-contain"
+  const base = "h-3.5 w-3.5 object-contain";
   if (!mono) {
-    return <img src={`/icons/${slug}.svg`} alt="" aria-hidden className={base} />
+    return (
+      <img src={`/icons/${slug}.svg`} alt="" aria-hidden className={base} />
+    );
   }
   return (
     <>
@@ -62,40 +68,42 @@ function StackChipIcon({ slug, mono }: { slug: string; mono?: boolean }) {
         className={`hidden ${base} dark:block`}
       />
     </>
-  )
+  );
 }
 
 function formatRange(startDate: string, endDate?: string, current?: boolean) {
-  const start = formatMonth(startDate)
-  const end = current ? "Present" : endDate ? formatMonth(endDate) : "Present"
-  if (start === end) return start
-  return `${start} — ${end}`
+  const start = formatMonth(startDate);
+  const end = current ? "Present" : endDate ? formatMonth(endDate) : "Present";
+  if (start === end) return start;
+  return `${start} — ${end}`;
 }
 
 export default function AboutPage() {
   const sortedExperience = [...experience]
     .filter((item) => !item.linkedinOnly)
     .sort((a, b) => {
-      if (a.current && !b.current) return -1
-      if (!a.current && b.current) return 1
-      return b.startDate.localeCompare(a.startDate)
-    })
+      if (a.current && !b.current) return -1;
+      if (!a.current && b.current) return 1;
+      return b.startDate.localeCompare(a.startDate);
+    });
 
   const sortedEducation = [...education].sort((a, b) => {
-    const aEnd = a.endYear ?? Number.POSITIVE_INFINITY
-    const bEnd = b.endYear ?? Number.POSITIVE_INFINITY
-    return bEnd - aEnd
-  })
+    const aEnd = a.endYear ?? Number.POSITIVE_INFINITY;
+    const bEnd = b.endYear ?? Number.POSITIVE_INFINITY;
+    return bEnd - aEnd;
+  });
 
-  const sortedProjects = [...projects].sort((a, b) => a.order - b.order)
+  const sortedProjects = [...projects].sort((a, b) => a.order - b.order);
 
-  const stackByCategory = getStackByCategory()
+  const stackByCategory = getStackByCategory();
 
   return (
     <div className="flex flex-col gap-20 px-6 py-16 md:gap-24 md:py-24">
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex flex-col gap-4">
-          <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">{siteConfig.role}</p>
+          <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+            {siteConfig.role}
+          </p>
           <h1 className="display-md">{siteConfig.name}</h1>
         </div>
         <Link
@@ -112,14 +120,18 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-3">
-        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Bio</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+          Bio
+        </h2>
         <p className="text-base leading-relaxed text-foreground md:text-lg">
           {siteConfig.bio}
         </p>
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Tech Stack</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+          Tech Stack
+        </h2>
         <ol className="flex flex-col gap-4">
           {stackByCategory.map((group) => (
             <li
@@ -148,7 +160,9 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Experience</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+          Experience
+        </h2>
         <ol className="flex flex-col gap-8">
           {sortedExperience.map((item) => (
             <li
@@ -157,7 +171,9 @@ export default function AboutPage() {
             >
               <div className="flex flex-col gap-1">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="text-lg font-medium text-foreground">{item.role}</h3>
+                  <h3 className="text-lg font-medium text-foreground">
+                    {item.role}
+                  </h3>
                   <span className="text-xs text-muted-foreground">
                     {formatRange(item.startDate, item.endDate, item.current)}
                   </span>
@@ -168,7 +184,9 @@ export default function AboutPage() {
                 </p>
               </div>
               {item.description ? (
-                <p className="text-sm leading-relaxed text-foreground/90">{item.description}</p>
+                <p className="text-sm leading-relaxed text-foreground/90">
+                  {item.description}
+                </p>
               ) : null}
               {item.highlights.length > 0 ? (
                 <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-foreground/90 marker:text-muted-foreground">
@@ -181,10 +199,12 @@ export default function AboutPage() {
                 <Collapsible className="mt-2 flex flex-col gap-2">
                   <CollapsibleTrigger className="group inline-flex w-fit items-center gap-1.5 rounded-pill border border-border bg-muted/30 px-3 py-1.5 text-xs font-medium uppercase tracking-wide text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-[3px] focus-visible:ring-ring/50">
                     <span className="group-data-[panel-open]:hidden">
-                      {item.engagements.length} client engagements - show details
+                      {item.engagements.length} client engagements - show
+                      details
                     </span>
                     <span className="hidden group-data-[panel-open]:inline">
-                      {item.engagements.length} client engagements - hide details
+                      {item.engagements.length} client engagements - hide
+                      details
                     </span>
                     <HugeiconsIcon
                       icon={ArrowDown01Icon}
@@ -193,52 +213,61 @@ export default function AboutPage() {
                     />
                   </CollapsibleTrigger>
                   <CollapsibleContent>
-                    <ol className="flex flex-col gap-6 rounded-xl border border-border bg-secondary/50 p-5">
-                      {[...item.engagements]
-                        .sort((a, b) => a.order - b.order)
-                        .map((eng) => (
-                          <li key={eng.name} className="flex flex-col gap-2">
-                            <div className="flex flex-col gap-1">
-                              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                                <h4 className="text-base font-medium text-foreground">
-                                  {eng.name}
-                                  <span className="font-normal text-muted-foreground">
-                                    {" · "}
-                                    {eng.role}
+                    <CardFeature variant="sage">
+                      <ol className="flex flex-col divide-y divide-border/60">
+                        {[...item.engagements]
+                          .sort((a, b) => a.order - b.order)
+                          .map((eng) => (
+                            <li
+                              key={eng.name}
+                              className="flex flex-col gap-2 py-5 first:pt-0 last:pb-0"
+                            >
+                              <div className="flex flex-col gap-1">
+                                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                                  <h4 className="text-base font-medium text-foreground">
+                                    {eng.name}
+                                    <span className="font-normal text-muted-foreground">
+                                      {" · "}
+                                      {eng.role}
+                                    </span>
+                                  </h4>
+                                  <span className="text-xs text-muted-foreground">
+                                    {formatRange(
+                                      eng.startDate,
+                                      eng.endDate,
+                                      eng.current,
+                                    )}
                                   </span>
-                                </h4>
-                                <span className="text-xs text-muted-foreground">
-                                  {formatRange(eng.startDate, eng.endDate, eng.current)}
-                                </span>
+                                </div>
+                                {eng.summary ? (
+                                  <p className="text-sm leading-relaxed text-foreground/90">
+                                    {eng.summary}
+                                  </p>
+                                ) : null}
                               </div>
-                              {eng.summary ? (
-                                <p className="text-sm leading-relaxed text-foreground/90">
-                                  {eng.summary}
-                                </p>
+                              {eng.highlights.length > 0 ? (
+                                <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-foreground/90 marker:text-muted-foreground">
+                                  {eng.highlights.map((highlight, i) => (
+                                    <li key={i}>{highlight}</li>
+                                  ))}
+                                </ul>
                               ) : null}
-                            </div>
-                            {eng.highlights.length > 0 ? (
-                              <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-foreground/90 marker:text-muted-foreground">
-                                {eng.highlights.map((highlight, i) => (
-                                  <li key={i}>{highlight}</li>
-                                ))}
-                              </ul>
-                            ) : null}
-                            {eng.tech && eng.tech.length > 0 ? (
-                              <ul className="flex flex-wrap gap-1.5 pt-1">
-                                {eng.tech.map((t) => (
-                                  <li
-                                    key={t}
-                                    className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs text-muted-foreground"
-                                  >
-                                    {t}
-                                  </li>
-                                ))}
-                              </ul>
-                            ) : null}
-                          </li>
-                        ))}
-                    </ol>
+                              {eng.tech && eng.tech.length > 0 ? (
+                                <ul className="flex flex-wrap gap-1.5 pt-1">
+                                  {eng.tech.map((t) => (
+                                    <li
+                                      key={t}
+                                      className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs text-muted-foreground"
+                                    >
+                                      {t}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : null}
+                            </li>
+                          ))}
+                      </ol>
+                    </CardFeature>
                   </CollapsibleContent>
                 </Collapsible>
               ) : null}
@@ -248,7 +277,9 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Education</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+          Education
+        </h2>
         <ol className="flex flex-col gap-6">
           {sortedEducation.map((item) => (
             <li
@@ -265,14 +296,18 @@ export default function AboutPage() {
                   {item.endYear ? ` — ${item.endYear}` : " — Present"}
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground">{item.institution}</p>
+              <p className="text-sm text-muted-foreground">
+                {item.institution}
+              </p>
             </li>
           ))}
         </ol>
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Open Source</h2>
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+          Open Source
+        </h2>
         <ul className="flex flex-col gap-4">
           {sortedProjects.map((project) => (
             <li key={project.name}>
@@ -285,7 +320,9 @@ export default function AboutPage() {
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2 text-foreground">
                     <HugeiconsIcon icon={GithubIcon} size={18} />
-                    <span className="text-base font-medium">{project.name}</span>
+                    <span className="text-base font-medium">
+                      {project.name}
+                    </span>
                   </div>
                   <HugeiconsIcon
                     icon={ArrowUpRight01Icon}
@@ -293,7 +330,9 @@ export default function AboutPage() {
                     className="text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                   />
                 </div>
-                <p className="text-sm text-muted-foreground">{project.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {project.description}
+                </p>
               </a>
             </li>
           ))}
@@ -302,15 +341,14 @@ export default function AboutPage() {
 
       <section className="mx-auto w-full max-w-3xl">
         <CardFeature variant="dark" className="items-start gap-4 p-8">
-          <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-primary">Resume</h2>
-          <Link
-            href="/resume"
-            className={buttonVariants({ size: "lg" })}
-          >
+          <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-primary">
+            Resume
+          </h2>
+          <Link href="/resume" className={buttonVariants({ size: "lg" })}>
             View Resume
           </Link>
         </CardFeature>
       </section>
     </div>
-  )
+  );
 }
