@@ -179,9 +179,12 @@ export default function AboutPage() {
               ) : null}
               {item.engagements && item.engagements.length > 0 ? (
                 <Collapsible className="mt-2 flex flex-col gap-2">
-                  <CollapsibleTrigger className="group inline-flex w-fit items-center gap-1.5 rounded-md text-xs font-medium uppercase tracking-wide text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50">
-                    <span>
+                  <CollapsibleTrigger className="group inline-flex w-fit items-center gap-1.5 rounded-pill border border-border bg-muted/30 px-3 py-1.5 text-xs font-medium uppercase tracking-wide text-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-[3px] focus-visible:ring-ring/50">
+                    <span className="group-data-[panel-open]:hidden">
                       {item.engagements.length} client engagements - show details
+                    </span>
+                    <span className="hidden group-data-[panel-open]:inline">
+                      {item.engagements.length} client engagements - hide details
                     </span>
                     <HugeiconsIcon
                       icon={ArrowDown01Icon}
