@@ -3,7 +3,7 @@ export const siteConfig = {
   handle: "imick.io",
   role: "Senior Product Engineer",
   tagline: "Senior Product Engineer. Ships at startup speed, end-to-end.",
-  bio: "Michael Boutin. Senior product engineer from Canada. Two years senior full-stack at Takeup. Product DNA from Flinks and Zumrails. I build with AI in the loop and a human eye on the bar: fast, never sloppy. I write about the workflow.",
+  bio: "Michael Boutin. Senior product engineer from Canada. 18 months senior full-stack at Takeup, most recently at ComfyUI. Product DNA from Flinks and Zumrails. I build with AI in the loop and a human eye on the bar: fast, never sloppy. I write about the workflow.",
   description: "Senior product engineer. Ships at startup speed, end-to-end.",
   url: "https://imick.io",
   contactEmail: "michael@concreo.io",

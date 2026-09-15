@@ -16,24 +16,14 @@ beforeEach(() => {
   mockExperience.length = 0
 })
 
-const concreoWithTakeup: Experience = {
-  company: "Concreo",
-  role: "Founder, AI Product Engineer",
-  startDate: "2024-01",
-  current: true,
-  description: "Independent agency.",
+const takeup: Experience = {
+  company: "Takeup",
+  role: "Senior Full-Stack Engineer",
+  startDate: "2024-12",
+  endDate: "2026-05",
+  description: "Pricing platform.",
   highlights: [],
-  engagements: [
-    {
-      name: "Takeup",
-      role: "AI Product Engineer",
-      startDate: "2024-05",
-      endDate: "2026-05",
-      summary: "Pricing platform.",
-      highlights: [],
-      order: 1,
-    },
-  ],
+  via: { name: "Toptal" },
   order: 1,
 }
 
@@ -59,7 +49,7 @@ const flinks: Experience = {
 
 describe("getPreviousRolesStrip", () => {
   it("returns three chips in the locked order: Takeup, Flinks, Zumrails", () => {
-    mockExperience.push(concreoWithTakeup, zumrails, flinks)
+    mockExperience.push(takeup, zumrails, flinks)
 
     const chips = getPreviousRolesStrip()
 
@@ -72,14 +62,14 @@ describe("getPreviousRolesStrip", () => {
   })
 
   it("populates each chip with the locked outcome label", () => {
-    mockExperience.push(concreoWithTakeup, zumrails, flinks)
+    mockExperience.push(takeup, zumrails, flinks)
 
-    const [takeup, flinksChip, zumrailsChip] = getPreviousRolesStrip()
+    const [takeupChip, flinksChip, zumrailsChip] = getPreviousRolesStrip()
 
-    expect(takeup).toMatchObject({
+    expect(takeupChip).toMatchObject({
       company: "Takeup",
-      role: "AI Product Engineer",
-      outcome: "Two years senior full-stack",
+      role: "Senior Full-Stack Engineer",
+      outcome: "18 months senior full-stack",
     })
     expect(flinksChip).toMatchObject({
       company: "Flinks",
@@ -93,24 +83,20 @@ describe("getPreviousRolesStrip", () => {
     })
   })
 
-  it("throws when the Takeup engagement is missing", () => {
-    const concreoWithoutTakeup: Experience = {
-      ...concreoWithTakeup,
-      engagements: [],
-    }
-    mockExperience.push(concreoWithoutTakeup, zumrails, flinks)
+  it("throws when the Takeup employer is missing", () => {
+    mockExperience.push(zumrails, flinks)
 
     expect(() => getPreviousRolesStrip()).toThrow(/Takeup/)
   })
 
   it("throws when the Flinks employer is missing", () => {
-    mockExperience.push(concreoWithTakeup, zumrails)
+    mockExperience.push(takeup, zumrails)
 
     expect(() => getPreviousRolesStrip()).toThrow(/Flinks/)
   })
 
   it("throws when the Zumrails employer is missing", () => {
-    mockExperience.push(concreoWithTakeup, flinks)
+    mockExperience.push(takeup, flinks)
 
     expect(() => getPreviousRolesStrip()).toThrow(/Zumrails/)
   })
