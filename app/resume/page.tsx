@@ -5,10 +5,12 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { ResumeDocument } from "@/components/resume-document"
 import { ResumeGateFormInline } from "@/components/resume-gate-form-inline"
+import { ResumeLanguageToggle } from "@/components/resume-language-toggle"
 import { ResumePdfButton } from "@/components/resume-pdf-button"
 import { ResumePreviewSkeleton } from "@/components/resume-preview-skeleton"
 import { auth } from "@/lib/auth"
 import { siteConfig } from "@/lib/config"
+import { parseResumeLocale, type ResumeLocale } from "@/lib/resume-content"
 
 export const metadata: Metadata = {
   title: "Resume",
@@ -17,13 +19,18 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-export default async function ResumePage() {
+export default async function ResumePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>
+}) {
   const session = await auth.api.getSession({ headers: await headers() })
+  const locale = parseResumeLocale((await searchParams).lang)
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-muted print:static print:overflow-visible print:bg-background">
-      {/* {session ? <GatedResume /> : <GateOverlay />} */}
-      <GatedResume />
+      {/* {session ? <GatedResume locale={locale} /> : <GateOverlay />} */}
+      <GatedResume locale={locale} />
     </div>
   )
 }
@@ -39,7 +46,7 @@ function GateOverlay() {
   )
 }
 
-function GatedResume() {
+function GatedResume({ locale }: { locale: ResumeLocale }) {
   return (
     <div className="relative min-h-full pb-12">
       <Link
@@ -49,9 +56,10 @@ function GatedResume() {
         <HugeiconsIcon icon={ArrowLeft01Icon} />
         Back to {siteConfig.handle}
       </Link>
-      <ResumePdfButton />
+      <ResumeLanguageToggle locale={locale} />
+      <ResumePdfButton locale={locale} />
       <div className="mx-auto w-full max-w-5xl px-4 pt-16 print:max-w-none print:px-0 print:pt-0">
-        <ResumeDocument />
+        <ResumeDocument locale={locale} />
       </div>
     </div>
   )

@@ -19,6 +19,18 @@ export type ResumeWorkEntry = {
   tech: string[]
 }
 
+export type ResumeLocale = "en" | "fr"
+
+/** UI strings around the resume content (section titles, buttons). */
+export type ResumeLabels = {
+  summary: string
+  workExperience: string
+  education: string
+  tech: string
+  downloadPdf: string
+  documentTitle: string
+}
+
 export type ResumeContent = {
   monogram: string
   name: string
@@ -34,7 +46,7 @@ export type ResumeContent = {
 export const resumeContent: ResumeContent = {
   monogram: "MB",
   name: "Michael Boutin",
-  title: "Senior Product Engineer & Full-Stack Developer",
+  title: "Senior Full-Stack Developer & Product Manager",
   location: "Montreal, QC, Canada",
   contactLinks: [
     {
@@ -46,71 +58,33 @@ export const resumeContent: ResumeContent = {
   ],
   chipGroups: [
     {
-      label: "Languages",
+      label: "Core Stack",
       items: [
-        "JavaScript",
+        "Next.js",
+        "React",
         "TypeScript",
-        "HTML5",
-        "CSS / SCSS",
-        "SQL",
-        "GraphQL / REST",
-      ],
-    },
-    {
-      label: "Frameworks & Libraries",
-      items: [
+        "Node.js",
+        "Tailwind CSS",
         "Vue 3",
         "Nuxt.js",
-        "React",
-        "Next.js",
-        "NestJS",
-        "Express.js",
-        "Svelte",
-        "SvelteKit",
-        "Tailwind CSS",
-        "Vuetify",
-        "Bootstrap",
+      ],
+    },
+    {
+      label: "Supporting",
+      items: [
         "Three.js",
         "GSAP",
-        "Laravel",
-        "Redux",
-        "Pinia",
-        "Jest",
-        "Highcharts",
-        "Shadcn",
-      ],
-    },
-    {
-      label: "Platforms & Tools",
-      items: [
-        "Claude Code",
-        "Codex",
+        "Sanity",
+        "Stripe",
+        "PostgreSQL",
         "Firebase",
         "Vercel",
-        "GCP",
-        "AWS Amplify",
-        "Docker",
-        "Clerk",
-        "Sanity",
-        "Contentful",
-        "Algolia",
-        "Stripe",
-        "Figma",
-        "Storybook",
-        "Git",
-        "GitHub",
-        "Jira",
+        "Claude Code",
       ],
     },
     {
-      label: "Databases",
-      items: [
-        "MySQL",
-        "PostgreSQL",
-        "MongoDB",
-        "Cloud Firestore",
-        "NoSQL",
-      ],
+      label: "Languages",
+      items: ["English", "French"],
     },
   ],
   education: [
@@ -128,17 +102,17 @@ export const resumeContent: ResumeContent = {
     },
   ],
   summary:
-    "Senior product engineer with 9+ years building high-performance web products for Canadian and American enterprises and startups. Verified Toptal expert since 2021, specializing in Next.js, React, TypeScript, and Node.js. Combines an AI-augmented development workflow with rigorous engineering discipline, consistently shipping products built for speed, scalability, and accessibility.",
+    "Senior full-stack developer and product manager with 9+ years across AI, fintech, and SaaS, shipping high-performance web products for North American startups and enterprises, most recently ComfyUI, the $500M-valuation open-source generative AI platform. Specializes in Next.js, React, TypeScript, and Node.js, pairing an AI-augmented development workflow with rigorous engineering discipline and a product management background. Bilingual, English and French.",
   workExperience: [
     {
-      role: "Front-End Developer",
+      role: "Senior Front-End Developer",
       company: "ComfyUI",
-      companySuffix: "Contract via Concreo",
-      dates: "2026 – Present",
+      companySuffix: "Contract via Toptal",
+      dates: "2026",
       bullets: [
-        "Improve and maintain the marketing site for a generative AI infrastructure company focused on node-based UI tools and community-driven AI workflows.",
-        "Build and maintain features in ComfyUI's complex, high-performance web application for node-based AI workflows.",
-        "Ship responsive, accessible front-end experiences across the marketing and product surfaces.",
+        "Designed a Claude Code chat workflow for Comfy Org, the $500M-valuation San Francisco startup behind ComfyUI: anyone on the team creates a production page through chat alone, no code and no UI, with Vercel preview URLs and an approval workflow gating the merge to production.",
+        "Integrated PayloadCMS as the structural backbone of that workflow: chat-created pages assemble existing, structured content blocks instead of generating one-off code, keeping the site's architecture consistent and letting marketing update pages without engineering.",
+        "Built and maintained features in ComfyUI's complex, high-performance web application, a platform with 4M+ users, 150K+ daily downloads, and an ecosystem of 60K+ community-built nodes.",
       ],
       tech: [
         "Vue 3",
@@ -154,9 +128,9 @@ export const resumeContent: ResumeContent = {
       ],
     },
     {
-      role: "Full-Stack Developer",
+      role: "Senior Full-Stack Developer",
       company: "Afi Expertise",
-      companySuffix: "Contract via Concreo",
+      companySuffix: "Client of Concreo",
       dates: "2026",
       bullets: [
         "Architected and rebuilt afiexpertise.com from scratch with Next.js, Sanity, and Tailwind CSS for a bilingual (FR/EN) corporate training company.",
@@ -177,28 +151,26 @@ export const resumeContent: ResumeContent = {
       ],
     },
     {
-      role: "Senior Frontend Developer",
-      company: "TakeUp LLC",
+      role: "Senior Full-Stack Developer & Product Manager",
+      company: "TakeUp",
+      companySuffix: "Contract via Toptal",
       dates: "2024 – 2026",
       bullets: [
-        "Built product UI for an AI-powered pricing platform used to manage room rates for hotels, boutique hotels, and B&Bs.",
-        "Developed front-end features with React, Next.js, shadcn/ui, and Server Actions to support complex pricing workflows.",
-        "Integrated authenticated product flows using Clerk, including user and organization-based access patterns.",
-        "Connected front-end experiences to Python/FastAPI backend services for pricing logic and AI-powered functionality.",
-        "Partnered with senior engineers in a high-autonomy team to ship features across the UI and support backend-driven workflows.",
+        "Rebuilt the web application from the ground up, migrating a live product with a paying customer base from Bubble.io to Next.js with zero downtime.",
+        "Sole developer of the web application over the 18-month engagement, acting as de facto product manager: decided which features to build, owned the architecture, and shipped from spec to production on an AI pricing platform managing live room rates for hotels, boutique hotels, and B&Bs.",
+        "Designed and built the pricing workflows operators use to preview, edit, and approve AI-driven rate recommendations, in Next.js, React, shadcn/ui, and Server Actions.",
+        "Connected the front end to Python and FastAPI services running pricing logic and AI inference, owning the latency and error-handling story across the boundary.",
+        "Wired organization-based authentication with Clerk for multi-property access patterns.",
       ],
       tech: ["React", "Next.js", "TypeScript", "Highcharts", "Clerk", "Node.js", "CSS"],
     },
     {
-      role: "Full-Stack Developer & Co-Founder",
+      role: "Founder & Senior Product Manager",
       company: "Concreo Solutions Inc.",
-      dates: "2021 – Present",
+      dates: "2020 – Present",
       bullets: [
-        "Founded Concreo.io to provide businesses with an unparalleled web presence, substantially increasing client engagements and brand reputation.",
-        "Oversaw development and deployment of digital solutions, enhancing client satisfaction and business outcomes.",
-        "Pioneered strategies ensuring lightning-fast load times, improving bounce rates by 20%.",
-        "Architected a high-availability infrastructure achieving 99.95% uptime during peak traffic.",
-        "Led a team of experts fostering a culture of innovation, dedication, and client-centric delivery.",
+        "Founded and run a product engineering consultancy, delivering six client engagements (marked \"Client of Concreo\" below) end to end across ed-tech, HR-tech, food delivery, and creative industries, from scoping and architecture through production launch and post-launch support.",
+        "Shipped every engagement to production with a maintainable handoff; two clients converted to ongoing retainers, and clients repeatedly extend engagements or return with new projects.",
       ],
       tech: [
         "React",
@@ -217,95 +189,362 @@ export const resumeContent: ResumeContent = {
       ],
     },
     {
-      role: "Full-Stack Developer",
-      company: "humanly.io",
-      companySuffix: "Fixed-price Contract via Concreo",
-      dates: "2024 – 2026",
+      role: "Senior Full-Stack Developer",
+      company: "Humanly",
+      companySuffix: "Client of Concreo",
+      dates: "2024 – Present",
       bullets: [
-        "Built and maintained a multi-page marketing website using Next.js, Sanity, Tailwind CSS, and shadcn/ui.",
-        "Implemented reusable UI components improving consistency and speeding up future page updates.",
-        "Integrated Sanity CMS so non-technical teammates could update copy and content without code changes.",
-        "Delivered polished, animated front-end experiences with an accessibility-first approach.",
+        "Own the marketing website of Humanly, an AI hiring platform, end to end; engaged directly after Humanly acquired Teamable, a previous client.",
+        "Built the multi-page site in Next.js, Sanity, Tailwind CSS, and shadcn/ui, with a reusable component layer that shortened time-to-feature and a content model non-technical teammates ship with, no engineering required.",
+        "Delivered polished, animated, WCAG-accessible experiences across desktop, tablet, and mobile.",
       ],
       tech: ["Next.js", "React", "Sanity Studio", "Tailwind CSS", "Shadcn", "Resend"],
     },
     {
       role: "Full-Stack & 3D Developer",
-      company: "Wearesky.com",
-      companySuffix: "Fixed-price Contract via Concreo",
-      dates: "2022 – 2023",
+      company: "Wearesky",
+      companySuffix: "Client of Concreo",
+      dates: "2022 – 2024",
       bullets: [
-        "Crafted a 3D-centric user interface using Nuxt.js, Three.js, and GSAP, setting the website apart in its niche.",
-        "Built responsive 3D designs that rendered flawlessly across diverse screen sizes, increasing mobile interactions.",
-        "Constructed a library of reusable Vue components tailored for 3D applications, streamlining future development.",
+        "Designed and built a 3D-centric web experience with Nuxt.js, Three.js, and GSAP that became the brand's primary visual differentiator.",
+        "Optimized heavy 3D assets to render smoothly across devices, increasing mobile interactions, and built a reusable Vue component library for 3D-driven layouts.",
       ],
       tech: ["Vue 3", "Nuxt.js", "Three.js", "GSAP", "Tailwind CSS", "Contentful", "Google Analytics 4"],
     },
     {
       role: "Front-End Developer",
       company: "Teamable",
-      companySuffix: "Fixed-price Contract via Concreo",
-      dates: "2022",
+      companySuffix: "Client of Concreo",
+      dates: "2022 – 2024",
       bullets: [
-        "Developed and launched a streamlined user interface using Next.js, enhancing UX and site performance.",
-        "Designed intuitive web pages with Tailwind CSS, resulting in a 20% increase in user engagement.",
-        "Enhanced accessibility ensuring WCAG compliance and optimized codebase for a 15% performance improvement.",
+        "Designed and shipped Teamable.com's UI in Next.js and Tailwind CSS for the venture-backed, San Francisco-based hiring platform, with WCAG-compliant accessibility and responsive performance.",
+        "Teamable was acquired by Humanly in 2024, which then engaged me directly for its own site.",
       ],
-      tech: ["Next.js", "React", "Tailwind CSS", "NestJS", "Google Analytics 4"],
+      tech: ["Next.js", "React", "Tailwind CSS", "Google Analytics 4"],
     },
     {
       role: "Front-End Developer",
       company: "Grics",
-      companySuffix: "Fixed-price Contract via Concreo",
+      companySuffix: "Client of Concreo",
       dates: "2021 – 2022",
       bullets: [
-        "Crafted a comprehensive suite of reusable components for an internal admin dashboard, ensuring UI consistency.",
-        "Authored automated tests with Jest and documented components within Storybook for developers and stakeholders.",
+        "Built the reusable component suite for an internal admin dashboard that became the team's component reference.",
+        "Hardened quality with Jest test suites and Storybook documentation used by developers and stakeholders alike.",
       ],
       tech: ["Vue 3", "Nuxt.js", "Vuetify", "Jest", "Storybook", "Azure DevOps"],
     },
     {
       role: "Full-Stack Developer",
       company: "TakeIn",
-      companySuffix: "Fixed-price Contract via Concreo",
+      companySuffix: "Client of Concreo",
       dates: "2020 – 2021",
       bullets: [
-        "Developed a robust, scalable back end handling simultaneous food orders and integrated secure Stripe payment gateways.",
-        "Refactored substantial portions of the codebase, enhancing system performance and maintainability.",
-        "Navigated complex NoSQL database architecture managing users and orders at scale.",
+        "Built the back end handling concurrent food orders at scale, including secure Stripe payment integration.",
+        "Refactored core user and order code paths, measurably improving performance and maintainability.",
       ],
       tech: ["Nuxt.js", "Vue", "Firebase", "Stripe", "Node.js", "TypeScript", "Docker"],
     },
     {
-      role: "Product Manager & Front-End Developer",
-      company: "Zum (Zumrails.com)",
-      dates: "2019 – 2020",
+      role: "Product Owner & Front-End Developer",
+      company: "Zumrails",
+      dates: "2020 – 2021",
       bullets: [
-        "Contributed to defining the product roadmap based on company strategy, market research, and analytic data.",
-        "Built the front end and interfaces, defining and implementing metrics related to the product strategy.",
-        "Collected and analyzed qualitative and quantitative customer feedback to drive decisions.",
+        "Joined Zumrails at its founding stage, shaping the initial product mockups and marketing proposal that defined its fintech payments platform.",
+        "Zumrails went on to raise a Series A at a $100M+ valuation (2024).",
       ],
       tech: ["Vue 3", "Nuxt.js", "Tailwind CSS", "Figma", "i18n"],
     },
     {
-      role: "Product Manager",
+      role: "Product Owner",
       company: "Flinks",
       dates: "2019",
       bullets: [
-        "Defined the product vision, roadmap, and growth opportunities; led planning of product release plans.",
-        "Managed the product features backlog, iteration planning, and user story elaboration.",
+        "Owned the Wealth Data product, expanding Flinks' data coverage from banking to investment and wealth accounts, and built the product-led growth initiative: a platform letting customers self-onboard without talking to a sales rep.",
+        "Drove product vision, roadmap, release planning, and user story elaboration across both initiatives.",
+        "Flinks was acquired by National Bank of Canada for $100M (2021).",
       ],
       tech: ["Aha!", "Figma", "Research", "Bootstrap"],
     },
     {
-      role: "Business Intelligence Analyst",
+      role: "Business Intelligence Consultant",
       company: "CGI",
       dates: "2017 – 2019",
       bullets: [
-        "Identified business needs and developed reporting dashboards in Tableau and Power BI.",
-        "Developed scenarios and sensitivity models to recommend options for strategic initiatives and predict financial outcomes.",
+        "Built reporting and forecasting dashboards in Tableau and Power BI for enterprise clients, including a major Canadian bank, that became the source of truth for executive KPI monitoring.",
+        "Designed scenario and sensitivity models to predict financial outcomes and pressure-test strategic initiatives.",
       ],
       tech: ["Tableau", "Power BI", "Microsoft Dynamics CRM", "SQL"],
     },
   ],
+}
+
+// French edition. Content mirrors resumeContent entry for entry; company and
+// technology names stay untranslated. Uses noun-phrase bullet style, standard
+// in French-language resumes.
+export const resumeContentFr: ResumeContent = {
+  monogram: "MB",
+  name: "Michael Boutin",
+  title: "Développeur full-stack senior et gestionnaire de produit",
+  location: "Montréal, QC, Canada",
+  contactLinks: [
+    {
+      label: "i-mick",
+      href: "https://www.linkedin.com/in/i-mick/",
+      kind: "linkedin",
+    },
+    { label: "imick.io", href: "https://imick.io", kind: "website" },
+  ],
+  chipGroups: [
+    {
+      label: "Technologies principales",
+      items: [
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Node.js",
+        "Tailwind CSS",
+        "Vue 3",
+        "Nuxt.js",
+      ],
+    },
+    {
+      label: "Complémentaires",
+      items: [
+        "Three.js",
+        "GSAP",
+        "Sanity",
+        "Stripe",
+        "PostgreSQL",
+        "Firebase",
+        "Vercel",
+        "Claude Code",
+      ],
+    },
+    {
+      label: "Langues",
+      items: ["Français", "Anglais"],
+    },
+  ],
+  education: [
+    {
+      degree: "Baccalauréat en administration des affaires",
+      institution: "Université Laval",
+      location: "Québec, Canada",
+      dates: "2012 – 2015",
+    },
+    {
+      degree: "DEC en informatique",
+      institution: "Cégep de Sainte-Foy",
+      location: "Québec, Canada",
+      dates: "2010 – 2012",
+    },
+  ],
+  summary:
+    "Développeur full-stack senior et gestionnaire de produit avec plus de 9 ans d'expérience en IA, en fintech et en SaaS, livrant des produits web performants pour des startups et des entreprises nord-américaines, plus récemment ComfyUI, la plateforme d'IA générative open source valorisée à 500 M$. Spécialisé en Next.js, React, TypeScript et Node.js, combinant un flux de développement augmenté par l'IA, une discipline d'ingénierie rigoureuse et une expérience en gestion de produit. Bilingue, français et anglais.",
+  workExperience: [
+    {
+      role: "Développeur front-end senior",
+      company: "ComfyUI",
+      companySuffix: "Contrat via Toptal",
+      dates: "2026",
+      bullets: [
+        "Conception d'un flux de création de pages par clavardage avec Claude Code pour Comfy Org, la startup de San Francisco valorisée à 500 M$ derrière ComfyUI : n'importe qui dans l'équipe crée une page de production par simple conversation, sans code ni interface, avec des URL de prévisualisation Vercel et un flux d'approbation avant la mise en production.",
+        "Intégration de PayloadCMS comme ossature structurelle de ce flux : les pages créées par clavardage assemblent des blocs de contenu structurés existants au lieu de générer du code ponctuel, gardant l'architecture du site cohérente et permettant au marketing de mettre à jour les pages sans ingénierie.",
+        "Développement et maintenance de fonctionnalités dans l'application web complexe et performante de ComfyUI, une plateforme comptant plus de 4 M d'utilisateurs, 150 K téléchargements quotidiens et un écosystème de 60 K nœuds créés par la communauté.",
+      ],
+      tech: [
+        "Vue 3",
+        "Astro",
+        "PayloadCMS",
+        "TypeScript",
+        "CodeRabbit",
+        "Tailwind CSS",
+        "CustomerIO",
+        "Supabase",
+        "PostgreSQL",
+        "GCP",
+      ],
+    },
+    {
+      role: "Développeur full-stack senior",
+      company: "Afi Expertise",
+      companySuffix: "Client de Concreo",
+      dates: "2026",
+      bullets: [
+        "Architecture et refonte complète d'afiexpertise.com avec Next.js, Sanity et Tailwind CSS pour une entreprise de formation corporative bilingue (FR/EN).",
+        "Intégration du système de gestion de formation Administrate pour alimenter un catalogue de plus de 360 cours avec filtrage à facettes par faculté, sujet et certification.",
+        "Développement du paiement de cours intégré avec Stripe, transformant le site d'une brochure en plateforme transactionnelle.",
+        "Modernisation du CMS par la migration du contenu vers Sanity, permettant à l'équipe de contenu d'être autonome dans les deux langues.",
+        "Préservation et amélioration du référencement (SEO) pendant la migration, en laissant un code nettement plus maintenable.",
+      ],
+      tech: [
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Sanity",
+        "Tailwind CSS",
+        "Stripe",
+        "Administrate",
+        "HubSpot",
+      ],
+    },
+    {
+      role: "Développeur full-stack senior et gestionnaire de produit",
+      company: "TakeUp",
+      companySuffix: "Contrat via Toptal",
+      dates: "2024 – 2026",
+      bullets: [
+        "Refonte complète de l'application web, migrant un produit en service avec une clientèle payante de Bubble.io vers Next.js sans interruption.",
+        "Seul développeur de l'application web sur un mandat de 18 mois, agissant aussi comme gestionnaire de produit : choix des fonctionnalités à développer, responsabilité de l'architecture et livraison de la spécification à la production, pour une plateforme de tarification par IA gérant en temps réel les tarifs de chambres d'hôtels, d'hôtels-boutiques et de gîtes.",
+        "Conception et développement des flux de tarification que les opérateurs utilisent pour prévisualiser, modifier et approuver les recommandations de prix générées par l'IA, en Next.js, React, shadcn/ui et Server Actions.",
+        "Connexion du front-end aux services Python et FastAPI exécutant la logique de tarification et l'inférence IA, avec responsabilité de la latence et de la gestion des erreurs.",
+        "Mise en place de l'authentification par organisation avec Clerk pour les accès multi-établissements.",
+      ],
+      tech: ["React", "Next.js", "TypeScript", "Highcharts", "Clerk", "Node.js", "CSS"],
+    },
+    {
+      role: "Fondateur et gestionnaire de produit senior",
+      company: "Concreo Solutions Inc.",
+      dates: "2020 – Présent",
+      bullets: [
+        "Fondation et direction d'une firme-conseil en ingénierie de produit, livrant six mandats clients (identifiés « Client de Concreo » ci-dessous) de bout en bout en ed-tech, RH-tech, livraison alimentaire et industries créatives, du cadrage et de l'architecture jusqu'au lancement en production et au soutien post-lancement.",
+        "Tous les mandats livrés en production avec une transition maintenable; deux clients convertis en contrats d'entretien continus, et des clients qui prolongent régulièrement leurs mandats ou reviennent avec de nouveaux projets.",
+      ],
+      tech: [
+        "React",
+        "Vue",
+        "Nuxt.js",
+        "Next.js",
+        "Svelte",
+        "Firebase",
+        "Tailwind CSS",
+        "PostgreSQL",
+        "MySQL",
+        "Laravel",
+        "AWS Amplify",
+        "GCP",
+        "Vercel",
+      ],
+    },
+    {
+      role: "Développeur full-stack senior",
+      company: "Humanly",
+      companySuffix: "Client de Concreo",
+      dates: "2024 – Présent",
+      bullets: [
+        "Responsable de bout en bout du site web marketing de Humanly, une plateforme d'embauche par IA; mandaté directement après l'acquisition de Teamable, un client précédent.",
+        "Développement du site multipage en Next.js, Sanity, Tailwind CSS et shadcn/ui, avec une couche de composants réutilisables qui accélère chaque nouvelle page et un modèle de contenu que les collègues non techniques utilisent sans ingénierie.",
+        "Livraison d'expériences soignées, animées et conformes WCAG sur ordinateur, tablette et mobile.",
+      ],
+      tech: ["Next.js", "React", "Sanity Studio", "Tailwind CSS", "Shadcn", "Resend"],
+    },
+    {
+      role: "Développeur full-stack et 3D",
+      company: "Wearesky",
+      companySuffix: "Client de Concreo",
+      dates: "2022 – 2024",
+      bullets: [
+        "Conception et développement d'une expérience web centrée sur la 3D avec Nuxt.js, Three.js et GSAP, devenue le principal différenciateur visuel de la marque.",
+        "Optimisation d'actifs 3D lourds pour un rendu fluide sur tous les appareils, augmentant les interactions mobiles, et création d'une bibliothèque de composants Vue réutilisables pour les mises en page 3D.",
+      ],
+      tech: ["Vue 3", "Nuxt.js", "Three.js", "GSAP", "Tailwind CSS", "Contentful", "Google Analytics 4"],
+    },
+    {
+      role: "Développeur front-end",
+      company: "Teamable",
+      companySuffix: "Client de Concreo",
+      dates: "2022 – 2024",
+      bullets: [
+        "Conception et livraison de l'interface de Teamable.com en Next.js et Tailwind CSS pour la plateforme d'embauche de San Francisco financée par capital de risque, avec accessibilité conforme WCAG et performance sur tous les appareils.",
+        "Teamable a été acquise par Humanly en 2024, qui m'a ensuite mandaté directement pour son propre site.",
+      ],
+      tech: ["Next.js", "React", "Tailwind CSS", "Google Analytics 4"],
+    },
+    {
+      role: "Développeur front-end",
+      company: "Grics",
+      companySuffix: "Client de Concreo",
+      dates: "2021 – 2022",
+      bullets: [
+        "Création de la suite de composants réutilisables d'un tableau de bord administratif interne, devenue la référence de composants de l'équipe.",
+        "Renforcement de la qualité avec des suites de tests Jest et une documentation Storybook utilisées autant par les développeurs que par les parties prenantes.",
+      ],
+      tech: ["Vue 3", "Nuxt.js", "Vuetify", "Jest", "Storybook", "Azure DevOps"],
+    },
+    {
+      role: "Développeur full-stack",
+      company: "TakeIn",
+      companySuffix: "Client de Concreo",
+      dates: "2020 – 2021",
+      bullets: [
+        "Développement du back-end gérant des commandes de repas simultanées à grande échelle, incluant une intégration de paiement Stripe sécurisée.",
+        "Refactorisation des chemins de code critiques des utilisateurs et des commandes, améliorant mesurablement la performance et la maintenabilité.",
+      ],
+      tech: ["Nuxt.js", "Vue", "Firebase", "Stripe", "Node.js", "TypeScript", "Docker"],
+    },
+    {
+      role: "Product Owner et développeur front-end",
+      company: "Zumrails",
+      dates: "2020 – 2021",
+      bullets: [
+        "Arrivée aux tout débuts de Zumrails, contribuant aux premières maquettes produit et à la proposition marketing qui ont défini sa plateforme de paiements fintech.",
+        "Zumrails a ensuite levé une série A à une valorisation de plus de 100 M$ (2024).",
+      ],
+      tech: ["Vue 3", "Nuxt.js", "Tailwind CSS", "Figma", "i18n"],
+    },
+    {
+      role: "Product Owner",
+      company: "Flinks",
+      dates: "2019",
+      bullets: [
+        "Responsable du produit Wealth Data, étendant la couverture de données de Flinks des comptes bancaires aux comptes d'investissement, et création de l'initiative de croissance par le produit (PLG) : une plateforme permettant aux clients de s'inscrire en libre-service sans parler à un représentant.",
+        "Direction de la vision produit, de la feuille de route, de la planification des versions et de l'élaboration des récits utilisateur pour les deux initiatives.",
+        "Flinks a été acquise par la Banque Nationale du Canada pour 100 M$ (2021).",
+      ],
+      tech: ["Aha!", "Figma", "Recherche", "Bootstrap"],
+    },
+    {
+      role: "Conseiller en intelligence d'affaires",
+      company: "CGI",
+      dates: "2017 – 2019",
+      bullets: [
+        "Création de tableaux de bord de rapports et de prévisions dans Tableau et Power BI pour des clients d'envergure, dont une grande banque canadienne, devenus la référence pour le suivi des indicateurs de direction.",
+        "Conception de scénarios et de modèles de sensibilité pour prédire les résultats financiers et éprouver les initiatives stratégiques.",
+      ],
+      tech: ["Tableau", "Power BI", "Microsoft Dynamics CRM", "SQL"],
+    },
+  ],
+}
+
+export const resumeLabels: Record<ResumeLocale, ResumeLabels> = {
+  en: {
+    summary: "Summary",
+    workExperience: "Work Experience",
+    education: "Education",
+    tech: "Tech:",
+    downloadPdf: "Download PDF",
+    documentTitle: "Michael Boutin resume",
+  },
+  fr: {
+    summary: "Sommaire",
+    workExperience: "Expérience professionnelle",
+    education: "Formation",
+    tech: "Technologies :",
+    downloadPdf: "Télécharger le PDF",
+    documentTitle: "CV de Michael Boutin",
+  },
+}
+
+export const resumeContentByLocale: Record<ResumeLocale, ResumeContent> = {
+  en: resumeContent,
+  fr: resumeContentFr,
+}
+
+export const resumePdfPathByLocale: Record<ResumeLocale, string> = {
+  en: "/resume.pdf",
+  fr: "/resume-fr.pdf",
+}
+
+export function parseResumeLocale(value: unknown): ResumeLocale {
+  return value === "fr" ? "fr" : "en"
 }

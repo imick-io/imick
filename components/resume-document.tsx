@@ -1,26 +1,31 @@
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Linkedin01Icon, Location01Icon, GlobeIcon } from "@hugeicons/core-free-icons"
-import { resumeContent } from "@/lib/resume-content"
+import { resumeContentByLocale, resumeLabels } from "@/lib/resume-content"
 import type {
   ResumeContent,
   ResumeEducation,
+  ResumeLabels,
+  ResumeLocale,
   ResumeWorkEntry,
 } from "@/lib/resume-content"
 
 const PAPER_TINT_CLASS = "[print-color-adjust:exact] [-webkit-print-color-adjust:exact]"
 
-export function ResumeDocument() {
+export function ResumeDocument({ locale = "en" }: { locale?: ResumeLocale }) {
+  const content = resumeContentByLocale[locale]
+  const labels = resumeLabels[locale]
   return (
     <article
+      lang={locale}
       className={`mx-auto grid w-full max-w-5xl grid-cols-[280px_1fr] overflow-hidden rounded-lg bg-card text-foreground shadow-sm ring-1 ring-border print:max-w-none print:rounded-none print:shadow-none print:ring-0 ${PAPER_TINT_CLASS}`}
     >
-      <Sidebar content={resumeContent} />
-      <Main content={resumeContent} />
+      <Sidebar content={content} labels={labels} />
+      <Main content={content} labels={labels} />
     </article>
   )
 }
 
-function Sidebar({ content }: { content: ResumeContent }) {
+function Sidebar({ content, labels }: { content: ResumeContent; labels: ResumeLabels }) {
   return (
     <aside
       className={`flex flex-col gap-6 bg-muted px-7 py-8 print:bg-muted ${PAPER_TINT_CLASS}`}
@@ -37,7 +42,7 @@ function Sidebar({ content }: { content: ResumeContent }) {
           <ChipList items={group.items} />
         </SidebarSection>
       ))}
-      <SidebarSection title="Education">
+      <SidebarSection title={labels.education}>
         <ul className="flex flex-col gap-3">
           {content.education.map((edu) => (
             <EducationEntry key={edu.degree} entry={edu} />
@@ -142,16 +147,16 @@ function EducationEntry({ entry }: { entry: ResumeEducation }) {
   )
 }
 
-function Main({ content }: { content: ResumeContent }) {
+function Main({ content, labels }: { content: ResumeContent; labels: ResumeLabels }) {
   return (
     <main className="flex flex-col gap-6 bg-card px-8 py-8 print:gap-5 print:bg-card print:px-6 print:py-6">
-      <Section title="Summary">
+      <Section title={labels.summary}>
         <p className="text-[11.5px] leading-relaxed text-foreground">{content.summary}</p>
       </Section>
-      <Section title="Work Experience">
+      <Section title={labels.workExperience}>
         <ol className="flex flex-col gap-4">
           {content.workExperience.map((entry, i) => (
-            <WorkEntry key={`${entry.company}-${i}`} entry={entry} />
+            <WorkEntry key={`${entry.company}-${i}`} entry={entry} techLabel={labels.tech} />
           ))}
         </ol>
       </Section>
@@ -182,7 +187,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   )
 }
 
-function WorkEntry({ entry }: { entry: ResumeWorkEntry }) {
+function WorkEntry({ entry, techLabel }: { entry: ResumeWorkEntry; techLabel: string }) {
   return (
     <li className="flex flex-col gap-1 print:break-inside-avoid">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
@@ -203,7 +208,7 @@ function WorkEntry({ entry }: { entry: ResumeWorkEntry }) {
         ))}
       </ul>
       <p className="mt-1 text-[10.5px] text-muted-foreground">
-        <span className="font-semibold text-foreground">Tech: </span>
+        <span className="font-semibold text-foreground">{techLabel} </span>
         {entry.tech.join(", ")}
       </p>
     </li>

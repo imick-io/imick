@@ -1,20 +1,26 @@
-// Generate public/resume.pdf from lib/resume-content.ts.
+// Generate public/resume.pdf (EN) and public/resume-fr.pdf (FR) from
+// lib/resume-content.ts.
 //
 // Requires WeasyPrint installed on the host (`brew install weasyprint` on macOS,
 // `apt-get install weasyprint` on Linux). The script writes a self-contained
-// HTML file (plain CSS, no Tailwind) and pipes it through weasyprint.
+// HTML file per locale (plain CSS, no Tailwind) and pipes it through weasyprint.
 //
 // Run with: pnpm generate-resume-pdf
 
 import { writeFileSync, mkdirSync } from "node:fs"
 import { execSync } from "node:child_process"
 import { join } from "node:path"
-import { resumeContent } from "../lib/resume-content.ts"
+import {
+  resumeContentByLocale,
+  resumeLabels,
+  resumePdfPathByLocale,
+  type ResumeContent,
+  type ResumeLabels,
+  type ResumeLocale,
+} from "../lib/resume-content.ts"
 
 const projectRoot = process.cwd()
 const tmpDir = join(projectRoot, ".tmp-resume-pdf")
-const htmlPath = join(tmpDir, "resume.html")
-const pdfPath = join(projectRoot, "public", "resume.pdf")
 
 mkdirSync(tmpDir, { recursive: true })
 
@@ -22,7 +28,7 @@ function escape(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 }
 
-const c = resumeContent
+function buildHtml(locale: ResumeLocale, c: ResumeContent, labels: ResumeLabels): string {
 
 const sidebarChipGroups = c.chipGroups
   .map(
@@ -85,18 +91,24 @@ const workEntries = c.workExperience
       <ul class="bullets">
         ${w.bullets.map((b) => `<li>${escape(b)}</li>`).join("")}
       </ul>
-      <p class="tech"><span class="tech-label">Tech:</span> ${w.tech.map(escape).join(", ")}</p>
+      <p class="tech"><span class="tech-label">${escape(labels.tech)}</span> ${w.tech.map(escape).join(", ")}</p>
     </li>`
   )
   .join("")
 
-const html = `<!DOCTYPE html>
-<html lang="en">
+return `<!DOCTYPE html>
+<html lang="${locale}">
 <head>
 <meta charset="utf-8" />
-<title>${escape(c.name)} resume</title>
+<title>${escape(labels.documentTitle)}</title>
 <style>
-@page { size: letter; margin: 0.4in 0; }
+@page {
+  size: letter; margin: 0.4in 0;
+  /* Painted from the physical page edge, so the sidebar tint bleeds through
+     the top/bottom page margins instead of leaving a white band. The 2.4in
+     stop must match .sb-cell width. */
+  background: linear-gradient(to right, #f1ede3 0, #f1ede3 2.4in, #ffffff 2.4in);
+}
 * { box-sizing: border-box; }
 html, body {
   margin: 0; padding: 0;
@@ -104,11 +116,11 @@ html, body {
   font-size: 10pt; color: #1d1d1d; line-height: 1.45;
 }
 :root {
-  --primary: #00813a;
+  --primary: #3d5afe;
   --foreground: #1d1d1d;
   --muted-foreground: #6b6b65;
-  --sidebar-bg: #f4f4f0;
-  --border: #e8e8e3;
+  --sidebar-bg: #f1ede3;
+  --border: #e7e2d6;
   --card-bg: #ffffff;
   --monogram-bg: #0c0c09;
   --monogram-fg: #ffffff;
@@ -117,7 +129,7 @@ html, body {
 .sb-cell {
   width: 2.4in;
   background: var(--sidebar-bg);
-  padding: 0.3in 0.28in 0;
+  padding: 0.24in 0.28in 0;
   vertical-align: top;
 }
 .main-cell { padding: 0.3in 0.4in 0; vertical-align: top; background: #fff; }
@@ -128,7 +140,7 @@ html, body {
   color: var(--monogram-fg);
   text-align: center; line-height: 0.42in;
   font-weight: 600; font-size: 11pt; letter-spacing: 0.5pt;
-  border-radius: 3pt; margin-bottom: 12pt;
+  border-radius: 3pt; margin-bottom: 8pt;
 }
 .name {
   margin: 0 0 4pt 0; font-size: 16pt; font-weight: 600;
@@ -136,7 +148,7 @@ html, body {
 }
 .title { margin: 0 0 8pt 0; font-size: 10pt; color: var(--foreground); }
 .contact {
-  margin: 0 0 18pt 0; font-size: 8pt;
+  margin: 0 0 12pt 0; font-size: 8pt;
   color: var(--muted-foreground); line-height: 1.7;
 }
 .contact-item {
@@ -148,7 +160,7 @@ html, body {
   color: var(--primary); margin-right: 2pt;
 }
 a { color: inherit; text-decoration: none; }
-.sb-section { margin-bottom: 14pt; }
+.sb-section { margin-bottom: 10pt; }
 .sb-title, .main-title {
   margin: 0 0 6pt 0; font-size: 8pt; font-weight: 600;
   letter-spacing: 1.6pt; text-transform: uppercase; color: var(--primary);
@@ -159,11 +171,11 @@ a { color: inherit; text-decoration: none; }
 .chip {
   display: inline-block; background: var(--card-bg);
   border: 1px solid var(--border); border-radius: 2pt;
-  padding: 1.5pt 4pt; margin: 0 2pt 2pt 0;
+  padding: 1pt 4pt; margin: 0 2pt 1.5pt 0;
   font-size: 7.5pt; color: var(--foreground);
 }
 .edu-list { margin: 0; padding: 0; list-style: none; }
-.edu { margin-bottom: 8pt; }
+.edu { margin-bottom: 6pt; page-break-inside: avoid; }
 .edu-degree { margin: 0; font-size: 9pt; font-weight: 600; color: var(--foreground); }
 .edu-school { margin: 1pt 0 0 0; font-size: 7.5pt; color: var(--muted-foreground); }
 .edu-dates { margin: 1pt 0 0 0; font-size: 7.5pt; color: var(--primary); }
@@ -209,28 +221,34 @@ a { color: inherit; text-decoration: none; }
     ${sidebarChipGroups}
 
     <section class="sb-section">
-      <h2 class="sb-title">Education</h2>
+      <h2 class="sb-title">${escape(labels.education)}</h2>
       <ul class="edu-list">${sidebarEducation}</ul>
     </section>
   </td>
 
   <td class="main-cell">
     <section class="main-section">
-      <h2 class="main-title">Summary</h2>
+      <h2 class="main-title">${escape(labels.summary)}</h2>
       <p class="summary">${escape(c.summary)}</p>
     </section>
 
     <section class="main-section">
-      <h2 class="main-title">Work Experience</h2>
+      <h2 class="main-title">${escape(labels.workExperience)}</h2>
       <ul class="work-list">${workEntries}</ul>
     </section>
   </td>
 </tr></table>
 </body>
 </html>`
+}
 
-writeFileSync(htmlPath, html)
-console.log(`wrote ${htmlPath}`)
+for (const locale of ["en", "fr"] as const) {
+  const htmlPath = join(tmpDir, `resume-${locale}.html`)
+  const pdfPath = join(projectRoot, "public", resumePdfPathByLocale[locale].slice(1))
 
-execSync(`weasyprint "${htmlPath}" "${pdfPath}"`, { stdio: "inherit" })
-console.log(`wrote ${pdfPath}`)
+  writeFileSync(htmlPath, buildHtml(locale, resumeContentByLocale[locale], resumeLabels[locale]))
+  console.log(`wrote ${htmlPath}`)
+
+  execSync(`weasyprint "${htmlPath}" "${pdfPath}"`, { stdio: "inherit" })
+  console.log(`wrote ${pdfPath}`)
+}
