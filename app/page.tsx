@@ -6,6 +6,12 @@ import { ArticleCoverTile } from "@/components/home/article-cover-tile"
 import { BookmarksTile } from "@/components/home/bookmarks-tile"
 import { CookingTile } from "@/components/home/cooking-tile"
 import { SubscribeForm } from "@/components/subscribe-form"
+import {
+  VariantA,
+  VariantB,
+  VariantC,
+} from "@/components/home/hero-prototype-variants"
+import { PrototypeSwitcher } from "@/components/prototype-switcher"
 import { buttonVariants } from "@/components/ui/button"
 import { siteConfig } from "@/lib/config"
 import { getFeaturedPosts } from "@/lib/featured-posts"
@@ -42,13 +48,34 @@ const heroHeadline = (
 const heroSubline =
   "Senior Product Engineer. Startup speed, end-to-end. The same obsession runs the rest of my life: my workflow, my tools, even my kitchen. Everything I learn lands here."
 
-export default function HomePage() {
+// PROTOTYPE -- throwaway switcher for issue #62. Delete with the variants once one wins.
+const PROTOTYPE_VARIANTS = [
+  { key: "now", name: "Live today" },
+  { key: "a", name: "Person first" },
+  { key: "b", name: "Letter first" },
+  { key: "c", name: "Subject led" },
+]
+
+type SearchParams = Promise<{ variant?: string }>
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
   const [leadPost, ...morePosts] = getFeaturedPosts(3)
   const recipes = getFeaturedRecipes()
   const recipeCount = getAllRecipes().length
+  const { variant } = await searchParams
+  const active = PROTOTYPE_VARIANTS.some((v) => v.key === variant) ? variant : "now"
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-12 md:py-16 lg:grid lg:grid-cols-[minmax(300px,380px)_1fr] lg:gap-12">
+      {active === "a" ? <VariantA /> : null}
+      {active === "b" ? <VariantB /> : null}
+      {active === "c" ? <VariantC /> : null}
+      <PrototypeSwitcher variants={PROTOTYPE_VARIANTS} current={active as string} />
+      {active !== "now" ? null : (
       <aside className="flex flex-col gap-8 lg:sticky lg:top-24 lg:h-fit lg:self-start motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500">
         <div className="flex flex-col gap-4">
           <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
@@ -81,6 +108,7 @@ export default function HomePage() {
           <SubscribeForm source="home" variant="compact" />
         </div>
       </aside>
+      )}
 
       <main className="grid grid-cols-1 gap-4 pt-12 sm:grid-cols-2 lg:pt-0">
         {leadPost ? (
