@@ -6,8 +6,8 @@ import {
   ArrowUpRight01Icon,
   ArrowDown01Icon,
 } from "@hugeicons/core-free-icons";
-import { buttonVariants } from "@/components/ui/button";
 import { CardFeature } from "@/components/ui/brand/card-feature";
+import { SubscribeForm } from "@/components/subscribe-form";
 import {
   Collapsible,
   CollapsibleContent,
@@ -121,43 +121,21 @@ export default function AboutPage() {
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-3">
         <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
-          Bio
+          Intro
         </h2>
-        <p className="text-base leading-relaxed text-foreground md:text-lg">
-          {siteConfig.bio}
-        </p>
+        <div className="flex flex-col gap-4">
+          {siteConfig.bio.map((paragraph) => (
+            <p
+              key={paragraph}
+              className="text-base leading-relaxed text-foreground md:text-lg"
+            >
+              {paragraph}
+            </p>
+          ))}
+        </div>
       </section>
 
-      <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
-          Tech Stack
-        </h2>
-        <ol className="flex flex-col gap-4">
-          {stackByCategory.map((group) => (
-            <li
-              key={group.category}
-              className="flex flex-col gap-2 md:flex-row md:items-start md:gap-4"
-            >
-              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground md:w-32 md:shrink-0 md:pt-1.5">
-                {group.label}
-              </span>
-              <ul className="flex flex-1 flex-wrap gap-1.5">
-                {group.items.map((item) => (
-                  <li
-                    key={item.name}
-                    className="inline-flex items-center gap-1.5 rounded-pill border border-border bg-muted/30 px-2.5 py-1 text-xs text-foreground"
-                  >
-                    {item.iconSlug ? (
-                      <StackChipIcon slug={item.iconSlug} mono={item.mono} />
-                    ) : null}
-                    <span>{item.name}</span>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ol>
-      </section>
+      {/* What I am into: reserved slot, built in a separate issue (#54 via #64). */}
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
         <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
@@ -278,6 +256,37 @@ export default function AboutPage() {
 
       <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
         <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+          Tech Stack
+        </h2>
+        <ol className="flex flex-col gap-4">
+          {stackByCategory.map((group) => (
+            <li
+              key={group.category}
+              className="flex flex-col gap-2 md:flex-row md:items-start md:gap-4"
+            >
+              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground md:w-32 md:shrink-0 md:pt-1.5">
+                {group.label}
+              </span>
+              <ul className="flex flex-1 flex-wrap gap-1.5">
+                {group.items.map((item) => (
+                  <li
+                    key={item.name}
+                    className="inline-flex items-center gap-1.5 rounded-pill border border-border bg-muted/30 px-2.5 py-1 text-xs text-foreground"
+                  >
+                    {item.iconSlug ? (
+                      <StackChipIcon slug={item.iconSlug} mono={item.mono} />
+                    ) : null}
+                    <span>{item.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+        <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
           Education
         </h2>
         <ol className="flex flex-col gap-6">
@@ -342,11 +351,15 @@ export default function AboutPage() {
       <section className="mx-auto w-full max-w-3xl">
         <CardFeature variant="dark" className="items-start gap-4 p-8">
           <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-primary">
-            Resume
+            Newsletter
           </h2>
-          <Link href="/resume" className={buttonVariants({ size: "lg" })}>
-            View Resume
-          </Link>
+          <p className="text-base leading-relaxed text-foreground/90">
+            Every other Tuesday, a short letter about what I am building,
+            reading, and cooking.
+          </p>
+          <div className="w-full max-w-md pt-1">
+            <SubscribeForm source="about" variant="compact" />
+          </div>
         </CardFeature>
       </section>
     </div>
