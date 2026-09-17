@@ -5,14 +5,18 @@ import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { SubscribeForm } from "@/components/subscribe-form"
 import { siteConfig } from "@/lib/config"
 
-const newsletterDescription = `Notes on shipping software — pragmatic engineering, product, and the path from idea to production. From ${siteConfig.name}.`
+const newsletterDescription = `A short personal letter every other Tuesday about what I am building, reading, and cooking. From ${siteConfig.name}.`
+
+const promiseLine =
+  "Every other Tuesday, a short letter about what I am building, reading, and cooking."
 
 const SOCIAL_PROOF_THRESHOLD = 100
 
 const valueProps = [
-  "One issue, every other Tuesday — short enough to read with a coffee.",
-  "A mix of engineering deep-dives, product notes, and what I'm actually building.",
-  "Highlights from the Learn section before they make it to the front page.",
+  "One letter every other Tuesday, short enough to read with a coffee.",
+  "The articles from the fortnight, plus the parts I did not publish.",
+  "What I am building right now, including what is not working.",
+  "What I cooked, and what went into my bookmarks.",
   "No tracking pixels. No referral links. Unsubscribe in one click.",
 ]
 
@@ -24,12 +28,12 @@ export const metadata: Metadata = {
     type: "website",
     url: "/newsletter",
     siteName: siteConfig.handle,
-    title: `Newsletter — ${siteConfig.name}`,
+    title: `Newsletter, ${siteConfig.name}`,
     description: newsletterDescription,
   },
   twitter: {
     card: "summary_large_image",
-    title: `Newsletter — ${siteConfig.name}`,
+    title: `Newsletter, ${siteConfig.name}`,
     description: newsletterDescription,
   },
 }
@@ -43,11 +47,12 @@ export default function NewsletterPage() {
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
         <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">Newsletter</p>
         <h1 className="font-heading text-4xl font-normal tracking-tight md:text-5xl">
-          Notes on shipping software.
+          A letter every other Tuesday.
         </h1>
         <p className="text-base text-muted-foreground md:text-lg">
-          Engineering, product, and the path from idea to production — straight
-          to your inbox, every other Tuesday.
+          A short personal note carrying the fortnight&apos;s articles plus the
+          things that never became one: what I am building, what broke, what I
+          cooked, and what I bookmarked.
         </p>
       </section>
 
@@ -63,6 +68,7 @@ export default function NewsletterPage() {
       </section>
 
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+        <p className="text-base font-medium text-foreground">{promiseLine}</p>
         <SubscribeForm
           source="newsletter-page"
           variant="full"
@@ -89,11 +95,11 @@ export default function NewsletterPage() {
 
       <section className="mx-auto flex w-full max-w-2xl flex-col gap-3">
         <h2 className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
-          Recent issues
+          Recent letters
         </h2>
         <p className="text-sm leading-relaxed text-foreground/90">
-          Past issues live on the Beehiiv-hosted archive — read a few before
-          you commit your inbox.
+          Past letters live on the Beehiiv-hosted archive. Read a few before you
+          commit your inbox.
         </p>
         <a
           href={siteConfig.newsletterArchiveUrl}
