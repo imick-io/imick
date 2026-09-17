@@ -39,4 +39,8 @@ describe("siteConfig", () => {
       expect(paragraph).not.toContain("—")
     }
   })
+
+  it("no longer carries a GitHub Sponsors URL now the /sponsor page is gone", () => {
+    expect(siteConfig).not.toHaveProperty("githubSponsorsUrl")
+  })
 })

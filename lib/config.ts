@@ -12,7 +12,6 @@ export const siteConfig = {
     "Michael Boutin on building products with AI, the career around it, and the systems that make the rest of it work. Written down as it happens.",
   url: "https://imick.io",
   contactEmail: "michael@concreo.io",
-  githubSponsorsUrl: "https://github.com/sponsors/PLACEHOLDER",
   githubUrl: "https://github.com/imick-io",
   repoUrl: "https://github.com/mboutin-toptal/imick-io",
   repoBranch: "main",
