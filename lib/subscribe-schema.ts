@@ -6,6 +6,7 @@ export const subscribeSourceValues = [
   "post-cta",
   "snippet-cta",
   "home",
+  "about",
 ] as const
 
 export type SubscribeSource = (typeof subscribeSourceValues)[number]
