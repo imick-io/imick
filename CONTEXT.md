@@ -4,6 +4,22 @@ Personal site, blog, and curated bookmark stack. This file captures the domain l
 
 ## Language
 
+### Audience
+
+**Reader**:
+Who the site's content is *written for*: a working developer, roughly three or more years in, employed, and building something of their own. Secondarily the technical founder that developer becomes, treated as the same person twelve to twenty-four months later rather than a separate segment. The Reader sets voice, register, assumed knowledge, and what counts as evidence. Copy addresses the Reader directly, always as a peer and never as a guide.
+_Avoid_: Audience (the group, not the person we write to), User (reserved for the authenticated account), Visitor, Subscriber (that is a **Letter** recipient, a role a Reader may or may not hold).
+
+**Buyer**:
+Someone who might hire the site owner as a *consequence* of the content being good: a founder, hiring manager, or recruiter. **Never addressed.** The Buyer is served entirely by overhearing a conversation aimed at the **Reader**, and by the same things the Reader wants: real numbers, shipped artifacts, and a peer voice visibly doing the work. The distinction is load-bearing and easy to lose: writing *for* the Buyer collapses the peer register into a pitch. See ADR `0008`.
+_Avoid_: Client, Lead, Prospect (all imply the site is selling to them; it is not), Reader (the opposite role).
+
+### Newsletter
+
+**Letter**:
+One issue of the newsletter, published every other Tuesday. A companion note rather than a delivery channel: it carries the fortnight's **Articles** plus the material that never becomes one (what is being built, what broke, what was cooked, what was bookmarked). Distinct from an **Article** by cadence, venue, and content; the Articles are its spine, the note around them is the value. Sent via Beehiiv.
+_Avoid_: Issue (ambiguous with tracker issues), Newsletter (that is the publication, not one send), Digest, Email, Post.
+
 ### Classes
 
 **Class**:
@@ -53,7 +69,7 @@ _Avoid_: Read me, Overview (reserved for Classes), Intro, Foreword, Notes (reser
 ### Bookmarks
 
 **Bookmark**:
-A saved tool, library, site, or resource that the site owner finds useful, with optional human opinion.
+A tool, library, site, or resource the site owner either uses or has found and intends to try later, kept close and made public, with optional human opinion. Both halves count: a Bookmark is not restricted to the owner's working stack, and it is not a wide net of anything useful on the web. What makes it publishable is that the selection is personal.
 Lifecycle is gated by `publishedAt` (same field as Articles, Snippets, Classes, and Folios). Future-dated Bookmarks are hidden in production and visible in `next dev`, matching the Article/Snippet rule rather than the "Coming soon" rule used for Classes. The admin list exposes three states: Draft (`publishedAt IS NULL`), Scheduled (`publishedAt > now()`), Published (`publishedAt <= now()`).
 _Avoid_: Link, entry, item.
 

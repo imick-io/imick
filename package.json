@@ -18,7 +18,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf node_modules .next .content-collections",
-    "sandcastle": "npx tsx .sandcastle/main.mts"
+    "afk": "npx tsx .sandcastle/main.mts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.75",

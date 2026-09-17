@@ -33,3 +33,10 @@ Supporting decisions:
 - New brand primitive `components/ui/brand/hero-band.tsx` (`tone="light" | "dark"`) joins the existing `content-band` and `card-feature`.
 - Rollout is a Foundation PR (this token/type/primitive swap, current layouts intact) followed by page-by-page PRs (homepage, /about, /resume, /contact, /learn, /admin + /bookmarks). The site stays usable at every step.
 - Note: this ADR is numbered `0006`; `0005` was already taken by the background-bookmark-enrichment decision when this work landed (the PRD had reserved `0005` before that number was used).
+
+## Amendment (2026-09-17)
+
+Two things in this ADR were written on a premise that no longer holds. The brand instantiation itself is unchanged and still correct: cobalt, warm bone, Manrope/Inter, the radius scale, and the single-accent discipline all stand.
+
+- **The opening premise is superseded.** "The portfolio is the top of a contracts-primary funnel" was true when this was written. The site's job is now audience building around a person, and the funnel is demoted. See ADR `0007` and ADR `0008`. The brand decisions below were taken for a magazine-cover editorial feel, which serves the new framing at least as well as the old one, so none of them are reopened.
+- **The polarity-flip map is corrected.** The locked list named three dark moments. The homepage closing CTA (`hero-band` dark) never shipped and the homepage has no closing band, so it is dropped. The `/about` card remains a dark moment but now carries the **newsletter** rather than the resume CTA, per ADR `0008`. The always-dark footer is unchanged. `DESIGN.md` carries the corrected list.

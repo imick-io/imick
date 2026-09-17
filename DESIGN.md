@@ -88,9 +88,15 @@ the variants the spec covers.
 
 ## Polarity-flip editorial map (locked)
 
-Dark moments are intentional and few: the homepage closing CTA (`hero-band`
-dark), the /about resume CTA card (`card-feature` dark), and the always-dark
-footer. No other dark moments outside the footer.
+Dark moments are intentional and few: the /about closing CTA card
+(`card-feature` dark) and the always-dark footer. No other dark moments outside
+the footer.
+
+The /about card carries the **newsletter**, which is the site's primary action;
+it previously carried the resume CTA and was repointed when the portfolio funnel
+was demoted (ADR `0008`). An earlier version of this list also named a homepage
+closing CTA (`hero-band` dark); the homepage has no closing band, so that entry
+is removed rather than left as a spec for something that does not exist.
 
 ---
 
