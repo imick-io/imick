@@ -22,4 +22,8 @@ describe("siteConfig", () => {
     expect(siteConfig.tagline).not.toContain("—")
     expect(siteConfig.description).not.toContain("—")
   })
+
+  it("no longer carries a GitHub Sponsors URL now the /sponsor page is gone", () => {
+    expect(siteConfig).not.toHaveProperty("githubSponsorsUrl")
+  })
 })
