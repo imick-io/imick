@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { headers } from "next/headers"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { ResumeDocument } from "@/components/resume-document"
@@ -8,7 +7,6 @@ import { ResumeGateFormInline } from "@/components/resume-gate-form-inline"
 import { ResumeLanguageToggle } from "@/components/resume-language-toggle"
 import { ResumePdfButton } from "@/components/resume-pdf-button"
 import { ResumePreviewSkeleton } from "@/components/resume-preview-skeleton"
-import { auth } from "@/lib/auth"
 import { siteConfig } from "@/lib/config"
 import { parseResumeLocale, type ResumeLocale } from "@/lib/resume-content"
 
@@ -24,12 +22,13 @@ export default async function ResumePage({
 }: {
   searchParams: Promise<{ lang?: string }>
 }) {
-  const session = await auth.api.getSession({ headers: await headers() })
   const locale = parseResumeLocale((await searchParams).lang)
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-muted print:static print:overflow-visible print:bg-background">
-      {/* {session ? <GatedResume locale={locale} /> : <GateOverlay />} */}
+      {/* Gate disabled. While it is off, this page must stay free of any
+          session lookup: a DB outage would otherwise 500 a page whose content
+          is entirely static. Restore the lookup alongside the gate. */}
       <GatedResume locale={locale} />
     </div>
   )
