@@ -8,7 +8,9 @@ import { BookmarkLogo } from "@/components/bookmarks/bookmark-logo"
 import { BookmarkPill } from "@/components/bookmarks/bookmark-pill"
 import { getPublishedBookmark, isReviewed } from "@/lib/bookmarks"
 import { getHostname } from "@/lib/bookmarks-meta"
-import { getCategoryLabel, getCategoryMap } from "@/lib/categories"
+import { getCategoryLabel, getCategoryMap, humanizeSlug } from "@/lib/categories"
+import { BookmarksUnavailable } from "@/components/bookmarks/bookmarks-unavailable"
+import { readWhenAvailable } from "@/lib/db-availability"
 
 export const revalidate = 3600
 
@@ -21,7 +23,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category, slug } = await params
-  const bookmark = await getPublishedBookmark(category, slug)
+  const found = await readWhenAvailable(() => getPublishedBookmark(category, slug))
+  const bookmark = found.ok ? found.data : null
   if (!bookmark) return {}
   return {
     title: bookmark.title,
@@ -31,7 +34,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BookmarkDetailPage({ params }: Props) {
   const { category, slug } = await params
-  const bookmark = await getPublishedBookmark(category, slug)
+  const found = await readWhenAvailable(() => getPublishedBookmark(category, slug))
+
+  // While the database is down we cannot know whether this bookmark exists, so
+  // we say "back shortly" rather than claim it is gone.
+  if (!found.ok) {
+    return (
+      <div className="mx-auto max-w-2xl space-y-8 px-6 py-12">
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Link href="/bookmarks" className="transition-colors hover:text-foreground">
+            Bookmarks
+          </Link>
+          <span>/</span>
+          <span>{humanizeSlug(category)}</span>
+        </nav>
+        <BookmarksUnavailable description="This bookmark is briefly unavailable while the library is down for maintenance. Everything else on the site works as usual." />
+      </div>
+    )
+  }
+
+  const bookmark = found.data
   if (!bookmark) notFound()
 
   const categoryLabel = getCategoryLabel(bookmark.category, await getCategoryMap())

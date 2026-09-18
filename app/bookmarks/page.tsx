@@ -7,6 +7,8 @@ import { getAllPublishedBookmarks, getPublishedCategoryCounts } from "@/lib/book
 import { getCategoryMap } from "@/lib/categories"
 import { buildTagMap } from "@/lib/bookmarks-filter"
 import { UnderDevelopmentNotice } from "@/components/ui/under-development-notice"
+import { BookmarksUnavailable } from "@/components/bookmarks/bookmarks-unavailable"
+import { readWhenAvailable } from "@/lib/db-availability"
 
 export const revalidate = 3600
 
@@ -31,13 +33,14 @@ export const metadata: Metadata = {
 }
 
 export default async function BookmarksHubPage() {
-  const [bookmarks, categoryMap, categoryCounts] = await Promise.all([
-    getAllPublishedBookmarks(),
-    getCategoryMap(),
-    getPublishedCategoryCounts(),
-  ])
-
-  const tagMap = buildTagMap(bookmarks)
+  const library = await readWhenAvailable(async () => {
+    const [bookmarks, categoryMap, categoryCounts] = await Promise.all([
+      getAllPublishedBookmarks(),
+      getCategoryMap(),
+      getPublishedCategoryCounts(),
+    ])
+    return { bookmarks, categoryMap, categoryCounts }
+  })
 
   return (
     <div className="flex flex-col gap-10 px-6 py-16 md:py-20">
@@ -60,16 +63,20 @@ export default async function BookmarksHubPage() {
       </div>
 
       <section className="mx-auto flex w-full max-w-5xl flex-col gap-8">
-        {/* nuqs reads search params, which bails out of static rendering up to
-            the nearest Suspense boundary. */}
-        <Suspense>
-          <BookmarksFilteredView
-            bookmarks={bookmarks}
-            categoryMap={categoryMap}
-            categoryCounts={categoryCounts}
-            tagMap={tagMap}
-          />
-        </Suspense>
+        {library.ok ? (
+          /* nuqs reads search params, which bails out of static rendering up to
+             the nearest Suspense boundary. */
+          <Suspense>
+            <BookmarksFilteredView
+              bookmarks={library.data.bookmarks}
+              categoryMap={library.data.categoryMap}
+              categoryCounts={library.data.categoryCounts}
+              tagMap={buildTagMap(library.data.bookmarks)}
+            />
+          </Suspense>
+        ) : (
+          <BookmarksUnavailable />
+        )}
       </section>
 
       <p className="mx-auto w-full max-w-5xl text-sm text-muted-foreground">
