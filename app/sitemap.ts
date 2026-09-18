@@ -10,6 +10,7 @@ import {
   getPublishedCategoryCounts,
 } from "@/lib/bookmarks"
 import { getAllRecipes } from "@/lib/recipes"
+import { readWhenAvailable } from "@/lib/db-availability"
 
 function url(path: string) {
   return new URL(path, siteConfig.url).toString()
@@ -95,10 +96,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   }
 
-  const [counts, publishedBookmarks] = await Promise.all([
-    getPublishedCategoryCounts(),
-    getAllPublishedBookmarks(),
-  ])
+  // The sitemap must still build when the database is down. Bookmark URLs are
+  // simply omitted from that build rather than failing the whole export; the
+  // next successful revalidation puts them back.
+  const bookmarkEntries = await readWhenAvailable(async () => {
+    const [counts, publishedBookmarks] = await Promise.all([
+      getPublishedCategoryCounts(),
+      getAllPublishedBookmarks(),
+    ])
+    return { counts, publishedBookmarks }
+  })
+  if (!bookmarkEntries.ok) return entries
+
+  const { counts, publishedBookmarks } = bookmarkEntries.data
 
   for (const [category, count] of Object.entries(counts)) {
     if (count === 0) continue
