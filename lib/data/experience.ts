@@ -67,6 +67,7 @@ export const experience: Experience[] = [
     description:
       "My independent consultancy: I source clients directly and deliver senior product, design, and engineering on AI-native products under the Concreo banner. Separately, a Toptal network member since 2021, through which the Toptal-sourced engagements below flow.",
     highlights: [
+      "Work in a forward-deployed model: embed with each client's leadership, map the business problem, and own delivery from prototype to production.",
       "Lead AI product engagements end-to-end for selected clients: design, frontend, backend, and the production craft around AI features.",
       "Ship full-stack products in Next.js, React, and Server Actions, integrating Python and FastAPI services and AI APIs.",
       "Run product ownership and hands-on engineering on every engagement, not one or the other.",
@@ -74,17 +75,19 @@ export const experience: Experience[] = [
     engagements: [
       {
         name: "Afi Expertise",
-        role: "Senior Full-Stack Engineer",
+        role: "Senior Full-Stack Engineer & Architect",
         startDate: "2026",
         endDate: "2026",
         summary:
           "Architected and rebuilt afiexpertise.com from scratch as a bilingual (FR/EN) training platform with a 360+ course catalog and in-app checkout.",
         highlights: [
-          "Rebuilt the site end to end in Next.js, Sanity, and Tailwind CSS, replacing the legacy platform.",
+          "Owned the architecture review, the choice of services, and the end-to-end rebuild in Next.js, Sanity, and Tailwind CSS, replacing the legacy platform.",
+          "Worked forward-deployed with the client: learned how AFI runs its training and enrollment operations, then shaped the platform and its integrations around that workflow.",
           "Integrated the Administrate training management system to power the 360+ course catalog with faceted filtering by faculty, subject, and certification.",
           "Built in-app course checkout with Stripe, turning the site from a brochure into a transactional platform.",
           "Migrated content into Sanity so the content team self-serves in both languages.",
           "Preserved and improved SEO through the migration while leaving a markedly more maintainable codebase.",
+          "Delivered the rebuild with my own AI development workflow built on Claude Code, combining custom and existing agent skills to ship faster.",
         ],
         tech: ["Next.js", "Sanity", "Tailwind CSS", "Stripe", "Administrate", "HubSpot"],
         url: "https://www.afiexpertise.com/en",
@@ -181,6 +184,7 @@ export const experience: Experience[] = [
       "San Francisco startup behind the leading open-source platform for node-based generative AI, backed by $48M in venture funding at a $500M valuation, with 4M+ users worldwide.",
     via: { name: "Toptal", url: "https://www.toptal.com" },
     highlights: [
+      "Forward-deployed with the marketing team: learned how they publish, then built a Slack-to-Claude agent pipeline around their workflow so non-engineers ship production pages.",
       "Designed a Claude Code chat workflow for page creation: anyone on the team creates a production page through chat alone, no code and no UI, with Vercel preview URLs and an approval workflow gating the merge to production.",
       "Integrated PayloadCMS as the structural backbone of that workflow: chat-created pages assemble existing, structured content blocks instead of generating one-off code, keeping the site's architecture consistent and letting marketing update pages without engineering.",
       "Built and maintained features in ComfyUI's complex, high-performance web application, a platform with 150K+ daily downloads and 60K+ community-built nodes.",
@@ -200,6 +204,7 @@ export const experience: Experience[] = [
       "Built pricing workflows in Next.js, React, shadcn/ui, and Server Actions, designing how operators preview, edit, and approve AI-driven rate recommendations.",
       "Wired org-based authentication with Clerk for multi-property access patterns.",
       "Connected front-end flows to Python and FastAPI services running pricing logic and AI inference, owning the latency and error-handling story across the boundary.",
+      "Worked as the client's forward-deployed engineer: embedded with the founders and data science team, writing the specs and roadmap that turned AI rate recommendations into workflows operators trust.",
       "Sole developer of the web application, acting as de facto product manager: decided which features to build, owned the architecture, and shipped from spec to production.",
     ],
     via: { name: "Toptal", url: "https://www.toptal.com" },
@@ -222,13 +227,14 @@ export const experience: Experience[] = [
   },
   {
     company: "Flinks",
-    role: "Product Owner",
+    role: "Business Analyst & Product Owner",
     startDate: "2019-03",
     endDate: "2019-11",
     location: "Montreal, Canada",
     description:
       "Owned the PLG initiative and the Wealth Data product expanding Flinks' coverage from banking to wealth accounts.",
     highlights: [
+      "Started as a business analyst, mapping, cleaning up, and automating internal processes, which built the end-to-end understanding of the platform I later relied on as Product Owner.",
       "Built the PLG (Product-Led Growth) initiative: a platform letting customers self-onboard and start using the product without talking to a sales rep.",
       "Owned the Wealth Data product, expanding Flinks' data coverage from banking to investment and wealth accounts.",
       "Drove roadmap, prioritization, and release planning across both initiatives, aligning stakeholders end to end.",
@@ -243,9 +249,10 @@ export const experience: Experience[] = [
     endDate: "2019-03",
     location: "Montreal, Canada",
     description:
-      "Joined as a Business Analyst, moved into Business Intelligence work for enterprise clients including a major Canadian bank.",
+      "Joined as a Business Analyst, moved into Business Intelligence work for CGI's executive team and the BI unit of a major Canadian bank.",
     highlights: [
-      "Built reporting and forecasting surfaces in Tableau and Power BI for enterprise clients, including a major Canadian bank.",
+      "Worked directly with CGI's executive team to build their reporting and forecasting in Tableau and Power BI.",
+      "Embedded in the business intelligence unit of a major Canadian bank, delivering reporting for the entire bank, which meant learning how complex banking processes work end to end before reporting on them.",
       "Designed scenario and sensitivity models to predict financial outcomes and pressure-test strategic initiatives.",
       "Built management dashboards that became the source of truth for executive KPI monitoring.",
       "Translated ambiguous business questions into rigorous analytic frameworks under tight timelines.",
