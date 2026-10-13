@@ -14,20 +14,20 @@ export function FeaturedArticle({ post }: FeaturedArticleProps) {
   return (
     <Link
       href={`/learn/articles/${post.slug}`}
-      className="group grid grid-cols-1 overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-foreground md:grid-cols-[3fr_2fr]"
+      className="group grid grid-cols-1 overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-foreground lg:grid-cols-[3fr_2fr]"
     >
-      <div className="relative aspect-[1200/630] w-full overflow-hidden bg-muted md:aspect-auto md:min-h-full">
+      <div className="relative aspect-video w-full overflow-hidden bg-muted">
         <Image
           src={coverSrc}
           alt=""
           fill
           priority
-          sizes="(min-width: 768px) 60vw, 100vw"
+          sizes="(min-width: 1024px) 60vw, 100vw"
           className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
           unoptimized={!post.coverImage}
         />
       </div>
-      <div className="flex flex-col gap-4 p-6 md:p-8">
+      <div className="flex flex-col gap-4 p-6 md:p-8 lg:p-6">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span className="font-mono uppercase tracking-[0.15em]">
             {categoryLabel[post.category]}
@@ -42,10 +42,10 @@ export function FeaturedArticle({ post }: FeaturedArticleProps) {
             </span>
           ) : null}
         </div>
-        <h3 className="font-heading text-2xl leading-tight tracking-tight text-foreground md:text-4xl">
+        <h3 className="font-heading text-2xl leading-tight tracking-tight text-foreground md:text-4xl lg:line-clamp-3 lg:text-3xl">
           {post.title}
         </h3>
-        <p className="text-base leading-relaxed text-muted-foreground">
+        <p className="text-base leading-relaxed text-muted-foreground lg:line-clamp-3">
           {post.excerpt}
         </p>
         <span className="mt-auto inline-flex items-center gap-1 pt-2 text-sm font-medium text-primary">
