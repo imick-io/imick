@@ -18,8 +18,8 @@ export const siteConfig = {
   newsletterArchiveUrl: "https://imick.beehiiv.com",
   newsletterSubscriberMilestone: 0,
   featuredPostSlugs: [
+    "setting-up-the-servers",
     "build-products-become-unstoppable",
     "shadcn-components-are-yours",
-    "hello-imick-io",
   ],
 } as const

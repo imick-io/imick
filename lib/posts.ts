@@ -37,6 +37,7 @@ export function formatPostDate(value: string | undefined): string {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC",
   })
 }
 
