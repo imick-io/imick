@@ -60,6 +60,12 @@ export function SiteFooter() {
                 About
               </Link>
               <Link
+                href="/skills"
+                className="text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              >
+                Skills
+              </Link>
+              <Link
                 href="/contact"
                 className="text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
               >
