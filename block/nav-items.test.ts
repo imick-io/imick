@@ -10,11 +10,12 @@ describe("nav-items", () => {
     expect(contactItem).toEqual({ name: "Contact", href: "/contact" });
   });
 
-  it("produces the full navbar order: About, Learn, Bookmarks, Cooking, Newsletter, Contact", () => {
+  it("produces the full navbar order: About, Learn, Skills, Bookmarks, Cooking, Newsletter, Contact", () => {
     const allNames = [...navItems, contactItem].map((item) => item.name);
     expect(allNames).toEqual([
       "About",
       "Learn",
+      "Skills",
       "Bookmarks",
       "Cooking",
       "Newsletter",

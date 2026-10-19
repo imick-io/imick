@@ -321,9 +321,8 @@ export default function AboutPage() {
           {sortedProjects.map((project) => (
             <li key={project.name}>
               <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={project.url ?? project.githubUrl}
+                {...(project.url?.startsWith("/") ? {} : { target: "_blank", rel: "noopener noreferrer" })}
                 className="group flex flex-col gap-2 rounded-lg border border-border bg-card p-5 transition-colors hover:bg-muted/50"
               >
                 <div className="flex items-center justify-between gap-3">
