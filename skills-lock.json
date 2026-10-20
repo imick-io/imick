@@ -1,77 +1,161 @@
 {
   "version": 1,
   "skills": {
-    "caveman": {
-      "source": "mattpocock/skills",
+    "ask-imick": {
+      "source": "imick-io/skills",
       "sourceType": "github",
-      "skillPath": "skills/productivity/caveman/SKILL.md",
-      "computedHash": "934433479903febc585bf6deb5f0cebc63137e3f86b7babe0aab1ecb94d6d7a4"
+      "skillPath": "skills/engineering/ask-imick/SKILL.md",
+      "computedHash": "df8f7b80c13f60407d1f6daa138adc08b45df1d286f857c16c7fafb41baa7fda"
     },
-    "diagnose": {
-      "source": "mattpocock/skills",
+    "brief": {
+      "source": "imick-io/skills",
       "sourceType": "github",
-      "skillPath": "skills/engineering/diagnose/SKILL.md",
-      "computedHash": "15939a26f86edec2d4862042b8564e5a062cb81d04e047a0cea6305c8830b5f5"
+      "skillPath": "skills/engineering/brief/SKILL.md",
+      "computedHash": "a0babe02522bec1678c3bbdaa7910aff119fc864cdd6376140c4029cffe7b0f6"
     },
-    "grill-me": {
-      "source": "mattpocock/skills",
+    "code-review": {
+      "source": "imick-io/skills",
       "sourceType": "github",
-      "skillPath": "skills/productivity/grill-me/SKILL.md",
-      "computedHash": "784f0dbb7403b0f00324bce9a112f715342777a0daee7bbb7385f9c6f0a170ea"
+      "skillPath": "skills/engineering/code-review/SKILL.md",
+      "computedHash": "a86d317af692f0665d36ef1613fa55c94ad430776be72e2b068d6da3feefdb0f"
+    },
+    "codebase-design": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/codebase-design/SKILL.md",
+      "computedHash": "b2888e4f4e8c0af3bfd557575a64b905c44e6248c3101d72077816882b3a92b9"
+    },
+    "debug-and-fix": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/debug-and-fix/SKILL.md",
+      "computedHash": "b50384616dc94cb600203d48011bc049e4ecc55fda6c783038e8dc304eb43e19"
+    },
+    "diagnosing-bugs": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/diagnosing-bugs/SKILL.md",
+      "computedHash": "99d49c100a4cf59d03e5bb4c35b41027c71c321df4e1522999b0e41e15f06921"
+    },
+    "dig": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/dig/SKILL.md",
+      "computedHash": "717a840cc25b06f8f536e7fe464ba75cd02db72443833abbf9fcc103637ecd2c"
+    },
+    "domain-modeling": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/domain-modeling/SKILL.md",
+      "computedHash": "b3eb40152b81f0c98fd2095a023c019452dbdce56f7540cc67fece2972db8369"
     },
     "grill-with-docs": {
-      "source": "mattpocock/skills",
+      "source": "imick-io/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/grill-with-docs/SKILL.md",
-      "computedHash": "31a5b1ae116558bf7d3f633f442835f54bd7645923d4f45c7823e52a97317666"
+      "computedHash": "35e62aa423aaeab6a414bcac273f56dfb17802ef2334b41b6a3b00f28196c8cf"
+    },
+    "grilling": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/grilling/SKILL.md",
+      "computedHash": "0c0e33c8fc08adb70b814fce98b28436bd90d65e4aed6ef2920e741a848d790a"
+    },
+    "handoff": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/handoff/SKILL.md",
+      "computedHash": "20e5f4afdef502637510bc5c64d27645d3c85c88df9cb006824bbb0980166319"
+    },
+    "implement": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/implement/SKILL.md",
+      "computedHash": "2139cfedf24791adbc839aaab6019cff158af1e28bfead020ec6e0ce01b3e74d"
     },
     "improve-codebase-architecture": {
-      "source": "mattpocock/skills",
+      "source": "imick-io/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
-      "computedHash": "c77b86b4332919499608f9af1880074e1fec65a59b95c70c27a9f39cd137865e"
+      "computedHash": "ac2c94885f34ff8492dc12aa4543182f661f32ea1722b8d6b6c2c7045af33ae3"
     },
-    "setup-matt-pocock-skills": {
-      "source": "mattpocock/skills",
+    "product-design": {
+      "source": "imick-io/skills",
       "sourceType": "github",
-      "skillPath": "skills/engineering/setup-matt-pocock-skills/SKILL.md",
-      "computedHash": "3a32f8f1ed8160c9d286a2aabe88ee9b884c6f3f88a7a6c47b7d5d552c959587"
+      "skillPath": "skills/engineering/product-design/SKILL.md",
+      "computedHash": "0eb476da237b4f3a95093c8e3a594d2c9e3453900037b3e1b44669b4cd598846"
+    },
+    "prototype": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/prototype/SKILL.md",
+      "computedHash": "d3fc74689bd993e39c44bfae510d014eecffbeec2922764b065377fd1327c0f6"
+    },
+    "research": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/research/SKILL.md",
+      "computedHash": "c8c1cba327a6f824b554cd978079a3dadd7406d73174f8fb9bfef58824691970"
+    },
+    "scope-decomposer": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/scope-decomposer/SKILL.md",
+      "computedHash": "a132a3d21c401269dbe2f1559b5880111f15cf32c1ba277b3b9c330abb7242dd"
+    },
+    "setup-imick-skills": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/setup-imick-skills/SKILL.md",
+      "computedHash": "da1e63d763d124cead5fcbd45d1e55528ed56f1a6d9d84d02114412622015634"
     },
     "tdd": {
-      "source": "mattpocock/skills",
+      "source": "imick-io/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/tdd/SKILL.md",
-      "computedHash": "15a7b5e36383ebadb2dec5e586679e55e9663d292da418926b8da6fc0ef27d84"
+      "computedHash": "9ce12c4a1e209e557fcf9d02086ade3d7ffdb976186018fc1b063b4164246004"
     },
-    "to-issues": {
-      "source": "mattpocock/skills",
+    "to-spec": {
+      "source": "imick-io/skills",
       "sourceType": "github",
-      "skillPath": "skills/engineering/to-issues/SKILL.md",
-      "computedHash": "73a91f30784523aa59ec9b02769576ebfc738e2cd5ad8f6441076031f0a5d5ac"
+      "skillPath": "skills/engineering/to-spec/SKILL.md",
+      "computedHash": "3d580753722c9307ab5235a98ddcfc127c763182f7175b567234ff0fc5831eac"
     },
-    "to-prd": {
-      "source": "mattpocock/skills",
+    "to-tickets": {
+      "source": "imick-io/skills",
       "sourceType": "github",
-      "skillPath": "skills/engineering/to-prd/SKILL.md",
-      "computedHash": "fd8c259f9c44eff08e29a1a2fc71a806a3568d279a55387a361f78620b10f2aa"
+      "skillPath": "skills/engineering/to-tickets/SKILL.md",
+      "computedHash": "9be1dcc089383eb9b58cc2d8f44fdf7dff5ea8c27d22971b9ef6678b06b72665"
+    },
+    "tracker": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/tracker/SKILL.md",
+      "computedHash": "3fc3709dddca0307c084cb4d5886e9f585cea7b11e10a12676c9c595ff69ae67"
     },
     "triage": {
-      "source": "mattpocock/skills",
+      "source": "imick-io/skills",
       "sourceType": "github",
       "skillPath": "skills/engineering/triage/SKILL.md",
-      "computedHash": "2b6efb6da12d92551772fcc04acf331f4e0e6f7bd9d4cb23ce0b301e0b128feb"
+      "computedHash": "0324e7a8644f91b41589c4772a888e55b4111217081e4ee37bb48a83f2a80c5e"
     },
-    "write-a-skill": {
-      "source": "mattpocock/skills",
+    "verify-epic": {
+      "source": "imick-io/skills",
       "sourceType": "github",
-      "skillPath": "skills/productivity/write-a-skill/SKILL.md",
-      "computedHash": "b44d8aab2ead83c716e01af4c9a24ccc4575ce70ad58ec4f1749fb88c9cc82ba"
+      "skillPath": "skills/engineering/verify-epic/SKILL.md",
+      "computedHash": "20adae94e602257874d2539f7df31e126e778eb27ecbc3eb6444ee831f722e8a"
     },
-    "zoom-out": {
-      "source": "mattpocock/skills",
+    "wayfinder": {
+      "source": "imick-io/skills",
       "sourceType": "github",
-      "skillPath": "skills/engineering/zoom-out/SKILL.md",
-      "computedHash": "8357aeaece3b709c442eab67e64b86844e05e2f1ea95b109565eba50b6def36e"
+      "skillPath": "skills/engineering/wayfinder/SKILL.md",
+      "computedHash": "6590d65ffd6a2d2a5edc410b86134386cfe930710ed9c39d22d17c320a62c474"
+    },
+    "whats-next": {
+      "source": "imick-io/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/whats-next/SKILL.md",
+      "computedHash": "19aaaf3bfe21a4a039b2dac35373cd94583c8cfa665cffa77796cf678e81119c"
     }
   }
 }

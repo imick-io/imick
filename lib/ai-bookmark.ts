@@ -124,7 +124,7 @@ export const MAX_ENRICHMENT_ATTEMPTS = 3
 // Pure transition for a Bookmark's Enrichment status. Both the single "Generate
 // with AI" flow and the background cron drainer route their status writes
 // through here so every Bookmark carries the outcome of its last attempt
-// regardless of trigger (ADR 0005, CONTEXT.md).
+// regardless of trigger (ADR 0005, GLOSSARY.md).
 export function nextEnrichmentState(
   state: EnrichmentState,
   outcome: EnrichmentOutcome,

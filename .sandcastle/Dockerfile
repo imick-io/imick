@@ -1,4 +1,5 @@
-FROM node:22-bookworm
+# Agent loop image: Sandcastle's default plus a headless Chromium.
+FROM node:24-bookworm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -15,6 +16,15 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
   && apt-get update && apt-get install -y gh \
   && rm -rf /var/lib/apt/lists/*
 
+# A headless browser, so agents can reproduce UI bugs (diagnosing-bugs BROWSER.md)
+RUN npx -y playwright@latest install --with-deps chromium \
+  && chmod -R a+rx /root/.cache/ms-playwright \
+  && mv /root/.cache/ms-playwright /opt/ms-playwright
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright
+
+# pnpm, at the version package.json pins (packageManager)
+RUN npm install -g pnpm@11.13.1
+
 # Build-args for UID/GID alignment: sandcastle docker build-image
 # defaults these to the host user's UID/GID so image-built files
 # and bind-mounted files share an owner without runtime chown.
@@ -22,7 +32,7 @@ ARG AGENT_UID=1000
 ARG AGENT_GID=1000
 
 # Rename the base image's "node" user to "agent" and align UID/GID.
-RUN groupmod -g $AGENT_GID node && usermod -u $AGENT_UID -g $AGENT_GID -d /home/agent -m -l agent node
+RUN groupmod -o -g $AGENT_GID node && usermod -o -u $AGENT_UID -g $AGENT_GID -d /home/agent -m -l agent node
 USER ${AGENT_UID}:${AGENT_GID}
 
 # Install Claude Code CLI

@@ -18,7 +18,9 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf node_modules .next .content-collections",
-    "afk": "npx tsx .sandcastle/main.mts"
+    "agents": "node --env-file-if-exists=.sandcastle/.env .sandcastle/main.mts",
+    "agents:awake": "caffeinate -i pnpm agents",
+    "agents:stop": "touch .sandcastle/STOP"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.75",
@@ -57,7 +59,7 @@
     "zod": "^4.4.1"
   },
   "devDependencies": {
-    "@ai-hero/sandcastle": "^0.5.10",
+    "@ai-hero/sandcastle": "^0.12.0",
     "@next/env": "^16.2.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
