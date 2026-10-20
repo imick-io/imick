@@ -10,6 +10,7 @@ import { localizeTemps, TEMP_UNITS } from "@/lib/temperature"
 
 const SCALES = [0.5, 1, 2] as const
 const VIEWS = ["classic", "consolidated"] as const
+const MAX_SCALE = 100
 
 type Props = {
   ingredients: Ingredient[]
@@ -33,6 +34,16 @@ export function RecipeView({ ingredients, steps, servings }: Props) {
     parseAsStringLiteral(TEMP_UNITS).withDefault("c")
   )
   const [scale, setScale] = useState<number>(1)
+  const [customScale, setCustomScale] = useState("")
+  const isCustom = customScale !== ""
+  const scaledServings = Math.round(servings * scale * 10) / 10
+
+  function onCustomScaleChange(value: string) {
+    setCustomScale(value)
+    const n = Number.parseFloat(value)
+    if (Number.isFinite(n) && n > 0) setScale(Math.min(n, MAX_SCALE))
+    else if (value === "") setScale(1)
+  }
 
   const byItem = new Map(ingredients.map((ing) => [ing.item, ing]))
 
@@ -72,11 +83,14 @@ export function RecipeView({ ingredients, steps, servings }: Props) {
             <button
               key={s}
               type="button"
-              aria-pressed={scale === s}
-              onClick={() => setScale(s)}
+              aria-pressed={!isCustom && scale === s}
+              onClick={() => {
+                setScale(s)
+                setCustomScale("")
+              }}
               className={cn(
                 "rounded-full px-2.5 py-1 font-mono text-xs transition-colors",
-                scale === s
+                !isCustom && scale === s
                   ? "bg-foreground text-background"
                   : "text-muted-foreground hover:text-foreground"
               )}
@@ -84,6 +98,28 @@ export function RecipeView({ ingredients, steps, servings }: Props) {
               {s}x
             </button>
           ))}
+          <label className="flex items-center font-mono text-xs text-muted-foreground">
+            <input
+              type="number"
+              inputMode="decimal"
+              min={0.1}
+              max={MAX_SCALE}
+              step={0.1}
+              placeholder="custom"
+              aria-label="Custom multiplier"
+              value={customScale}
+              onChange={(e) => onCustomScaleChange(e.target.value)}
+              className={cn(
+                "w-16 rounded-md border border-border bg-transparent px-2 py-1 text-center font-mono text-xs outline-none transition-colors [appearance:textfield] focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+                isCustom
+                  ? "border-foreground text-foreground"
+                  : "placeholder:text-muted-foreground"
+              )}
+            />
+            <span aria-hidden className="ml-0.5">
+              x
+            </span>
+          </label>
           <span aria-hidden className="text-border">
             |
           </span>
@@ -105,7 +141,7 @@ export function RecipeView({ ingredients, steps, servings }: Props) {
             </button>
           ))}
           <span className="ml-1 text-sm text-muted-foreground">
-            {servings * scale} {servings * scale === 1 ? "serving" : "servings"}
+            {scaledServings} {scaledServings === 1 ? "serving" : "servings"}
           </span>
         </div>
       </div>
