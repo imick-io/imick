@@ -1,0 +1,26 @@
+# Manual triage only: the agent loop triages new issues (AGENTS_TRIAGE=1 in
+# .sandcastle/.env), so this workflow keeps just its workflow_dispatch trigger
+# for triaging one issue by hand. The workflow itself lives in imick-io/skills.
+# Secrets: CLAUDE_CODE_OAUTH_TOKEN (or ANTHROPIC_API_KEY), and optionally
+# SLACK_ALERTS_WEBHOOK_URL and SLACK_FEED_WEBHOOK_URL, on this repo or its
+# organization.
+name: Triage
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Issue number to triage now
+        required: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  triage:
+    uses: imick-io/skills/.github/workflows/triage.yml@v1
+    with:
+      issue-number: ${{ github.event.inputs.issue }}
+      skills-ref: v1
+    secrets: inherit

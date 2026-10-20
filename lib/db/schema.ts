@@ -82,7 +82,7 @@ export type NewFormSubmission = typeof formSubmissions.$inferInsert
 // --- Bookmarks ---
 
 // Enrichment status: the per-Bookmark state of its last Enrichment attempt.
-// Orthogonal to the Draft / Scheduled / Published lifecycle (see CONTEXT.md,
+// Orthogonal to the Draft / Scheduled / Published lifecycle (see GLOSSARY.md,
 // ADR 0005). Backfilled to `done` for pre-existing rows by migration 0007.
 export const aiStatusEnum = pgEnum("ai_status", [
   "pending",

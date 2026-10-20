@@ -13,7 +13,7 @@ A **Bookmark** has two prose fields that look superficially similar: `reviewText
 
 1. **Single field**, AI fills it when empty, human edits later. *Rejected* — once the AI's neutral prose lives in the same field as the human's opinion, the boundary erodes. Readers can no longer tell whether the prose reflects the site owner's actual experience or a model's summary of marketing copy. The whole point of a personal bookmark stack is that the opinions are personal; conflating the two destroys that signal.
 2. **AI fills `reviewText` directly.** *Rejected* for the same reason in stronger form — generating prose in the first person about a tool the model has never used would publish fabricated personal experience under the site owner's name.
-3. **Two distinct fields, distinct labels.** *Accepted* — preserves the human/machine boundary in the schema, in the rendering, and in the domain language (see CONTEXT.md "Review" and "AI Summary" entries).
+3. **Two distinct fields, distinct labels.** *Accepted* — preserves the human/machine boundary in the schema, in the rendering, and in the domain language (see GLOSSARY.md "Review" and "AI Summary" entries).
 
 ## Consequences
 

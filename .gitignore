@@ -61,3 +61,6 @@ components.json
 
 # resume PDF generator tmp output
 /.tmp-resume-pdf/
+
+# tracker page (node tracker/build.mjs)
+tracker/index.html

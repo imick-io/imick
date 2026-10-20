@@ -1,35 +1,22 @@
-# ISSUES
-
-Here are the open issues in the repo:
-
-<issues-json>
-
-!`gh issue list --state open --label ready-for-agent --json number,title,body,labels,comments --jq '[.[] | {number, title, body, labels: [.labels[].name], comments: [.comments[].body]}]'`
-
-</issues-json>
-
-The list above has already been filtered to issues ready for work.
-
 # TASK
 
-Analyze the open issues and build a dependency graph. For each issue, determine whether it **blocks** or **is blocked by** any other open issue.
+These tickets are ready for agents in this repo:
 
-An issue B is **blocked by** issue A if:
+{{TICKETS}}
 
-- B requires code or infrastructure that A introduces
-- B and A modify overlapping files or modules, making concurrent work likely to produce merge conflicts
-- B's requirements depend on a decision or API shape that A will establish
+Pick the ones that can be worked **at the same time** without stepping on each other, at most {{MAX_PARALLEL}}. Read each ticket (`gh issue view <number> --comments`) and the code it points at.
 
-An issue is **unblocked** if it has zero blocking dependencies on other open issues.
+Two tickets must not run together when:
 
-For each unblocked issue, assign a branch name using the format `sandcastle/issue-{id}-{slug}`.
+- one needs code, an API shape or a decision the other introduces,
+- they change the same files or modules, so their branches would conflict.
+
+Prefer tickets of the same epic, oldest first; bugs (`bug` kind) before builds when they conflict. Don't modify anything.
 
 # OUTPUT
 
-Output your plan as a JSON object wrapped in `<plan>` tags:
-
 <plan>
-{"issues": [{"id": "42", "title": "Fix auth bug", "branch": "sandcastle/issue-42-fix-auth-bug"}]}
+{"issues": [{"number": 42}, {"number": 43}]}
 </plan>
 
-Include only unblocked issues. If every issue is blocked, include the single highest-priority candidate (the one with the fewest or weakest dependencies).
+Always emit the `<plan>` tags. If nothing can be worked, output `<plan>{"issues": []}</plan>`.
