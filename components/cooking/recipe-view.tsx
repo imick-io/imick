@@ -7,6 +7,7 @@ import { WeightScaleIcon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import type { Ingredient, Step } from "@/lib/recipes"
 import { localizeTemps, TEMP_UNITS } from "@/lib/temperature"
+import { scaleNote } from "@/lib/recipe-scaling"
 
 const SCALES = [0.5, 1, 2] as const
 const VIEWS = ["classic", "consolidated"] as const
@@ -19,9 +20,10 @@ type Props = {
 }
 
 function formatAmount(ing: Ingredient, scale: number): string {
-  if (ing.grams === undefined) return ing.note ?? ""
+  const note = ing.note && scaleNote(ing.note, scale)
+  if (ing.grams === undefined) return note ?? ""
   const grams = `${Math.round(ing.grams * scale)} g`
-  return ing.note ? `${grams} · ${ing.note}` : grams
+  return note ? `${grams} · ${note}` : grams
 }
 
 export function RecipeView({ ingredients, steps, servings }: Props) {
